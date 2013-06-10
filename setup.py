@@ -7,9 +7,9 @@ setup(
     author_email='team@appcubator.com',
     packages=['app_builder',
               'app_builder.analyzer',
-              'app_builder.code_templates',
-              'app_builder.code_templates.htmlgen',
               'app_builder.codes',
+              'app_builder.deployment',
+              'app_builder.tests'
               ],
     url='https://github.com/appcubator/appcubator-codegen',
     license='LICENSE.txt',

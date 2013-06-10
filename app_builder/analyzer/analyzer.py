@@ -10,10 +10,10 @@ from utils import encode_braces, decode_braces
 from resolving import Resolvable, LinkLang, EntityLang
 
 
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
 
-env = Environment(trim_blocks=True, lstrip_blocks=True, loader=PackageLoader(
-    'app_builder.code_templates', 'htmlgen'))
+env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
+    'app_builder/code_templates/htmlgen'))
 
 
 # tables
@@ -104,7 +104,7 @@ class Footer(DictInited):
         "links": {"_type": [], "_each": {"_type": FooterItem}}
     }
 
-from app_builder.uielements import UIElement
+from uielements import UIElement
 
 class Page(DictInited):
 
@@ -161,7 +161,7 @@ class Email(DictInited):
 
 # Put it all together, you get an App
 
-from app_builder.uielements import Form, Iterator
+from uielements import Form, Iterator
 
 class App(DictInited):
     _schema = {

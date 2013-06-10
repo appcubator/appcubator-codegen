@@ -1,8 +1,8 @@
 from copy import deepcopy
-from jinja2 import Environment, PackageLoader, StrictUndefined
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-env = Environment(trim_blocks=True, lstrip_blocks=True, loader=PackageLoader(
-    'app_builder.code_templates', 'htmlgen'), undefined=StrictUndefined, autoescape=True)
+env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
+    'app_builder.code_templates/htmlgen'), undefined=StrictUndefined, autoescape=True)
 
 valid_tags = ('a', 'abbr', 'address', 'area', 'article',
               'aside', 'audio', 'b', 'base', 'bdi',

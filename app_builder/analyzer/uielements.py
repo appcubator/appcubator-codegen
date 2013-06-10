@@ -1,17 +1,17 @@
 from dict_inited import DictInited
 from resolving import Resolvable, LinkLang
-from analyzer_utils import encode_braces, decode_braces
+from utils import encode_braces, decode_braces
 
 
 from app_builder.htmlgen import Tag
 
 
 from copy import deepcopy
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
 
 
-env = Environment(trim_blocks=True, lstrip_blocks=True, loader=PackageLoader(
-    'app_builder.code_templates', 'htmlgen'))
+env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
+    'app_builder/code_templates/htmlgen'))
 
 def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
