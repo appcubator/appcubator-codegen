@@ -11,7 +11,8 @@ setup(
               'app_builder.deployment',
               'app_builder.tests'
               ],
-    package_data={"app_builder": ['codes/code_templates/*.*', 'codes/code_templates/*/*.*',
+    package_data={"app_builder": ['tests/master_json.json',
+                                  'codes/code_templates/*.*', 'codes/code_templates/*/*.*',
                                   'analyzer/templates/*.*', 'analyzer/templates/*/*.*']},
     url='https://github.com/appcubator/appcubator-codegen',
     license='LICENSE.txt',
