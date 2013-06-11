@@ -163,7 +163,7 @@ def write_to_fs(coder, css="", dest=None):
                   'settings.py', 'wsgi.py']:
         copy_file(fname, fname)
 
-    copy_file('gitignore', '.gitignore')
+    copy_file('gitignore.gitignore', '.gitignore')
     copy_file('base.html', 'webapp/templates/base.html')
 
     # main webapp files
