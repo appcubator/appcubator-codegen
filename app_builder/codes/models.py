@@ -21,6 +21,7 @@ class DjangoField(object):
                  '_MODIFIED': 'DateTimeField',
                  'email': 'EmailField',
                  'image': 'TextField',
+                 'file': 'TextField',
                  }
 
     def __init__(self, identifier, canonical_type, required=False, parent_model=None):
@@ -39,7 +40,7 @@ class DjangoField(object):
         elif field.canon_type == '_MODIFIED':
             kwargs['auto_now'] = True
         if field.required:
-            if field.canon_type in ['text', 'email', 'image']:
+            if field.canon_type in ['text', 'email', 'image', 'file']:
                 kwargs['default'] = repr("")
             if field.canon_type in ['float', 'date']:
                 kwargs['default'] = 0

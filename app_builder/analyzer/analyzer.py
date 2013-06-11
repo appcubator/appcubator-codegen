@@ -9,12 +9,7 @@ from dict_inited import DictInited
 from utils import encode_braces, decode_braces
 from resolving import Resolvable, LinkLang, EntityLang
 
-
-from jinja2 import Environment, FileSystemLoader
-
-env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
-    'app_builder/code_templates/htmlgen'))
-
+from . import env
 
 # tables
 

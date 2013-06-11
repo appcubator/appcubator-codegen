@@ -1,52 +1,43 @@
-
 import unittest
 from app_builder.analyzer import App
+import random
+import os.path
+import simplejson
+
+TABLE_NAME_LIST = ["Bottle", "Glass", "Spoon", "Screen", "Monitor", "Cable"]
+USER_NAME_LIST = ["Admin", "Carpooler", "Driver", "Wizard", "PG", "VC"]
+PRIM_FIELD_LIST = ["Name", "Number Of Kids", "Money In The Bank", "Brew", "Favorite Language", "T-Shirt Size"]
+RELATED_NAME_FIELD_TYPES_LIST = ["Socks", "Trousers", "Tweet", "Keyboard"]
+URLPART_LIST = ["profile", "barn", "beard", "pool", "notebook", "ryangosling"]
+
+ALIGNMENT_LIST = ["left", "center", "right"]
+FIELD_TYPES_LIST = ["number", "text", "image", "date", "email", "file"]
+RELATIONAL_FIELD_TYPES_LIST = ["fk", "o2o", "m2m"]
+
 
 class TestGenerator(object):
 
+    def init_with_blank_state(self):
+        module_dir = os.path.dirname(__file__)
+        self.state = simplejson.loads(open(os.path.join(module_dir, 'master_state.json')).read())
 
-    def __init__(self):
-
-        self.states = []
-
-
-
-
-    def make_relational_fields(self):
-        pass
-
-    def make_prim_fields(self):
-        pass
-
-    def make_entity(self):
-        pass
-
-    def make_page(self):
-        pass
-
-    def make_uielements(self):
-        pass
-
-    def make_standard_create_forms(self):
-        pass
-
-    def make_related_forms(self):
-        pass
-        
     def make_state(self):
-        s = {}
-        s['pages'] = []
-        s['entities'] = []
-        s['users'] = {}
-        s['info'] = {}
+        s = self.state
+
+        assert len(s['users']) == 1 and len(s['users'][0]['fields']) > 0, "blank json wasn't what i thought it was"
+
+
+        return s
+
 
 
 class IsComprehensiveTestCase(unittest.TestCase):
 
     def setUp(self):
         t = TestGenerator()
-        d = t.make_state()
-        self.app = App.create_from_dict(d)
+        t.init_with_blank_state()
+        self.d = t.make_state()
+        self.app = App.create_from_dict(self.d)
 
     def test_has_multiple_entities(self):
         pass

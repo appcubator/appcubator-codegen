@@ -5,13 +5,7 @@ from utils import encode_braces, decode_braces
 
 from app_builder.htmlgen import Tag
 
-
-from copy import deepcopy
-from jinja2 import Environment, FileSystemLoader
-
-
-env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
-    'app_builder/code_templates/htmlgen'))
+from . import env
 
 def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,

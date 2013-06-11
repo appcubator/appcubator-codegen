@@ -1,7 +1,8 @@
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+import os.path
 
 env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
-    'app_builder/code_templates'), undefined=StrictUndefined)
+    os.path.join(os.path.dirname(__file__), 'code_templates')), undefined=StrictUndefined)
 
 from models import *
 from views import *
