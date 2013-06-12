@@ -45,6 +45,8 @@ def create_codes(app):
                   'create signup form receiver if not exists': factory.create_signup_form_receiver_if_not_created,
                   'create url for form receiver if not created': factory.create_url_for_form_receiver_if_not_created,
 
+                  # STATIC FILES
+                  'create static urls': factory.add_statics,
     }
 
 
@@ -103,6 +105,8 @@ def create_codes(app):
         create('create row/col structure for nodes', p)
 
     create('create tests for static pages', app)
+    create('create static urls', app)
+    
 
     return codes
 

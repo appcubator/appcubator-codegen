@@ -2,7 +2,7 @@ import re
 
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate
-from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery
+from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
 from app_builder.codes.utils import AssignStatement, FnCodeChunk
@@ -182,6 +182,10 @@ class AppComponentFactory(object):
 
 
     # ADDING ROUTES
+
+    def add_statics(self, app):
+        return Statics(self.urls_namespace)
+
 
     def add_page_to_urls(self, page):
         url_obj = page.app._django_page_urls

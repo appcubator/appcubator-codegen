@@ -22,7 +22,9 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.patterns':          'from django.conf.urls import patterns',
             'django.include':           'from django.conf.urls import include',
             'django.url':               'from django.conf.urls import url',
-            
+            'django.url.statics':       'from django.contrib.staticfiles.urls import staticfiles_urlpatterns',
+
+
             'django.test.TestCase':     'from django.test import TestCase',
             'django.test.Client':       'from django.test.client import Client',
 
@@ -60,7 +62,7 @@ FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User'),
                                             'django.render_to_response',
                                             'django.get_object_or_404'),
                  'webapp/forms.py': ('django.forms',),
-                 'webapp/urls.py': ('django.patterns', 'django.include', 'django.url',),
+                 'webapp/urls.py': ('django.patterns', 'django.include', 'django.url', 'django.url.statics',),
                  'webapp/tests.py': ('django.test.TestCase', 'django.test.Client')
 }
 
