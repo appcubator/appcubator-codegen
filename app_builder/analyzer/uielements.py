@@ -1,7 +1,7 @@
 from dict_inited import DictInited
 from resolving import Resolvable, LinkLang
 from utils import encode_braces, decode_braces
-
+from copy import deepcopy
 
 from app_builder.htmlgen import Tag
 
