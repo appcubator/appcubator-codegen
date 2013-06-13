@@ -268,7 +268,7 @@ class DictInited(object):
                             "Couldn't convert %r to an int. Maybe you meant to use name_allowed=True" % attr)
                     else:
                         raise Exception(
-                            "Couldn't find thing with name=%r" % attr)
+                                "Couldn't find thing with name=%r. Path: %r" % (attr, path))
 
                 this_obj = this_obj[attr]
 

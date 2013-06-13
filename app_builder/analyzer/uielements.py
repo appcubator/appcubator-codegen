@@ -159,8 +159,7 @@ class Form(DictInited, Hooked):
                     "placeholder": {"_type": ""},
                     "label": {"_type": ""},
                     "displayType": {"_type": ""},
-                    "type": {"_type": ""},  # FIXME what is the diff btwn this and the above
-                    "options": {"_type": [], "_each": {"_type": ""}}  # XXX what is this, in more detail?
+                    "options": {"_type": [], "_default": [], "_each": {"_type": ""}}  # XXX what is this, in more detail?
                 }
 
                 _resolve_attrs = (('field_name', 'model_field'),)
