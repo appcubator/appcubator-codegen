@@ -236,8 +236,8 @@ class Form(DictInited, Hooked):
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
                 #"goto": {"_type": LinkLang},
                 "belongsTo": {"_one_of": [{"_type": ""}, {"_type": None}]},  # TODO may have reference
-                "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}}
-                "redirect" : {"_type" : Redirect}
+                "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
+                "redirect" : {"_type" : FormRedirect}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
@@ -260,7 +260,7 @@ class Form(DictInited, Hooked):
                     toks = ref.split('.')
                     if toks[0] == 'Page':
                         name_of_type_of_inst_needed_from_page = toks[1]
-                        entity = self.app.find('entities/%s' % name, name_allowed=True)
+                        entity = self.app.find('entities/%s' % name_of_type_of_inst_needed_from_page, name_allowed=True)
                         entities.append(entity)
                 return entities
 
