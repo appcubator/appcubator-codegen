@@ -1,0 +1,4 @@
+{
+    "on_deploy": ["syncdb.py"],
+    "on_redeploy": ["syncdb.py"],
+}

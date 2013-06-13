@@ -139,6 +139,7 @@ def write_to_fs(coder, css="", dest=None):
     if not os.path.exists(dest):
         os.makedirs(dest)
     os.mkdir(join(dest, "webapp"))
+    os.mkdir(join(dest, "scripts"))
     os.mkdir(join(dest, "webapp", "templates"))
     os.mkdir(join(dest, "webapp", "static"))
     #os.mkdir(join(dest, "webapp", "static", "jslibs"))
@@ -159,10 +160,11 @@ def write_to_fs(coder, css="", dest=None):
 
     # copy boilerplate
     logger.debug("Copying boilerplate files.")
-    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'settings.py']:
+    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'settings.py', 'scripts.json']:
         copy_file(fname, fname)
 
     copy_file('gitignore.gitignore', '.gitignore')
+    copy_file('syncdb.py', 'scripts/syncdb.py')
     copy_file('base.html', 'webapp/templates/base.html')
 
     # main webapp files
