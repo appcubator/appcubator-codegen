@@ -3,6 +3,7 @@
 import os
 import os.path
 import re
+import logging
 
 
 from dict_inited import DictInited
@@ -10,6 +11,8 @@ from utils import encode_braces, decode_braces
 from resolving import Resolvable, LinkLang, EntityLang
 
 from . import env
+
+logger = logging.GetLogger("codegen-analyzer")
 
 # tables
 
@@ -113,9 +116,10 @@ class Page(DictInited):
             for u in self.urlparts:
                 try:
                     if not re.match(r'^[a-zA-Z0-9-_]+$', u):
+                        logger.error("Page URL %s is not valid." % u)
                         return False
                 except TypeError:
-                    pass
+                    logger.error("Page URL %s encountered TypeError" % u)
             return True
 
 

@@ -204,6 +204,16 @@ class Form(DictInited, Hooked):
                     """Just for consistency w other fields"""
                     pass
 
+            class FormRedirect(DictInited, Resolvable):
+                _schema = {
+                    "page_name" : {"_type" : ""},
+                }
+
+                def __init__(self, *args, **kwargs):
+                    super(Form.FormInfo.FormInfoInfo.FormRedirect, self).__init__(*args, **kwargs)
+                    self.page_name = encode_braces("pages/" + self.page_name)
+
+                _resolve_attrs = (('page_name', 'page'),)
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
@@ -227,6 +237,7 @@ class Form(DictInited, Hooked):
                 #"goto": {"_type": LinkLang},
                 "belongsTo": {"_one_of": [{"_type": ""}, {"_type": None}]},  # TODO may have reference
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}}
+                "redirect" : {"_type" : Redirect}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
