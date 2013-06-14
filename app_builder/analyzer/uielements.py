@@ -348,20 +348,19 @@ class Iterator(DictInited, Hooked):
             _schema = {
                 "isListOrGrid": {"_type": ""},
                 "layout": {"_type": Layout},
-                "uielements": {"_type": [], "_each": {"_type": Node}},
+                "uielements": {"_type": [], "_each": {"_type": UIElement}},
             }
 
         _schema = {
             "entity": {"_type": ""},  # TODO may have reference
             "action": {"_type": ""},
-            "uielements": {"_type": [], "_each": {"_type": UIElement}},
             "query": {"_type": Query},
             "row": {"_type": Row}
         }
 
         def __init__(self, *args, **kwargs):
             super(Iterator.IteratorInfo, self).__init__(*args, **kwargs)
-            self.uielements = [u.subclass for u in self.uielements]
+            self.row.uielements = [u.subclass for u in self.row.uielements]
 
         _resolve_attrs = (("entity", "entity_resolved"),)
 
@@ -371,7 +370,7 @@ class Iterator(DictInited, Hooked):
 
     def html(self):
         inner_htmls = []
-        for uie in self.container_info.uielements:
+        for uie in self.container_info.row.uielements:
             inner_htmls.append(uie.html())
 
         loop_contents = []
