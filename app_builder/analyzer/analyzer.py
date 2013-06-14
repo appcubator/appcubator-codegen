@@ -25,6 +25,18 @@ class EntityField(DictInited):
     def is_relational(self):
         return False
 
+    def get_property(self):
+        pass
+
+    def set_django_access_id(self, some_identifier):
+        self._django_field_id = some_identifier
+
+    def get_django_access_id(self):
+        return self._django_field_id
+
+    def get_translation(self, datalang):
+        raise Exception("This is a primitive field, you can't get %r of it." % datalang)
+
 
 class EntityRelatedField(DictInited, Resolvable):
     _schema = {
@@ -35,12 +47,29 @@ class EntityRelatedField(DictInited, Resolvable):
     }
     _resolve_attrs = (('entity_name', 'entity'),)
 
-    def is_relational(self): 
+    def is_relational(self):
         return True
 
     def __init__(self, *args, **kwargs):
         super(EntityRelatedField, self).__init__(*args, **kwargs)
         self.entity_name = encode_braces('tables/%s' % self.entity_name)
+
+    def get_property(self, datalang):
+        "return the property that datalang is referring to. a property is something that has a django access id, and can get translation"
+        "datalang refers to some relational field, either by ways of related name or field name. return that child."
+
+    def set_django_access_id(self, some_identifier):
+        self._django_field_id = some_identifier
+
+    def get_django_access_id(self):
+        return self._django_field_id
+
+    def get_translation(self, datalang):
+        """Returns a lambda which will evaluate to the tranlation.
+           Notice that it is calling get_transation of another method,
+            and eval-ing it upon the returned lambdas evaluation."""
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation()()) # whatup function linked list continuation!
+
 
 
 class Entity(DictInited):
@@ -55,6 +84,23 @@ class Entity(DictInited):
 
     def relational_fields(self):
         return filter(lambda x: x.is_relational(), self.fields)
+
+    def get_property(self, datalang):
+        "return the property that datalang is referring to. a property is something that has a django access id, and can get translation"
+        "datalang refers to some relational field, either by ways of related name or field name. return that child."
+        # return some field matching datalang
+
+    def set_django_access_id(self, some_identifier):
+        self._django_model_id = some_identifier
+
+    def get_django_access_id(self):
+        return self._django_model_id
+
+    def get_translation(self, datalang):
+        """Returns a lambda which will evaluate to the tranlation.
+           Notice that it is calling get_transation of another method,
+            and eval-ing it upon the returned lambdas evaluation."""
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation()()) # whatup function linked list continuation!
 
 
 class UserRole(DictInited):
