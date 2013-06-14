@@ -56,9 +56,10 @@ class Translator(object):
             else:
                 id_candidates = [ data['template_id'] for arg, data in django_request_handler.args if data['template_id'].ref == ent._django_model ]
             assert len(id_candidates) == 1, 'Found %d arguments in the view function with the matching djangomodel.' % len(id_candidates)
-            seed = id_candidates[0]
             if tokens[0] == 'loop':
-                seed = "obj.%s" % seed # assumes obj is the name of the variable in the loop.
+                seed = "obj" # assumes obj is the name of the variable in the loop.
+            else:
+                seed = id_candidates[0]
             tokens = tokens[2:]
             # get the entity from the page which matches the type  
 

@@ -213,7 +213,7 @@ class DictInited(object):
             if "_max" in schema:
                 if not (thing <= schema["_max"]):
                     errors.append(ValidationError(
-                        'int/float was greater than max', thing, schema))
+                        'int/float was greater than max', thing, schema, ancestor_list))
 
         elif type(thing) == type(True):
             pass

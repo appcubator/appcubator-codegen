@@ -22,12 +22,12 @@ class EntityField(DictInited):
         "type": {"_type": ""}
     }
 
-    def is_relational(self): 
+    def is_relational(self):
         return False
 
 
 class EntityRelatedField(DictInited, Resolvable):
-    _schema = { 
+    _schema = {
         "name": {"_type": ""},
         "type": {"_type":""}, # one to one, many to one, many to many
         "entity_name": {"_type" : ""},
@@ -219,7 +219,6 @@ class App(DictInited):
 
         # HACK replace uielements with their subclass
         for p in self.pages:
-            #p.uielements = [u.subclass for u in p.uielements]
             uies = []
             for uie in p.uielements:
                 subclass = uie.subclass
@@ -228,7 +227,6 @@ class App(DictInited):
             p.uielements = uies
 
         for path, row in self.search(r'pages/\d+/uielements/\d+/container_info/row$'):
-            #p.uielements = [u.subclass for u in p.uielements]
             uies = []
             for uie in row.uielements:
                 subclass = uie.subclass
