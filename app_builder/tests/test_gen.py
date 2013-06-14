@@ -2,6 +2,7 @@ import unittest
 from app_builder.analyzer import App
 import random
 import os.path
+import glob
 import simplejson
 
 TABLE_NAME_LIST = ["Bottle", "Glass", "Spoon", "Screen", "Monitor", "Cable"]
@@ -21,27 +22,52 @@ class TestGenerator(object):
         module_dir = os.path.dirname(__file__)
         self.state = simplejson.loads(open(os.path.join(module_dir, 'app_states/master_state.json')).read())
 
+    def get_all_app_states(self):
+        app_states = {}
+        for json in self.get_json_names():
+            app_state = simplejson.loads(open(os.path.join(json)).read())
+            # Gets the name of the json.
+            state_name = json.split('/')[-1].split('.')[0]
+            app_states[state_name] = App.create_from_dict(self.make_state(state=app_state))
+        return app_states
+
+    def get_json_names(self):
+        """ Gets all the jsons in app_states directory. """
+        module_dir = os.path.dirname(__file__)
+        json_dir = os.path.join(module_dir, 'app_states/*.json')
+        dirs = []
+        for dir in glob.glob(json_dir):
+            dirs.append(dir)
+        return dirs
+
     def init_specific_state(self, json_file):
         module_dir = os.path.dirname(__file__)
         self.state = simplejson.loads(open(os.path.join(module_dir, 'app_states/%s' % json_file)).read())
 
-    def make_state(self):
-        s = self.state
-
+    def make_state(self, state=None):
+        if state is None:
+            s = self.state
+        else:
+            s = state
         assert len(s['users']) == 1 and len(s['users'][0]['fields']) > 0, "blank json wasn't what i thought it was"
-
-
         return s
 
-
-
 class IsComprehensiveTestCase(unittest.TestCase):
-
+    """
+        Each test case should have access to all apps, where apps is a dictionary that maps
+        the filename (a descriptive name of the test dict) to the app_state json.
+        In each test case we modify self.app which has a default value to master_state.json
+    """
+    
     def setUp(self):
         t = TestGenerator()
         t.init_with_blank_state()
+        self.apps = t.get_all_app_states()
         self.d = t.make_state()
         self.app = App.create_from_dict(self.d)
+
+    def test_all_app_states(self):
+        pass
 
     def test_has_multiple_entities(self):
         pass
