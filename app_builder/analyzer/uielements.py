@@ -343,13 +343,30 @@ class Iterator(DictInited, Hooked):
         _schema = {
             "entity": {"_type": ""},  # TODO may have reference
             "action": {"_type": ""},
-            "uielements": {"_type": [], "_each": {"_type": Node}},
+            "uielements": {"_type": [], "_each": {"_type": UIElement}},
             "query": {"_type": Query},
             "row": {"_type": Row}
         }
+
+        def __init__(self, *args, **kwargs):
+            super(Iterator.IteratorInfo, self).__init__(*args, **kwargs)
+            self.uielements = [u.subclass for u in self.uielements]
 
         _resolve_attrs = (("entity", "entity_resolved"),)
 
     _schema = {
         "container_info": {"_type": IteratorInfo},
     }
+
+    def html(self):
+        inner_htmls = []
+        for uie in self.container_info.uielements:
+            inner_htmls.append(uie.html())
+
+        loop_contents = []
+        loop_wrapper = Tag('div', , content=loop_contents)
+        loop_contents.append("{% for obj in _ %}")
+        loop_contents.extend(inner_htmls)
+        loop_contents.append("{% endfor %}")
+        return form
+
