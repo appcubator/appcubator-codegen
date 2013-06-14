@@ -25,8 +25,8 @@ class EntityField(DictInited):
     def is_relational(self):
         return False
 
-    def get_property(self):
-        pass
+    def get_property(self, datalang):
+        "datalang may refer to a relational field that this field has. Get it and return it."
 
     def set_django_access_id(self, some_identifier):
         self._django_field_id = some_identifier
@@ -34,8 +34,12 @@ class EntityField(DictInited):
     def get_django_access_id(self):
         return self._django_field_id
 
+
     def get_translation(self, datalang):
-        raise Exception("This is a primitive field, you can't get %r of it." % datalang)
+        """Returns a lambda which will evaluate to the tranlation.
+           Notice that it is calling get_transation of another method,
+            and eval-ing it upon the returned lambdas evaluation."""
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
 
 
 class EntityRelatedField(DictInited, Resolvable):
@@ -68,7 +72,7 @@ class EntityRelatedField(DictInited, Resolvable):
         """Returns a lambda which will evaluate to the tranlation.
            Notice that it is calling get_transation of another method,
             and eval-ing it upon the returned lambdas evaluation."""
-        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation()()) # whatup function linked list continuation!
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
 
 
 
@@ -100,7 +104,7 @@ class Entity(DictInited):
         """Returns a lambda which will evaluate to the tranlation.
            Notice that it is calling get_transation of another method,
             and eval-ing it upon the returned lambdas evaluation."""
-        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation()()) # whatup function linked list continuation!
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
 
 
 class UserRole(DictInited):
