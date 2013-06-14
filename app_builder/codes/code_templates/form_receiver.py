@@ -12,9 +12,9 @@ def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
     if form.is_valid():
         {% block do_stuff_with_valid_form %}
         obj = form.save()
+        {% endblock %}
         redirect_url = reverse('{{ page_view_id }}')
         return {{JsonResponse}}(data={'redirect_to':redirect_url})
-        {% endblock %}
 
     return {{JsonResponse}}(errors=form.errors)
 
