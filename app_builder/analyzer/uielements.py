@@ -18,10 +18,10 @@ def get_uielement_by_type(type_string):
 
 class Layout(DictInited):
     _schema = {
-        "width": {"_type": 0, "_min": 1, "_max": 64},
+        "width": {"_type": 0, "_min": 1}, # max is 64 unless this is in a row, b/c then it's absolutepositioned in px
         "height": {"_type": 0, "_min": 1},
-        "top": {"_type": 0, "_min": 0},
-        "left": {"_type": 0, "_min": 0, "_max": 64},
+        "top": {"_type": 0, "_min": 0}, # max is 64 unless this is in a row, b/c then it's absolutepositioned in px
+        "left": {"_type": 0, "_min": 0}, # max is 64 unless this is in a row, b/c then it's absolutepositioned in px
         "t_padding": {"_type": 0, "_default": 0},
         "b_padding": {"_type": 0, "_default": 0},
         "l_padding": {"_type": 0, "_default": 0},
@@ -331,6 +331,7 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         tag = Tag(self.tagName, self.kwargs(), content=content)
         return tag
 
+
 class Iterator(DictInited, Hooked):
 
     _hooks = ['find or add the needed data to the view']
@@ -376,7 +377,7 @@ class Iterator(DictInited, Hooked):
 
         loop_contents = []
         loop_wrapper = Tag('div', {}, content=loop_contents)
-        loop_contents.append("{% for obj in %s %}" % self._django_query_id)
+        loop_contents.append("{%% for obj in %s %%}" % self._django_query_id)
         loop_contents.extend(inner_htmls)
         loop_contents.append("{% endfor %}")
         return loop_wrapper
