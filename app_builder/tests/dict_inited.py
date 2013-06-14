@@ -1,5 +1,5 @@
 import unittest
-from app_builder.dict_inited import DictInited, ValidationError
+from app_builder.analyzer.dict_inited import DictInited, ValidationError
 from copy import deepcopy
 import re
 
