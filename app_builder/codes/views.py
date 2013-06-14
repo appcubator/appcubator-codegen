@@ -36,7 +36,7 @@ class DjangoPageView(object):
         self.template_code_path = template_code_path
 
     def add_query(self, dq_obj):
-        template_id = self.pc_namespace.new_identifier(dq_obj.model_id + 's') # very crude pluralize
+        template_id = self.pc_namespace.new_identifier('%ss' % dq_obj.model_id) # very crude pluralize
         self.queries.append((template_id, dq_obj.render()))
 
     def render(self):

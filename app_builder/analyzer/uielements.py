@@ -364,6 +364,11 @@ class Iterator(DictInited, Hooked):
         "container_info": {"_type": IteratorInfo},
     }
 
+    def visit_strings(self, f):
+        for uie in self.container_info.row.uielements:
+            uie.visit_strings(f)
+
+
     def html(self):
         inner_htmls = []
         for uie in self.container_info.row.uielements:

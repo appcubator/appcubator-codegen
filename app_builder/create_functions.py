@@ -133,7 +133,7 @@ class AppComponentFactory(object):
         view = page._django_view
         view.add_query(dq)
 
-        return dq
+        #return dq
 
 
     # HTML GEN
