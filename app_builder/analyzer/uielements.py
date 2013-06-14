@@ -381,11 +381,12 @@ class Iterator(DictInited, Hooked):
             uie_html = uie.html()
             uie_html = style_inner_uie(uie, uie_html)
             inner_htmls.append(uie_html)
+        row_wrapper = Tag('div', {'style': 'display:block'}, content=inner_htmls)
 
         loop_contents = []
         loop_wrapper = Tag('div', {'style': 'position:relative; display:block;'}, content=loop_contents)
         loop_contents.append("{%% for obj in %s %%}" % self._django_query_id)
-        loop_contents.extend(inner_htmls)
+        loop_contents.append(row_wrapper)
         loop_contents.append("{% endfor %}")
         return loop_wrapper
 
