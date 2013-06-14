@@ -51,17 +51,17 @@ class Translator(object):
         elif tokens[0] == 'Page' or tokens[0] == 'loop':
             ent = self.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
             assert django_request_handler is not None, "Plz provide a django_request_handler to the function for %r" % s
-            if py:
-                id_candidates = [ data['inst_id'] for arg, data in django_request_handler.args if data['inst_id'].ref == ent._django_model ]
-            else:
-                id_candidates = [ data['template_id'] for arg, data in django_request_handler.args if data['template_id'].ref == ent._django_model ]
-            assert len(id_candidates) == 1, 'Found %d arguments in the view function with the matching djangomodel.' % len(id_candidates)
             if tokens[0] == 'loop':
                 seed = "obj" # assumes obj is the name of the variable in the loop.
             else:
+                assert tokens[0] == 'Page', "Impossible"
+                if py:
+                    id_candidates = [ data['inst_id'] for arg, data in django_request_handler.args if data['inst_id'].ref == ent._django_model ]
+                else:
+                    id_candidates = [ data['template_id'] for arg, data in django_request_handler.args if data['template_id'].ref == ent._django_model ]
+                assert len(id_candidates) == 1, 'Found %d arguments in the view function with the matching djangomodel.' % len(id_candidates)
                 seed = id_candidates[0]
             tokens = tokens[2:]
-            # get the entity from the page which matches the type  
 
         elif tokens[0] == 'this': # for forms
             assert py, "this is a form in py code, so py must be true."
