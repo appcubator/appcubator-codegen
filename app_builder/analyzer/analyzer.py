@@ -12,7 +12,7 @@ from resolving import Resolvable, LinkLang, EntityLang
 
 from . import env
 
-logger = logging.GetLogger("codegen-analyzer")
+logger = logging.getLogger("codegen-analyzer")
 
 # tables
 
