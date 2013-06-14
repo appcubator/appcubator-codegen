@@ -50,6 +50,7 @@ class TestGenerator(object):
         else:
             s = state
         assert len(s['users']) == 1 and len(s['users'][0]['fields']) > 0, "blank json wasn't what i thought it was"
+
         return s
 
 class IsComprehensiveTestCase(unittest.TestCase):
