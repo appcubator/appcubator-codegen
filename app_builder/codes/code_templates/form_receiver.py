@@ -1,6 +1,7 @@
 
 {% set JsonResponse = imports['django.JsonResponse'] %}
 {% set simplejson = imports['django.simplejson'] %}
+{% set reverse = imports['django.url.reverse'] %}
 {% set request = locals['request'] %}
 {% set page_view_id = locals['page_view_id']() %}
 
@@ -12,9 +13,9 @@ def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
     if form.is_valid():
         {% block do_stuff_with_valid_form %}
         obj = form.save()
-        redirect_url = reverse('{{ page_view_id }}')
-        return {{JsonResponse}}(data={'redirect_to':redirect_url})
         {% endblock %}
+        redirect_url = {{reverse}}('{{ page_view_id }}')
+        return {{JsonResponse}}(data={'redirect_to':redirect_url})
 
     return {{JsonResponse}}(errors=form.errors)
 

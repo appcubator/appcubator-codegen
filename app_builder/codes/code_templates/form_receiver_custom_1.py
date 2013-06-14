@@ -43,7 +43,5 @@
         {% endif %}
         {{ l() }}.save()
         {% endfor %}
-        # TODO: redirect or refresh page.
-        return {{JsonResponse}}(data={})
         {% endblock %}
 
