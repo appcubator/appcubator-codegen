@@ -372,11 +372,18 @@ class Iterator(DictInited, Hooked):
 
     def html(self):
         inner_htmls = []
+
+        def style_inner_uie(el, html):
+            html.style_string += '; height: %dpx; width:%dpx; top: %dpx; left: %dpx; text-align:%s ' % (el.layout.height, el.layout.width, el.layout.left, el.layout.right, el.layout.alignment)
+            return html
+
         for uie in self.container_info.row.uielements:
-            inner_htmls.append(uie.html())
+            uie_html = uie.html()
+            uie_html = style_inner_uie(uie, uie_html)
+            inner_htmls.append(uie_html)
 
         loop_contents = []
-        loop_wrapper = Tag('div', {}, content=loop_contents)
+        loop_wrapper = Tag('div', {'style': 'position:relative; display:block;'}, content=loop_contents)
         loop_contents.append("{%% for obj in %s %%}" % self._django_query_id)
         loop_contents.extend(inner_htmls)
         loop_contents.append("{% endfor %}")
