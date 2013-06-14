@@ -219,9 +219,23 @@ class App(DictInited):
 
         # HACK replace uielements with their subclass
         for p in self.pages:
-            p.uielements = [u.subclass for u in p.uielements]
-        for path, obj in self.search(r'pages/\d+/uielements/\d+/container_info/row/uielements'):
-            obj = obj.subclass
+            #p.uielements = [u.subclass for u in p.uielements]
+            uies = []
+            for uie in p.uielements:
+                subclass = uie.subclass
+                subclass._path = uie._path
+                uies.append(subclass)
+            p.uielements = uies
+
+        for path, row in self.search(r'pages/\d+/uielements/\d+/container_info/row$'):
+            #p.uielements = [u.subclass for u in p.uielements]
+            uies = []
+            for uie in row.uielements:
+                subclass = uie.subclass
+                subclass._path = uie._path
+                uies.append(subclass)
+            row.uielements = uies
+
 
         # HACK give everything a reference to the app
         for path, obj in filter(lambda u: isinstance(u[1], DictInited), self.iternodes()):
