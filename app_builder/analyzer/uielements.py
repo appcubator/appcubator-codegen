@@ -358,10 +358,6 @@ class Iterator(DictInited, Hooked):
             "row": {"_type": Row}
         }
 
-        def __init__(self, *args, **kwargs):
-            super(Iterator.IteratorInfo, self).__init__(*args, **kwargs)
-            self.row.uielements = [u.subclass for u in self.row.uielements]
-
         _resolve_attrs = (("entity", "entity_resolved"),)
 
     _schema = {
