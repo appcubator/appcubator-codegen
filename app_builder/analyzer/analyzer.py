@@ -22,12 +22,12 @@ class EntityField(DictInited):
         "type": {"_type": ""}
     }
 
-    def is_relational(self): 
+    def is_relational(self):
         return False
 
 
 class EntityRelatedField(DictInited, Resolvable):
-    _schema = { 
+    _schema = {
         "name": {"_type": ""},
         "type": {"_type":""}, # one to one, many to one, many to many
         "entity_name": {"_type" : ""},

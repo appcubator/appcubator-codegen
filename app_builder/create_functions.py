@@ -133,6 +133,9 @@ class AppComponentFactory(object):
         view = page._django_view
         view.add_query(dq)
 
+        uie._django_query = dq
+        uie._django_query_id = view.pc_namespace.get_by_ref(dq)
+
         #return dq
 
 

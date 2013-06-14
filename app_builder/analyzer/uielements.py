@@ -376,7 +376,7 @@ class Iterator(DictInited, Hooked):
 
         loop_contents = []
         loop_wrapper = Tag('div', {}, content=loop_contents)
-        loop_contents.append("{% for obj in _ %}")
+        loop_contents.append("{% for obj in %s %}" % self._django_query_id)
         loop_contents.extend(inner_htmls)
         loop_contents.append("{% endfor %}")
         return loop_wrapper
