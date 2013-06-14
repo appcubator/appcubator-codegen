@@ -374,7 +374,7 @@ class Iterator(DictInited, Hooked):
         inner_htmls = []
 
         def style_inner_uie(el, html):
-            html.style_string += '; height: %dpx; width:%dpx; top: %dpx; left: %dpx; text-align:%s ' % (el.layout.height, el.layout.width, el.layout.top, el.layout.left, el.layout.alignment)
+            html.style_string += '; position: absolute; height: %dpx; width:%dpx; top: %dpx; left: %dpx; text-align:%s ' % (el.layout.height, el.layout.width, el.layout.top, el.layout.left, el.layout.alignment)
             return html
 
         for uie in self.container_info.row.uielements:
