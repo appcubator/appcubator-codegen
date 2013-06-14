@@ -23,7 +23,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.include':           'from django.conf.urls import include',
             'django.url':               'from django.conf.urls import url',
             'django.url.statics':       'from django.contrib.staticfiles.urls import staticfiles_urlpatterns',
-
+            'django.url.reverse':       'from django.core.urlresolvers import reverse',
 
             'django.test.TestCase':     'from django.test import TestCase',
             'django.test.Client':       'from django.test.client import Client',
