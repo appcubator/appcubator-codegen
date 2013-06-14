@@ -375,9 +375,9 @@ class Iterator(DictInited, Hooked):
             inner_htmls.append(uie.html())
 
         loop_contents = []
-        loop_wrapper = Tag('div', , content=loop_contents)
+        loop_wrapper = Tag('div', {}, content=loop_contents)
         loop_contents.append("{% for obj in _ %}")
         loop_contents.extend(inner_htmls)
         loop_contents.append("{% endfor %}")
-        return form
+        return loop_wrapper
 

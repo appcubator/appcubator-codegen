@@ -47,7 +47,8 @@ class Translator(object):
             tokens = tokens[1:]
             if len(tokens) > 0:
                 seed += '.get_profile()'
-        elif tokens[0] == 'Page':
+
+        elif tokens[0] == 'Page' or tokens[0] == 'loop':
             ent = self.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
             assert django_request_handler is not None, "Plz provide a django_request_handler to the function for %r" % s
             if py:
@@ -56,6 +57,8 @@ class Translator(object):
                 id_candidates = [ data['template_id'] for arg, data in django_request_handler.args if data['template_id'].ref == ent._django_model ]
             assert len(id_candidates) == 1, 'Found %d arguments in the view function with the matching djangomodel.' % len(id_candidates)
             seed = id_candidates[0]
+            if tokens[0] == 'loop':
+                seed = "obj.%s" % seed # assumes obj is the name of the variable in the loop.
             tokens = tokens[2:]
             # get the entity from the page which matches the type  
 
@@ -64,7 +67,7 @@ class Translator(object):
             seed = this_entity
             tokens = tokens[1:]
             ent = this_entity.ref
-            
+
         else:
             raise Exception("Not Yet Implemented: %r" % s)
 
