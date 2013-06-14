@@ -8,14 +8,13 @@ class HtmlGenBasicTestCase(unittest.TestCase):
     def test_some_text(self):
         ptag = Tag('p', {}, content="Hulloooo")
 
-        self.assertEqual(ptag.render(), "<p>Hulloooo</p>")
+        self.assertHtmlEqual(ptag.render(), "<p>Hulloooo</p>")
 
     def test_nest(self):
         ptag = Tag('p', {},
                    content=Tag('p', {}, content="Hulloooo"))
 
-        self.assertEqual(re.sub(
-            r'\s', '', ptag.render()), "<p><p>Hulloooo</p></p>")
+        self.assertHtmlEqual(ptag.render(), "<p><p>Hulloooo</p></p>")
 
     def test_nest_list(self):
         ptag = Tag('body', {},
@@ -24,21 +23,26 @@ class HtmlGenBasicTestCase(unittest.TestCase):
                    Tag('a', {}, content=Tag('p', {}, content="C"))),
                    )
 
-        self.assertEqual(
-            re.sub(r'\s', '', ptag.render()),
+        self.assertHtmlEqual(ptag.render(),
             "<body><p>A</p><span>B</span><a><p>C</p></a></body>")
+
+    def assertHtmlEqual(self, a, b):
+        def remove_whitespace(s):
+            return re.sub(r'\s', '', s)
+
+        self.assertEqual(remove_whitespace(a),remove_whitespace(b))
 
     def test_no_content(self):
         tag = Tag('p', {})
-        self.assertEqual(tag.render(), '<p></p>')
+        self.assertHtmlEqual(tag.render(), '<p></p>')
 
     def test_void_tag(self):
         br = Tag('br', {})
-        self.assertEqual(br.render(), '<br>')
+        self.assertHtmlEqual(br.render(), '<br>')
 
     def test_attribs(self):
         atag = Tag('a', {'href': 'http://google.com/'}, content="Google")
-        self.assertEqual(
+        self.assertHtmlEqual(
             atag.render(), '<a href="http://google.com/">Google</a>')
 
     def test_id_class_style_attrib_order(self):
@@ -47,13 +51,13 @@ class HtmlGenBasicTestCase(unittest.TestCase):
                   'style': "position:absolute",
                   'alt': "This is after the others"}
         div = Tag('div', kwargs, content="Test")
-        self.assertEqual(
+        self.assertHtmlEqual(
             div.render(), '<div id="container" class="some classes here" style="position:absolute" alt="This is after the others">Test</div>')
 
     def test_html_escape(self):
         atag = Tag('a', {'href': 'http:"><script'}, content="Google")
         wrapper = Tag('div', {}, content=atag)
-        self.assertEqual(
+        self.assertHtmlEqual(
             wrapper.render(), '<div><a href="http:&#34;&gt;&lt;script">Google</a></div>')
 
 if __name__ == "__main__":

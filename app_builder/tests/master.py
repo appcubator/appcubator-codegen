@@ -10,7 +10,7 @@ import os.path
 def main():
     try:
         module_dir = os.path.dirname(__file__)
-        app_dict = open(os.path.join(module_dir, "master_state.json")).read()
+        app_dict = open(os.path.join(module_dir, "app_states/master_state.json")).read()
         app_dict = json.loads(app_dict)
     except Exception:
         return (1, "Could not open file. Traceback: %s" % traceback.format_exc())
