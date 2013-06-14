@@ -19,7 +19,7 @@ class TestGenerator(object):
 
     def init_with_blank_state(self):
         module_dir = os.path.dirname(__file__)
-        self.state = simplejson.loads(open(os.path.join(module_dir, 'master_state.json')).read())
+        self.state = simplejson.loads(open(os.path.join(module_dir, 'app_states/master_state.json')).read())
 
     def make_state(self):
         s = self.state
