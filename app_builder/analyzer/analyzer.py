@@ -190,32 +190,47 @@ class App(DictInited):
                 {
                     "name": "username",
                     "type": "text",
-                    "required": True
                 },
                 {
                     "name": "First Name",
                     "type": "text",
-                    "required": True
                 },
                 {
                     "name": "Last Name",
                     "type": "text",
-                    "required": True
                 },
                 {
                     "name": "Email",
                     "type": "text",
-                    "required": True
                 },
             ]
         }
         userentity = Entity.create_from_dict(userdict)
         userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
-        userentity.user_profile_fields = [f for f in self.users[0].fields] # users[0] is the first user role. this is temp.
-        userentity.fields.extend(self.users[0].fields)
+
+        # combine all the fields from all the user roles
+        combined_fields_from_all_roles = []
+        for u in self.users:
+            combined_fields_from_all_roles.extend(u.fields)
+
+        # deduplicate by name to get the total set of fields that the userprofile will have.
+        user_profile_field_set = []
+        for field in combined_fields_from_all_roles:
+            for already_added_field in user_profile_field_set]:
+                if field.name != already_added_field.name:
+                    user_profile_field_set.append(field)
+                else:
+                    assert field.type == already_added_field.type, "Two user role fields had same name but different type."
+
+        userentity.user_profile_fields = user_profile_field_set
+
+        userentity.fields = userentity.user_fields + userentity.user_profile_fields
+
         userentity.is_user = True
+        userentity.role_names = [ u.name for u in self.users ]
+
         self.tables.append(userentity)
-        self.userentity = userentity # just a convenience for the posterity
+        self.userentity = userentity # just binding for convenience
 
         # HACK replace uielements with their subclass
         for p in self.pages:
