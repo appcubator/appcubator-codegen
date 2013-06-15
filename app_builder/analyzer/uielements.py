@@ -205,14 +205,14 @@ class Form(DictInited, Hooked):
 
             class FormRedirect(DictInited, Resolvable):
                 _schema = {
-                    "page_name" : {"_type" : ""},
+                    "pageName" : {"_type" : ""},
                 }
 
                 def __init__(self, *args, **kwargs):
                     super(Form.FormInfo.FormInfoInfo.FormRedirect, self).__init__(*args, **kwargs)
-                    self.page_name = encode_braces("pages/" + self.page_name)
+                    self.pageName = encode_braces("pages/" + self.pageName)
 
-                _resolve_attrs = (('page_name', 'page'),)
+                _resolve_attrs = (('pageName', 'page'),)
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
