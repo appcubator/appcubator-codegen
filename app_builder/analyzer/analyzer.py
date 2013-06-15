@@ -229,7 +229,7 @@ class App(DictInited):
         # deduplicate by name to get the total set of fields that the userprofile will have.
         user_profile_field_set = []
         for field in combined_fields_from_all_roles:
-            for already_added_field in user_profile_field_set]:
+            for already_added_field in user_profile_field_set:
                 if field.name != already_added_field.name:
                     user_profile_field_set.append(field)
                 else:
