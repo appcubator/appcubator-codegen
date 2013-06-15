@@ -14,6 +14,19 @@ from . import env
 
 logger = logging.getLogger("codegen-analyzer")
 
+"""
+  Consists of each type of front facing primitive. This can range from different type
+  of fields, pages etc.
+
+  Each field contains a schema that specifies what the app_state for that primitive
+  must contain. Each field must have a _type that specifies its type. This can be
+  prefixed with _one_of to specify different types. For lists, we use _each to
+  signify its element's types.
+
+  ((src1,dst1), (src2, dst2), ...) is a way of specifying how src_i gets resolved to
+  dst_i for primitives that may need attributes resolved. This is stored in _resolve_attrs
+"""
+
 # tables
 
 class EntityField(DictInited):
