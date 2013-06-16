@@ -11,7 +11,7 @@ class DataLang(object):
         assert context_type in ['Page', 'Loop', 'Form', 'user']
         self.context_type = context_type
         self.seed_entity = seed_entity
-        self.chain_of_renderable = chain_of_renderable
+        self.fields = fields
 
     def to_code(self, context=None, seed_id=None):
         if self.context_type == 'Form':
@@ -24,7 +24,7 @@ class DataLang(object):
         def get_accessor(field):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
             return field._django_field.identifier
-        return ''.join([seed_id] + ['.%s' % get_accessor(f) for f in fields])
+        return ''.join([seed_id] + ['.%s' % get_accessor(f) for f in self.fields])
 
 
 def datalang_to_fields(self, starting_ent, tokens):
@@ -91,55 +91,27 @@ class Resolvable(object):
         # 1. get the seed type to start the chaining in step 2
         if tokens[0] == 'CurrentUser':
             context_type = 'user'
-            # hard coding some shit for users
-            if linklang_string == 'CurrentUser.First Name':
-                return FnCodeChunk(lambda: 'user.first_name')
-            if linklang_string == 'CurrentUser.Last Name':
-                return FnCodeChunk(lambda: 'user.last_name')
-            if linklang_string == 'CurrentUser.username':
-                return FnCodeChunk(lambda: 'user.username')
-            if linklang_string == 'CurrentUser.Email':
-                return FnCodeChunk(lambda: 'user.email')
             ent = filter(lambda e: e.is_user, self.tables)[0]
-            if py:
-                assert django_request_handler is not None, "Need to get the request id on the django_request_handler"
-                seed = '%s.user' % django_request_handler.locals['request']
-            else:
-                seed = 'user.get_profile' # this is only in template. in code, it's request.user.get_profile()
             tokens = tokens[1:]
-            if len(tokens) > 0:
-                seed += '.get_profile()'
 
         elif tokens[0] == 'Page' or tokens[0] == 'loop':
             context_type = tokens[0].lower()
             ent = self.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
-            assert django_request_handler is not None, "Plz provide a django_request_handler to the function for %r" % s
-            if tokens[0] == 'loop':
-                seed = "obj" # assumes obj is the name of the variable in the loop.
-            else:
-                assert tokens[0] == 'Page', "Impossible"
-                if py:
-                    id_candidates = [ data['inst_id'] for arg, data in django_request_handler.args if data['inst_id'].ref == ent._django_model ]
-                else:
-                    id_candidates = [ data['template_id'] for arg, data in django_request_handler.args if data['template_id'].ref == ent._django_model ]
-                assert len(id_candidates) == 1, 'Found %d arguments in the view function with the matching djangomodel.' % len(id_candidates)
-                seed = id_candidates[0]
             tokens = tokens[2:]
 
         elif tokens[0] == 'this': # for forms
             context_type = 'form'
-            assert py, "this is a form in py code, so py must be true."
-            seed = this_entity
+            #ent = this_entity.ref
+            ent = None # TODO FIXME get the entity for this form
             tokens = tokens[1:]
-            ent = this_entity.ref
 
         else:
-            raise Exception("Not Yet Implemented: %r" % s)
+            raise Exception("Not Yet Implemented: %r" % tokens[0])
 
         # 2. get the list of fields by performing entity-field-entity chaining
         field_entity_pairs = datalang_to_fields(ent, tokens)
         # 3. create a datalang instance and bind it to dest_attr
-        dl = DataLang(context_type, ent, fields)
+        dl = DataLang(context_type, ent, [ f for f, e in field_entity_pairs ])
 
         setattr(self, dest_attr, dl)
 
