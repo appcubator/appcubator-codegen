@@ -35,7 +35,7 @@ class Coder(object):
             self._codes[code_obj.code_path] = [code_obj]
 
     def itercode(self):
-        """Returns a generator like [(relative_path, code_string)...]"""
+        """Returns a generator like [(relative_path of directory, code_string)...]"""
         for relative_path, codes in self._codes.iteritems():
             code = '\n\n'.join([ c.render() for c in codes ])
 

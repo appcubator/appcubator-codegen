@@ -2,7 +2,11 @@ from app_builder.coder import Coder
 from app_builder.create_functions import AppComponentFactory
 from pyflakes.api import check
 
+import logging
 import traceback
+
+logger = logging.getLogger("codegen-controller")
+
 
 def create_codes(app):
     factory = AppComponentFactory()
@@ -54,7 +58,7 @@ def create_codes(app):
 
     def create(event_name, el, *args, **kwargs):
         try:
-            print event_name
+            logger.info(event_name)
             c = create_map[event_name](el)
         except KeyError:
             raise
@@ -111,7 +115,6 @@ def create_codes(app):
     return codes
 
 def main(app):
-
     codes = create_codes(app)
     cc = Coder.create_from_codes(codes)
 
