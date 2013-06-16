@@ -336,6 +336,8 @@ class Iterator(DictInited, Hooked):
                         "field_name": {"_type": ""},
                         "equal_to": {"_type": ""}
                 }
+                _resolve_attrs = (('field_name', 'field'),)
+                _datalang_attrs = ('equal_to', 'equal_to_dl')
 
             _schema = {
                 "sortAccordingTo": {"_type": ""},

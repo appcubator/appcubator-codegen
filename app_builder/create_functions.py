@@ -120,10 +120,11 @@ class AppComponentFactory(object):
     def find_or_create_query_for_view(self, uie):
 
         entity = uie.container_info.entity_resolved
-        # TODO implement filtering of queries
-        dq = DjangoQuery(entity._django_model.identifier)
+        query = uie.container_info.query
 
-        # TODO add to parent in a nicer way.
+        # create a list of keyvalue pairs for the filter in the query
+        filter_key_values = []
+        # TODO get the page of the uielement in a nicer way.
         def get_parent(obj):
             # app/pages/0/uielements/3  => app/pages/0
             parent_path = obj._path[:obj._path.rfind('/')]
@@ -131,6 +132,16 @@ class AppComponentFactory(object):
             return obj.app.find(parent_path)
         page = get_parent(uie)
         view = page._django_view
+
+        for where_clause in query.where:
+            key = where_clause.field._django_field.identifier
+            value = lambda x: where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+            filter_key_values.append((key, FnCodeChunk(value)))
+
+        dq = DjangoQuery(entity._django_model.identifier, filter_data=filter_key_values,
+                                                          sort_by=query.sortAccordingTo,
+                                                          limit=query.numberOfRows)
+
         view.add_query(dq)
 
         uie._django_query = dq
