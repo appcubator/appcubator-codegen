@@ -73,7 +73,7 @@ class AppComponentFactory(object):
         for f in filter(lambda x: x.is_relational(), entity.fields):
             # get the related django model's id (from the imports.)
             rel_model = f.entity._django_model
-            rel_model_id = m.namespace.get_by_ref(rel_model)
+            rel_model_id = rel_model.identifier
             # make an id for the related name in the related model's namespace
             # TODO FIXME potential bugs with related name and field name since they are really injected into the model.Model instance namespace
             rel_name_id = rel_model.namespace.new_identifier(f.related_name, ref=rel_model)

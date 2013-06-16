@@ -203,17 +203,6 @@ class Form(DictInited, Hooked):
                     """Just for consistency w other fields"""
                     pass
 
-            class FormRedirect(DictInited, Resolvable):
-                _schema = {
-                    "pageName" : {"_type" : ""},
-                }
-
-                def __init__(self, *args, **kwargs):
-                    super(Form.FormInfo.FormInfoInfo.FormRedirect, self).__init__(*args, **kwargs)
-                    self.pageName = encode_braces("pages/" + self.pageName)
-
-                _resolve_attrs = (('pageName', 'page'),)
-
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
                 # this is to make a proper path for resolving the field name later
@@ -233,13 +222,19 @@ class Form(DictInited, Hooked):
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
-                #"goto": {"_type": LinkLang},
                 "belongsTo": {"_one_of": [{"_type": ""}, {"_type": None}]},  # TODO may have reference
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                "redirect" : {"_type" : FormRedirect}
+                "goto" : {"_type" : ""}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
+            _pagelang_attrs = (('goto', 'goto_page'), )
+
+            def __init__(self, *args, **kwargs):
+                super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
+                self.goto = encode_braces("pages/" + self.goto)
+
+
 
             def get_actions_as_tuples(self):
                 return [(a.set_fk, a.to_object) for a in self.actions]
