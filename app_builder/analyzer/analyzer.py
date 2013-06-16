@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os
-import os.path
 import re
 import logging
 
 
 from dict_inited import DictInited
 from utils import encode_braces, decode_braces
-from resolving import Resolvable, LinkLang, EntityLang
+from resolving import Resolvable, EntityLang
 
 from . import env
 
@@ -159,8 +157,30 @@ class Page(DictInited):
     class URL(DictInited):
 
         _schema = {
-            "urlparts": {"_type": [], "_each": {"_one_of": [{"_type": ""}, {"_type": EntityLang}]}}
+            "urlparts": {"_type": [], "_each": {"_type": ""}},
+            "entities": {"_type": [], "_default": []}
         }
+        # Entities hack - frontend doesn't know about this array, so it will be default inited to [].
+        # then init function will populate it with EntityLang instances 
+        # later on, someone (analyzer post-init) will iternodes over this and resolve all the entitylangs.
+
+
+        def __init__(self, *args, **kwargs):
+            """Filters out brace-encoded strings and puts them in a separate array called entities.
+            Fills in the gaps of urlparts with None, so we know that an entity was there"""
+            super(Page.URL, self).__init__(*args, **kwargs)
+            assert self.entities == [], "Frontend shouldn't know about this..."
+            for idx, u in enumerate(self.urlparts):
+                try:
+                    entity_name = decode_braces(u)
+                except AssertionError:
+                    # means this is a normal string (not in braces), part of the url
+                    pass
+                else:
+                    # none will indicate that an ID reference was here.
+                    self.urlparts[idx] = None
+                    self.entities.append(EntityLang(entity_name=
+                                encode_braces('tables/%s' % entity_name)))
 
         def is_valid(self):
             for u in self.urlparts:
@@ -195,10 +215,10 @@ class Page(DictInited):
 
     def is_static(self):
         # returns true iff there are no tables in the url parts
-        return len(filter(lambda x: isinstance(x, EntityLang), self.url.urlparts)) == 0
+        return [] == filter(lambda x: x is None, self.url.urlparts)
 
     def get_tables_from_url(self):
-        return [l.entity for l in filter(lambda x: isinstance(x, EntityLang), self.url.urlparts)]
+        return [entlang.entity for entlang in self.url.entities]
 
 
 class Email(DictInited):
@@ -294,12 +314,6 @@ class App(DictInited):
             if fii.belongsTo is not None:
                 fii.belongsTo = encode_braces('tables/%s' % fii.belongsTo)
             fii.entity = encode_braces('tables/%s' % fii.entity)
-
-        for path, ll in filter(lambda n: isinstance(n[1], LinkLang), self.iternodes()):
-            ll.page_name = encode_braces('pages/%s' % ll.page_name)
-
-        for path, el in filter(lambda n: isinstance(n[1], EntityLang), self.iternodes()):
-            el.entity_name = encode_braces('tables/%s' % el.entity_name)
 
         for path, ii in filter(lambda n: isinstance(n[1], Iterator.IteratorInfo), self.iternodes()):
             ii.entity = encode_braces(

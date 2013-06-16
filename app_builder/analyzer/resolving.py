@@ -28,6 +28,10 @@ class Resolvable(object):
         #      by providing a page and loop context and hoping for the best.
 
 
+class EntityLang(DictInited, Resolvable):
+    _schema = {"entity_name": {"_type": ""}}
+    _resolve_attrs = (('entity_name', 'entity'),)
+
     """
     # datalang is going to be an ORM-like query language.:
     page.Tweet.content.whatever blah blah
