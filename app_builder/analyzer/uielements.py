@@ -1,5 +1,5 @@
 from dict_inited import DictInited
-from resolving import Resolvable, LinkLang
+from resolving import Resolvable
 from utils import encode_braces, decode_braces
 from copy import deepcopy
 
