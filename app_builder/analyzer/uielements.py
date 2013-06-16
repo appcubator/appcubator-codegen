@@ -330,10 +330,17 @@ class Iterator(DictInited, Hooked):
     class IteratorInfo(DictInited, Resolvable):
 
         class Query(DictInited):
+
+            class WhereClause(DictInited):
+                _schema = {
+                        "field_name": {"_type": ""},
+                        "equal_to": {"_type": ""}
+                }
+
             _schema = {
-                "belongsToUser": {"_type": True},
                 "sortAccordingTo": {"_type": ""},
-                "numberOfRows": {"_type": 0}
+                "numberOfRows": {"_type": 0},
+                "where": {"_type": [], "_each": {"_type":WhereClause}}
             }
 
         class Row(DictInited):
