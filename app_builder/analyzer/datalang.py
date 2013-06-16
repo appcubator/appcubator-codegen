@@ -25,7 +25,7 @@ class DataLang(object):
         return ''.join([seed_id] + ['.%s' % get_accessor(f) for f in self.fields])
 
 
-def datalang_to_fields(self, starting_ent, tokens):
+def datalang_to_fields(starting_ent, tokens):
     field_entity_pairs = []
     current_ent = starting_ent
     for idx, tok in enumerate(tokens):
@@ -64,21 +64,17 @@ def datalang_to_fields(self, starting_ent, tokens):
             except IndexError:
                 raise Exception("Couldn't find field with the name or related name: %r" % tok)
 
-def parse_to_datalang(datalang_string):
-    assert hasattr(self, 'app'), "You must have something at attribute \"app\""
-    for src_attr, dest_attr in self.__class__._resolve_attrs:
-        datalang_string = getattr(self, src_attr)
-
+def parse_to_datalang(datalang_string, app):
     tokens = datalang_string.split('.')
     # 1. get the seed type to start the chaining in step 2
     if tokens[0] == 'CurrentUser':
         context_type = 'user'
-        ent = filter(lambda e: e.is_user, self.tables)[0]
+        ent = filter(lambda e: e.is_user, app.tables)[0]
         tokens = tokens[1:]
 
     elif tokens[0] == 'Page' or tokens[0] == 'loop':
         context_type = tokens[0].lower()
-        ent = self.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
+        ent = app.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
         tokens = tokens[2:]
 
     elif tokens[0] == 'this': # for forms
@@ -94,5 +90,6 @@ def parse_to_datalang(datalang_string):
     field_entity_pairs = datalang_to_fields(ent, tokens)
     # 3. create a datalang instance and bind it to dest_attr
     dl = DataLang(context_type, ent, [ f for f, e in field_entity_pairs ])
+    return dl
 
 
