@@ -16,16 +16,6 @@ class Translator(object):
     def __init__(self, tables):
         self.tables = tables
 
-    def tokenize(self, s):
-        return s.split('.')
-
-    def toks_to_django_toks_w_types(self, tokens):
-        """Page.book.stores => [(None, book obj), (get_stores(), store list)] """
-
-    def toks_to_exp(self, tokens):
-        """Page.book.stores => lambda x: [(x, book obj), (get_stores(), store list)] """
-
-
     def v1script_to_app_component(self, s, django_request_handler, py=False, this_entity=None, inst_only=False):
         tokens = s.split('.')
         if tokens[0] == 'CurrentUser':
