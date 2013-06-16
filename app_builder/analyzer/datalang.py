@@ -44,7 +44,7 @@ def datalang_to_fields(starting_ent, tokens):
             else:
                 assert last_item_in_loop, "You can't chain things on after a primval"
                 field_entity_pairs.append((f, None))
-                return (field_entity_pairs, 'singular')
+                return (field_entity_pairs, 'primval')
         # try to get the field with this related_name on this entity
         except IndexError:
             # it couldn't find a field with this name, so let's try to find a related name.
@@ -60,7 +60,7 @@ def datalang_to_fields(starting_ent, tokens):
                 else:
                     assert f.type == 'o2o', "Many to many is not yet supported"
                     if last_item_in_loop:
-                        return (field_entity_pairs, 'singular')
+                        return (field_entity_pairs, 'object')
             except IndexError:
                 raise Exception("Couldn't find field with the name or related name: %r" % tok)
 
