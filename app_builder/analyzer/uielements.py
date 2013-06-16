@@ -203,12 +203,6 @@ class Form(DictInited, Hooked):
                     """Just for consistency w other fields"""
                     pass
 
-            def __init__(self, *args, **kwargs):
-                super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
-                # this is to make a proper path for resolving the field name later
-                for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
-                    f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
-
             class RelationalAction(DictInited):
                 _schema = {
                     "set_fk": {"_type": ""},
@@ -222,7 +216,6 @@ class Form(DictInited, Hooked):
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
-                "belongsTo": {"_one_of": [{"_type": ""}, {"_type": None}]},  # TODO may have reference
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
                 "goto" : {"_type" : ""}
             }
@@ -232,7 +225,10 @@ class Form(DictInited, Hooked):
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
-                self.goto = encode_braces("pages/" + self.goto)
+                # this is to make a proper path for resolving later
+                self.goto = encode_braces("pages/%s" % self.goto)
+                for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
+                    f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
 
 
 

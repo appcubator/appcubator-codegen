@@ -311,8 +311,6 @@ class App(DictInited):
 
         # Fix reflang namespaces
         for path, fii in filter(lambda n: isinstance(n[1], Form.FormInfo.FormInfoInfo), self.iternodes()):
-            if fii.belongsTo is not None:
-                fii.belongsTo = encode_braces('tables/%s' % fii.belongsTo)
             fii.entity = encode_braces('tables/%s' % fii.entity)
 
         for path, ii in filter(lambda n: isinstance(n[1], Iterator.IteratorInfo), self.iternodes()):
