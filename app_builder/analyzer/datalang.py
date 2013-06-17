@@ -17,7 +17,7 @@ class DataLang(object):
         elif self.context_type == 'user':
             seed_id = 'request.user'
         else:
-            seed_id = context.get_by_ref(self.seed_entity)
+            seed_id = context.get_by_ref(self.seed_entity._django_model)
 
         def get_accessor(field):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
