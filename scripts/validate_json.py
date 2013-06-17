@@ -1,22 +1,14 @@
 #!/usr/bin/python
 
-from app_builder.analyzer import App
-from app_builder.analyzer.dict_inited import InvalidDict
-import simplejson
+from test_runner import parse_app_state, create_app
 import sys
 
 if __name__ == "__main__":
     args = sys.argv
     if len(args) == 1:
-        print >> sys.stdout, "Give the path to a json file"
+        print "Usage: python validate_json.py <path_to_json>"
         sys.exit(1)
+    app_state = parse_app_state(args[1])
+    app = create_app(app_state)
 
-    app_state = simplejson.load(open(args[1], 'r'))
-
-    try:
-        app = App.create_from_dict(app_state)
-    except InvalidDict:
-        raise
-    else:
-        print >> sys.stdout, "Passed analyzer stage"
-
+    
