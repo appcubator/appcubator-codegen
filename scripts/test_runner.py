@@ -7,10 +7,15 @@ from app_builder.coder import Coder, write_to_fs
 import simplejson
 import sys
 
-# A decorator that wraps error checking and the right message to be 
-# printed on success. This will make code look much cleaner.
+
+
 
 def check_exn(msg, exns=[]):
+    """
+    A decorator that wraps error checking and the right message to be 
+    printed on success. This will make code look much cleaner. Takes in
+    a message to printed on success and a list of exns to catch.
+    """
     exn_tup = tuple(exns)
     def inner_func(func):
         rv = None
@@ -18,6 +23,7 @@ def check_exn(msg, exns=[]):
             try:
                 rv = func(*args, **kwargs)
             except exn_tup:
+                print >> sys.stderr, "Encountered exception: ", sys.exc_info()[0]
                 raise
             else:
                 print msg
