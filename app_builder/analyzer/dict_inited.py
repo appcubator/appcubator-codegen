@@ -41,7 +41,7 @@ class DictInited(object):
             setattr(self, name, value)
 
     @classmethod
-    def _recursively_create(cls, thing, schema):
+    def _recursively_create(cls, thing, schema, data_only=False):
         """Returns the object created version of thing if schema type is a class, else returns thing.
              Does a recursive DFS, mutating as it goes"""
 
@@ -51,7 +51,7 @@ class DictInited(object):
                 # error and quit.
                 new_errs = cls.validate_dict(thing, validation_schema, [])
                 if len(new_errs) == 0:
-                    return cls._recursively_create(thing, validation_schema)
+                    return cls._recursively_create(thing, validation_schema, data_only=data_only)
             # if you get to this point, none of the "one of" things were valid.
             raise Exception("thing does not ascribe to schema")
 
@@ -62,8 +62,11 @@ class DictInited(object):
 
         if type(schema['_type']) == type(type):
             data = schema['_type']._recursively_create(thing, {
-                                                       "_type": {}, "_mapping": schema['_type']._schema})
-            return schema['_type'](**data)
+                                                       "_type": {}, "_mapping": schema['_type']._schema}, data_only=data_only)
+            if data_only:
+                return data
+            else:
+                return schema['_type'](**data)
 
         if type(thing) == type(""):
             thing = unicode(thing)
@@ -75,7 +78,7 @@ class DictInited(object):
             if '_each' not in schema:
                 return thing
 
-            return [cls._recursively_create(minithing, schema['_each']) for minithing in thing]
+            return [cls._recursively_create(minithing, schema['_each'], data_only=data_only) for minithing in thing]
 
         elif type(thing) == type({}):
 
@@ -87,7 +90,7 @@ class DictInited(object):
                     del thing[key]
                 else:
                     thing[key] = cls._recursively_create(
-                        thing[key], schema['_mapping'][key])
+                        thing[key], schema['_mapping'][key], data_only=data_only)
 
             return thing
 
@@ -104,7 +107,7 @@ class DictInited(object):
         return thing
 
     @classmethod
-    def create_from_dict(cls, data):
+    def create_from_dict(cls, data, dict_only_mode=False):
         """
         Validates the data,
           then inits the object recursively.
@@ -117,7 +120,7 @@ class DictInited(object):
 
         data = deepcopy(data)
         o = cls._recursively_create(data, {
-                                    "_type": cls})  # helper function needed for schema based recursion
+                                    "_type": cls}, data_only=dict_only_mode)  # helper function needed for schema based recursion
         # set the path on each thing
         for path, obj in o.iternodes():
             try:
