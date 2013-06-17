@@ -7,9 +7,6 @@ from app_builder.coder import Coder, write_to_fs
 import simplejson
 import sys
 
-
-
-
 def check_exn(msg, exns=[]):
     """
     A decorator that wraps error checking and the right message to be 
