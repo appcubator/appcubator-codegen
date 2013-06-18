@@ -6,6 +6,7 @@ from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
 from app_builder.tests.app_state_interface import AppStateTestInterface
 import simplejson
+import fileinput
 import sys
 
 def check_exn(msg, exns=[]):
@@ -49,7 +50,7 @@ def create_app(app_state):
 @check_exn("Deployed locally.")
 def deploy_locally(coder):
     #TODO(nkhadke): fix css
-    return write_to_fs(coder, test=True)
+    return write_to_fs(coder)
 
 
 ### Helper functions ###
@@ -59,7 +60,14 @@ def basic_deploy(json_file):
     codes = create_indiv_components(app)
     coder = create_code(codes)
     fs_loc = deploy_locally(coder)
+    get_rid_of_wsgi(fs_loc)
     return fs_loc
+
+def get_rid_of_wsgi(dest):
+    for line in fileinput.FileInput(dest + "/settings.py", inplace=True):
+        if "WSGI_APPLICATION" in line:
+            line = "# " + line.strip()
+            print line
 
 def run_generic_tests(apps_interface):
     app_states = apps_interface.get_app_states()
