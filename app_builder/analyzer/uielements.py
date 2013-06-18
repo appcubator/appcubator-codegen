@@ -331,13 +331,13 @@ class Iterator(DictInited, Hooked):
 
         class Query(DictInited):
 
-            class WhereClause(DictInited):
+            class WhereClause(DictInited, Resolvable):
                 _schema = {
                         "field_name": {"_type": ""},
                         "equal_to": {"_type": ""}
                 }
                 _resolve_attrs = (('field_name', 'field'),)
-                _datalang_attrs = ('equal_to', 'equal_to_dl')
+                _datalang_attrs = (('equal_to', 'equal_to_dl'),)
 
             _schema = {
                 "sortAccordingTo": {"_type": ""},
@@ -360,6 +360,11 @@ class Iterator(DictInited, Hooked):
         }
 
         _resolve_attrs = (("entity", "entity_resolved"),)
+
+        def __init__(self, *args, **kwargs):
+            super(Iterator.IteratorInfo, self).__init__(*args, **kwargs)
+            for w in self.query.where:
+                w.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, w.field_name))
 
     _schema = {
         "container_info": {"_type": IteratorInfo},

@@ -320,6 +320,7 @@ class App(DictInited):
         # Resolve reflangs
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
+            rl.resolve_data()
 
 
         return self

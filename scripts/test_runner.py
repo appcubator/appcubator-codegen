@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
-from app_builder.analyzer import App
-from app_builder.analyzer.dict_inited import InvalidDict
+from app_builder.analyzer import App, InvalidDict
 from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
 from app_builder.tests.app_state_interface import AppStateTestInterface
 import simplejson
 import fileinput
 import sys
+import traceback
 import shlex
 import subprocess
 
@@ -19,12 +19,13 @@ def check_exn(msg, exns=[]):
     """
     exn_tup = tuple(exns)
     def inner_func(func):
-        rv = None
         def wrapper(*args, **kwargs):
             try:
                 rv = func(*args, **kwargs)
-            except exn_tup:
+            #except exn_tup:
+            except Exception:
                 print >> sys.stderr, "[test_runner] Encountered exception: ", sys.exc_info()[0]
+                print >> sys.stderr, "[test_runner] %s" % traceback.format_exc()
                 raise
             else:
                 print "[test_runner] %s" % msg

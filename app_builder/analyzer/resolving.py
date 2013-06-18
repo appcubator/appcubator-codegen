@@ -17,10 +17,12 @@ class Resolvable(object):
                 path_string, name_allowed=True))
 
     def resolve_data(self):
+        if not hasattr(self.__class__, '_datalang_attrs'):
+            return
         assert hasattr(self, 'app'), "You must have something at attribute \"app\""
         for src_attr, dest_attr in self.__class__._datalang_attrs:
             datalang_string = getattr(self, src_attr)
-            dl = parse_to_datalang(datalang_string)
+            dl = parse_to_datalang(datalang_string, self.app)
             setattr(self, dest_attr, dl)
 
 

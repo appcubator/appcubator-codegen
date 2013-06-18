@@ -8,3 +8,4 @@ env = Environment(trim_blocks=True, lstrip_blocks=True, loader=FileSystemLoader(
     os.path.join(os.path.dirname(__file__), 'templates')))
 
 from analyzer import *
+from dict_inited import InvalidDict
