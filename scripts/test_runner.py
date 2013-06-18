@@ -96,9 +96,11 @@ def run_generic_tests(apps_interface):
 ### Main ###
 if __name__ == "__main__":
     args = sys.argv
-    if len(args) == 1:
-        print "[test_runner] Give the path to a json file"
-        sys.exit(1)
+    apps_interface = None
     apps_interface = AppStateTestInterface()
+    if len(args) == 2:
+        apps_interface = AppStateTestInterface(app_state_dir=args[1].rstrip())
+    else:
+        print "[test_runner] Using default app_states directory."
     run_generic_tests(apps_interface)
 
