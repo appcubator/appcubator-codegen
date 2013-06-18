@@ -1,7 +1,7 @@
 "DataLang parsing and intermediate representation"
 
 class DataLang(object):
-    def __init__(self, context_type, seed_entity, fields):
+    def __init__(self, context_type, seed_entity, field_entity_pairs, result_type):
         """
         context_type is Page, Loop, or _____
         field_list is a list of the fields which will be tacked on after seed
@@ -9,7 +9,25 @@ class DataLang(object):
         assert context_type in ['Page', 'Loop', 'Form', 'user']
         self.context_type = context_type
         self.seed_entity = seed_entity
-        self.fields = fields
+        self.field_entity_pairs = field_entity_pairs
+        self.fields = [f for f, e in field_entity_pairs]
+        self.result_type = result_type
+
+    def final_type(self):
+        """Returns type of result.
+        If primval, returns ('primval', text|number|date...)
+        If object, returns ('object', <entity>)
+        If collection, returns ('collection', <entity>)
+        """
+        if len(self.fields) == 0:
+            return ('object', self.seed_entity)
+        last_field = self.fields[-1]
+        # if the last field is not relational, this is a primitiva value of a very simple type
+        if not last_field.is_relational():
+            assert self.result_type == 'primval'
+            return (self.result_type, last_field.type)
+        # now we know it's a relational field, so the last field_entity pair should have an entity in it.
+        return (self.result_type, self.field_entity_pairs[-1][1])
 
     def to_code(self, context=None, seed_id=None):
         if self.context_type == 'Form':
@@ -68,7 +86,7 @@ def datalang_to_fields(starting_ent, tokens):
             except IndexError:
                 raise Exception("Couldn't find field with the name or related name: %r" % tok)
 
-    return field_entity_pairs
+    return (field_entity_pairs, obj_type)
 
 def parse_to_datalang(datalang_string, app):
     tokens = datalang_string.split('.')
@@ -94,9 +112,9 @@ def parse_to_datalang(datalang_string, app):
         raise Exception("Not Yet Implemented: %r" % tokens[0])
 
     # 2. get the list of fields by performing entity-field-entity chaining
-    field_entity_pairs = datalang_to_fields(ent, tokens)
+    field_entity_pairs, result_type = datalang_to_fields(ent, tokens)
     # 3. create a datalang instance and bind it to dest_attr
-    dl = DataLang(context_type, ent, [ f for f, e in field_entity_pairs ])
+    dl = DataLang(context_type, ent, field_entity_pairs, result_type ])
     return dl
 
 

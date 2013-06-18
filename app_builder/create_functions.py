@@ -136,7 +136,12 @@ class AppComponentFactory(object):
 
         for where_clause in query.where:
             key = where_clause.field._django_field.identifier
-            value = lambda: where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+            def gen_code_for_value():
+                x = where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+                if where_clause.equal_to_dl.result_type == 'object':
+                    return "%s.id" % x
+                return x
+            value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,

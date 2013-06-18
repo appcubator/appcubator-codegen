@@ -15,7 +15,7 @@ class DjangoQuery(object):
     def render(self):
         code_line = "%s.objects.all()" % self.model_id
         if len(self.where_data) != 0:
-            code_line += '.' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data])
+            code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
         # add on sorting and limiting here
         return code_line
 
