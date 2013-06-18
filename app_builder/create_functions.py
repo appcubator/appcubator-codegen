@@ -1,5 +1,6 @@
 import re
 
+from app_builder.analyzer import datalang
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
@@ -156,17 +157,19 @@ class AppComponentFactory(object):
         self.v1_translator = Translator(app.tables)
 
     def properly_name_variables_in_template(self, page):
-        # find things in braces and replace them with this function:
         def oneshot_datalang(s, req_handler):
             """
             Given a string and a request handler:
-                1. find the context
-                2. create datalang
+                1. create datalang
+                2. find the context
                 3. return the result of to_code of the datalang
             """
-            context = req_hanlder.pc_namespace
+            dl = datalang.parse_to_datalang(s, page.app)
+            return dl.to_code(page._django_view.pc_namespace)
+
         def translate(m):
             return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
+
         translate_all = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', translate, x)
 
         for uie in page.uielements:
