@@ -1,6 +1,6 @@
 import re
 
-from app_builder.analyzer import datalang
+from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
@@ -125,13 +125,7 @@ class AppComponentFactory(object):
 
         # create a list of keyvalue pairs for the filter in the query
         filter_key_values = []
-        # TODO get the page of the uielement in a nicer way.
-        def get_parent(obj):
-            # app/pages/0/uielements/3  => app/pages/0
-            parent_path = obj._path[:obj._path.rfind('/')]
-            parent_path = parent_path[:parent_path.rfind('/')]
-            return obj.app.find(parent_path)
-        page = get_parent(uie)
+        page = uie.page
         view = page._django_view
 
         for where_clause in query.where:
@@ -317,8 +311,17 @@ class AppComponentFactory(object):
 
 
     def resolve_page_and_its_datalang(self, uie):
-        pass
-
+        def resolve_pagelang(pagelang_str):
+            if pagelang_str.startswith("internal://") or \
+            pagelang_str.startswith("http://") or \
+            pagelang_str.startswith("https://"):
+                try:
+                    pagelang.parse_to_datalang(pagelang_str, uie.app).to_code(context=uie.page._django_view.pc_namespace)
+                except AssertionError:
+                    return pagelang_str
+            else:
+                return pagelang_str
+        uie.visit_strings(resolve_pagelang)
 
     def import_form_into_form_receivers(self, uie):
         f = uie._django_form

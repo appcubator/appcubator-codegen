@@ -25,10 +25,12 @@ class PageLang(object):
         else:
             self.page = app.find("pages/%s" % page_name, name_allowed=True)
 
-    def to_code(self):
-        # Create datalangs here for query string params such as (tweet=Loop.Tweet)
-        pass
-
+    def to_code(self,context=None, template=False):
+        """ If template is false reverse is used. Otherwise we use the url tag """
+        if not template:
+            return "{%% url webapp.pages.%s %%}" % self.page._django_view.identifier
+        else:
+            assert False, "Non templates are not yet implemented"
 
 def parse_to_pagelang(pagelang_string, app):
     """
