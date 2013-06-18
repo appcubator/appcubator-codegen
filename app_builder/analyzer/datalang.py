@@ -17,7 +17,10 @@ class DataLang(object):
         elif self.context_type == 'user':
             seed_id = 'request.user'
         else:
-            seed_id = context.get_by_ref(self.seed_entity._django_model)
+            if self.context_type == 'Loop':
+                seed_id = 'obj'
+            else:
+                seed_id = context.get_by_ref(self.seed_entity._django_model)
 
         def get_accessor(field):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
@@ -76,12 +79,13 @@ def parse_to_datalang(datalang_string, app):
         tokens = tokens[1:]
 
     elif tokens[0] == 'Page' or tokens[0] == 'loop':
-        context_type = tokens[0].lower()
+        upper_first_char = lambda x: x[0].upper() + x[1:].lower()
+        context_type = upper_first_char(tokens[0])
         ent = app.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
         tokens = tokens[2:]
 
     elif tokens[0] == 'this': # for forms
-        context_type = 'form'
+        context_type = 'Form'
         #ent = this_entity.ref
         ent = None # TODO FIXME get the entity for this form
         tokens = tokens[1:]

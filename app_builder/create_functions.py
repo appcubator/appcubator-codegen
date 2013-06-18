@@ -165,7 +165,7 @@ class AppComponentFactory(object):
                 3. return the result of to_code of the datalang
             """
             dl = datalang.parse_to_datalang(s, page.app)
-            return dl.to_code(page._django_view.pc_namespace)
+            return dl.to_code(context=page._django_view.pc_namespace)
 
         def translate(m):
             return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
@@ -327,7 +327,7 @@ class AppComponentFactory(object):
             inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
-        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.redirect.page._django_view.identifier
+        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto.page._django_view.identifier
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr

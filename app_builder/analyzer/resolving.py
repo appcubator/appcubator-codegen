@@ -25,6 +25,15 @@ class Resolvable(object):
             dl = parse_to_datalang(datalang_string, self.app)
             setattr(self, dest_attr, dl)
 
+    def resolve_page(self):
+        if not hasattr(self.__class__, '_pagelang_attrs'):
+            return
+        assert hasattr(self, 'app'), "You must have something at attribute \"app\""
+        for src_attr, dest_attr in self.__class__._pagelang_attrs:
+            pagelang_string = getattr(self, src_attr)
+            pl = parse_to_pagelang(pagelang_string, self.app)
+            setattr(self, dest_attr, pl)
+
 
         # 4. later on in code generation, the datalang will be converted to code
         #      by providing a page and loop context and hoping for the best.

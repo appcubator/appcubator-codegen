@@ -221,7 +221,7 @@ class Form(DictInited, Hooked):
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
-            _pagelang_attrs = (('goto', 'goto_page'), )
+            _pagelang_attrs = (('goto', 'goto_pl'), )
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
