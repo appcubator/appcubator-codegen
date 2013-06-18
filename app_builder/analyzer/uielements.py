@@ -307,12 +307,17 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         return kw
 
     def visit_strings(self, f):
-        #print self.content
+        # Resolves either images or URLs
         self.content = f(self.content)
         try:
             self.content_attribs['src'] = f(self.content_attribs['src'])
         except KeyError:
             pass
+        try:
+           self.content_attribs['href'] = f(self.content_attribs['href'])
+        except KeyError:
+            pass
+
 
     def html(self):
         try:
