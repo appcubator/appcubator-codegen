@@ -311,6 +311,9 @@ class AppComponentFactory(object):
 ## END HACKING
 
 
+    def resolve_page_and_its_datalang(self, uie):
+        pass
+
 
     def import_form_into_form_receivers(self, uie):
         f = uie._django_form

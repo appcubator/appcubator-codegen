@@ -1,3 +1,4 @@
+from datalang import parse_to_datalang
 """
     Pagelang parsing and intermediate representation.
     Used to validate and convert link strings to renderable objects.
@@ -46,8 +47,9 @@ def parse_to_pagelang(pagelang_string, app):
             return pagelang_str[:pagelang_str.index('/')]
 
     def get_datalangs(pagelang_str):
+        """ Returns a dictionary of datalang objects referenced by their keys """
         datalang_str = pagelang_str[pagelang_str.split('/')+1:]
-        datalangs = []
+        datalangs = {}
         if len(datalang_str) == 0:
             # Case where we have no datalangs
             return datalangs
@@ -55,7 +57,7 @@ def parse_to_pagelang(pagelang_string, app):
             datalang_str = datalang_str[1:] # Get rid of qn mark
             for kv in datalang_str.split('&'):
                 (k, v) = kv.split('=')
-                datalangs.append((k, v))
+                datalangs[k] = parse_to_datalang(v, app)
             return datalangs
         
     if "internal://" not in pagelang_string:

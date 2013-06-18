@@ -287,6 +287,8 @@ class Form(DictInited, Hooked):
         return form
 
 class Node(DictInited, Hooked):  # a uielement with no container_info
+    _hooks = ['resolve page and its data lang']
+
     _schema = {
         "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},  # TODO may have reference
         # "isSingle": { "_type" : True }, # don't need this because it's implied from tagname
