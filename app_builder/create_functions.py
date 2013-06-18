@@ -136,7 +136,12 @@ class AppComponentFactory(object):
 
         for where_clause in query.where:
             key = where_clause.field._django_field.identifier
-            value = lambda: where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+            def gen_code_for_value():
+                x = where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+                if where_clause.equal_to_dl.result_type == 'object':
+                    return "%s.id" % x
+                return x
+            value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
@@ -327,7 +332,7 @@ class AppComponentFactory(object):
             inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
-        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto.page._django_view.identifier
+        fr.locals['page_view_id'] = lambda: 'webapp.pages.homepage'#lambda: 'webapp.pages.%s' % uie.container_info.form.goto.page._django_view.identifier
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr
