@@ -4,6 +4,7 @@ from app_builder.analyzer import App
 from app_builder.analyzer.dict_inited import InvalidDict
 from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
+from app_builder.tests.app_state_interface import AppStateTestInterface
 import simplejson
 import sys
 
@@ -20,14 +21,15 @@ def check_exn(msg, exns=[]):
             try:
                 rv = func(*args, **kwargs)
             except exn_tup:
-                print >> sys.stderr, "Encountered exception: ", sys.exc_info()[0]
+                print >> sys.stderr, "[test_runner] Encountered exception: ", sys.exc_info()[0]
                 raise
             else:
-                print msg
+                print "[test_runner] %s" % msg
                 return rv
         return wrapper
     return inner_func
 
+### Basic test primitives ###
 @check_exn("Created individual components")
 def create_indiv_components(app):
     return create_codes(app)
@@ -44,14 +46,35 @@ def parse_app_state(app_state_file):
 def create_app(app_state):
     return App.create_from_dict(app_state)
 
-if __name__ == "__main__":
-    args = sys.argv
-    if len(args) == 1:
-        print >> sys.stdout, "Give the path to a json file"
-        sys.exit(1)
+@check_exn("Deployed locally.")
+def deploy_locally(coder):
+    #TODO(nkhadke): fix css
+    return write_to_fs(coder, test=True)
 
-    app_state = parse_app_state(args[1])
+
+### Helper functions ###
+def basic_deploy(json_file):
+    app_state = parse_app_state(json_file)
     app = create_app(app_state)
     codes = create_indiv_components(app)
     coder = create_code(codes)
+    fs_loc = deploy_locally(coder)
+    return fs_loc
+
+def run_generic_tests(apps_interface):
+    app_states = apps_interface.get_app_states()
+    num_apps = len(app_states)
+    for i, app_state in enumerate(app_states):
+        print "[test_runner] Running tests for app %s [%d of %d]" %(app_state, (i+1), num_apps)
+        dest = basic_deploy(app_state)
+        print "[test_runner] Deployed locally at %s" % dest
+
+### Main ###
+if __name__ == "__main__":
+    args = sys.argv
+    if len(args) == 1:
+        print "[test_runner] Give the path to a json file"
+        sys.exit(1)
+    apps_interface = AppStateTestInterface()
+    run_generic_tests(apps_interface)
 
