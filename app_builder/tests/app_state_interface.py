@@ -16,12 +16,13 @@ class AppStateTestInterface():
         and generates App objects from them if needed.
     """
     
-    def __init__(self, app_state_dir=None):
+    def __init__(self, app_state_dir=None, forge='app_states_tmp/'):
         module_dir = os.path.dirname(__file__)
         if app_state_dir is None:
             self.app_state_dir = os.path.join(module_dir, 'app_states/')
         else:
             self.app_state_dir = app_state_dir
+        self.tmp_app_state_dir = os.path.join(module_dir, forge)
         self.app_states = get_json_names(self.app_state_dir)
 
     def get_num_app_states(self):
@@ -29,7 +30,7 @@ class AppStateTestInterface():
 
     def get_app_states(self):
         return self.app_states
-
+    
     def add_app_state(self, json, name):
         f = open(os.path.join(self.app_state_dir, name), "w")
         f.write(simplejson.dumps(json))

@@ -54,7 +54,7 @@ def create_codes(app):
 
     def create(event_name, el, *args, **kwargs):
         try:
-            print event_name
+            print "[create hook] %s" % event_name
             c = create_map[event_name](el)
         except KeyError:
             raise
