@@ -114,7 +114,7 @@ def parse_to_datalang(datalang_string, app):
     # 2. get the list of fields by performing entity-field-entity chaining
     field_entity_pairs, result_type = datalang_to_fields(ent, tokens)
     # 3. create a datalang instance and bind it to dest_attr
-    dl = DataLang(context_type, ent, field_entity_pairs, result_type ])
+    dl = DataLang(context_type, ent, field_entity_pairs, result_type)
     return dl
 
 
