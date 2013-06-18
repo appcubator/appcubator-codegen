@@ -135,10 +135,10 @@ class AppComponentFactory(object):
 
         for where_clause in query.where:
             key = where_clause.field._django_field.identifier
-            value = lambda x: where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+            value = lambda: where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
             filter_key_values.append((key, FnCodeChunk(value)))
 
-        dq = DjangoQuery(entity._django_model.identifier, filter_data=filter_key_values,
+        dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
                                                           sort_by=query.sortAccordingTo,
                                                           limit=query.numberOfRows)
 
@@ -157,7 +157,16 @@ class AppComponentFactory(object):
 
     def properly_name_variables_in_template(self, page):
         # find things in braces and replace them with this function:
-        translate = lambda m: "{{ %s }}" % self.v1_translator.v1script_to_app_component(m.group(1).strip(), page._django_view) 
+        def oneshot_datalang(s, req_handler):
+            """
+            Given a string and a request handler:
+                1. find the context
+                2. create datalang
+                3. return the result of to_code of the datalang
+            """
+            context = req_hanlder.pc_namespace
+        def translate(m):
+            return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
         translate_all = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', translate, x)
 
         for uie in page.uielements:

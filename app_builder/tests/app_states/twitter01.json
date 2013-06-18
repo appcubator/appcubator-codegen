@@ -687,7 +687,7 @@
                 ],
                 "action":"create",
                 "actions":[{
-                  "set_fk": "this.user",
+                  "set_fk": "this.User",
                   "to_object": "CurrentUser"
                 }],
                 "goto": "internal://My Tweets/"

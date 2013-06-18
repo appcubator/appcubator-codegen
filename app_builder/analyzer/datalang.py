@@ -21,13 +21,14 @@ class DataLang(object):
 
         def get_accessor(field):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
-            return field._django_field.identifier
+            return field._django_field_identifier
         return ''.join([seed_id] + ['.%s' % get_accessor(f) for f in self.fields])
 
 
 def datalang_to_fields(starting_ent, tokens):
     field_entity_pairs = []
     current_ent = starting_ent
+    obj_type = 'object'
     for idx, tok in enumerate(tokens):
         last_item_in_loop = (idx == len(tokens) - 1)
 
@@ -40,11 +41,11 @@ def datalang_to_fields(starting_ent, tokens):
                 current_ent = f._django_field.rel_model_id.ref._entity
                 field_entity_pairs.append((f, current_ent))
                 if last_item_in_loop:
-                    return (field_entity_pairs, 'object')
+                    obj_type = 'object'
             else:
                 assert last_item_in_loop, "You can't chain things on after a primval"
                 field_entity_pairs.append((f, None))
-                return (field_entity_pairs, 'primval')
+                obj_type = 'primval'
         # try to get the field with this related_name on this entity
         except IndexError:
             # it couldn't find a field with this name, so let's try to find a related name.
@@ -56,13 +57,15 @@ def datalang_to_fields(starting_ent, tokens):
                 field_entity_pairs.append((f, current_ent))
                 if f.type == 'fk':
                     assert last_item_in_loop, "You can't chain things on after collection"
-                    return (field_entity_pairs, 'collection')
+                    obj_type = 'collection'
                 else:
                     assert f.type == 'o2o', "Many to many is not yet supported"
                     if last_item_in_loop:
-                        return (field_entity_pairs, 'object')
+                        obj_type = 'object'
             except IndexError:
                 raise Exception("Couldn't find field with the name or related name: %r" % tok)
+
+    return field_entity_pairs
 
 def parse_to_datalang(datalang_string, app):
     tokens = datalang_string.split('.')
