@@ -8,6 +8,8 @@ from app_builder.tests.app_state_interface import AppStateTestInterface
 import simplejson
 import fileinput
 import sys
+import shlex
+import subprocess
 
 def check_exn(msg, exns=[]):
     """
@@ -61,7 +63,15 @@ def basic_deploy(json_file):
     coder = create_code(codes)
     fs_loc = deploy_locally(coder)
     get_rid_of_wsgi(fs_loc)
+#    syncdb(fs_loc)
     return fs_loc
+
+#TODO(nkhadke): FIX
+def syncdb(dest):
+    cmd = "python scripts/syncbd.py"
+    p = subprocess.Popen(shlex.split(cmd), env=self.env, stdin=ps.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    print out, err
 
 def get_rid_of_wsgi(dest):
     for line in fileinput.FileInput(dest + "/settings.py", inplace=True):
@@ -74,8 +84,13 @@ def run_generic_tests(apps_interface):
     num_apps = len(app_states)
     for i, app_state in enumerate(app_states):
         print "[test_runner] Running tests for app %s [%d of %d]" %(app_state, (i+1), num_apps)
-        dest = basic_deploy(app_state)
-        print "[test_runner] Deployed locally at %s" % dest
+        try:
+            dest = basic_deploy(app_state)
+        except:
+            print "[test_runner] FAIL: App %s failed." % app_state
+            print "[test_runner] Encountered exception: ", sys.exc_info()[0]
+        else:
+            print "[test_runner] PASS: App %s Deployed locally at %s" % (app_state.replace('.json', ''), dest)
 
 ### Main ###
 if __name__ == "__main__":
