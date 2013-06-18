@@ -66,8 +66,8 @@ def basic_deploy(json_file):
 def get_rid_of_wsgi(dest):
     for line in fileinput.FileInput(dest + "/settings.py", inplace=True):
         if "WSGI_APPLICATION" in line:
-            line = "# " + line.strip()
-            print line
+            line = "# " + line.rstrip()
+        print line.rstrip()
 
 def run_generic_tests(apps_interface):
     app_states = apps_interface.get_app_states()
