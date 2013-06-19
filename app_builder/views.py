@@ -14,7 +14,8 @@ def test(request):
 def validate(request):
     if request.method == "POST":
         try:
-            app_state = request.POST['app_state']
+            app_state = simplejson.loads(request.body)
+            #request.POST['app_state']
         except KeyError:
             response = HttpResponse("Send json string with key 'app_state'", status=400)
             response['Access-Control-Allow-Origin'] = "*"
