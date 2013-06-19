@@ -4,7 +4,7 @@
     <a class="brand" href="/" id="brand-name">{{ navbar.brandName }}</a>
     <ul class="nav" id="items">
       {% for l in navbar.links %}
-      <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+      <li><a href="{{ l.url_pl.to_code() }}">{{ l.title }}</a></li>
       {% endfor %}
     </ul>
     <ul class="nav pull-right">

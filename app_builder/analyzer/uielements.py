@@ -225,8 +225,6 @@ class Form(DictInited, Hooked):
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
-                # this is to make a proper path for resolving later
-                self.goto = encode_braces("pages/%s" % self.goto)
                 for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
 
@@ -287,7 +285,7 @@ class Form(DictInited, Hooked):
         return form
 
 class Node(DictInited, Hooked):  # a uielement with no container_info
-    _hooks = ['resolve page and its data lang']
+    _hooks = ['resolve links href']
 
     _schema = {
         "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},  # TODO may have reference

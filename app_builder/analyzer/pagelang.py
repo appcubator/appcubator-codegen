@@ -68,7 +68,8 @@ def parse_to_pagelang(pagelang_string, app):
                 datalangs[k] = parse_to_datalang(v, app)
             return datalangs
         
-    if "internal://" not in pagelang_string:
+    if not pagelang_string.startswith("internal://"):
+        assert pagelang_string.startswith("http://") or pagelang_string.startswith("https://"), "Not a valid link bro: %r" % pagelang_string
         return PageLang(pagelang_string, app, external=True)
     else:
         page_name = get_page_name(pagelang_string)

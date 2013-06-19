@@ -690,7 +690,7 @@
                   "set_fk": "this.User",
                   "to_object": "CurrentUser"
                 }],
-                "goto": "internal://My Tweets/"
+                "goto": "internal://My tweets/"
               }
             }
           },

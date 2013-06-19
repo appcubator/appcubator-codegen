@@ -1,6 +1,7 @@
 from dict_inited import DictInited
 from utils import encode_braces, decode_braces
 from datalang import parse_to_datalang
+from pagelang import parse_to_pagelang
 
 
 class Resolvable(object):

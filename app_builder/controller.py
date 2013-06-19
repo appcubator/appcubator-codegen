@@ -25,10 +25,7 @@ def create_codes(app):
                   'find or add the needed data to the view': factory.find_or_create_query_for_view ,
 
                   # PAGE AND DATALANG
-                  'resolve page and its data lang' : factory.resolve_page_and_its_datalang,
-
-                  # NAV BAR LINKS
-                  'resolve navbar links an its data lang' : factory.resolve_navbar_and_its_datalang,
+                  'resolve links href' : factory.resolve_page_and_its_datalang,
 
                   # HTML GEN STUFF
                   'translate strings in uielements': factory.properly_name_variables_in_template,
@@ -96,16 +93,6 @@ def create_codes(app):
                     print "Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__)
                     traceback.print_exc()
                     raise
-
-    # Navigation bar links
-    for p in app.pages:
-        for link in p.navbar.links:
-            try:
-                create('resolve navbar links an its data lang', link)
-            except Exception, e:
-                print "Failed to call hook %r on %r instance" % (hook_name, link.__class__.__name__)
-                traceback.print_exc()
-                raise
 
     # translation of {{ page.book.name }} to proper django template code
     for p in app.pages:
