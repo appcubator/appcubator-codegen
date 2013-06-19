@@ -43,7 +43,7 @@ class DataLang(object):
         def get_accessor(field):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
             return field._django_field_identifier
-        return ''.join([seed_id] + ['.%s' % get_accessor(f) for f in self.fields])
+        return ''.join([str(seed_id)] + ['.%s' % get_accessor(f) for f in self.fields])
 
 
 def datalang_to_fields(starting_ent, tokens):
@@ -88,7 +88,7 @@ def datalang_to_fields(starting_ent, tokens):
 
     return (field_entity_pairs, obj_type)
 
-def parse_to_datalang(datalang_string, app):
+def parse_to_datalang(datalang_string, app, entity_of_form=None):
     tokens = datalang_string.split('.')
     # 1. get the seed type to start the chaining in step 2
     if tokens[0] == 'CurrentUser':
@@ -104,8 +104,8 @@ def parse_to_datalang(datalang_string, app):
 
     elif tokens[0] == 'this': # for forms
         context_type = 'Form'
-        #ent = this_entity.ref
-        ent = None # TODO FIXME get the entity for this form
+        ent = entity_of_form
+        assert entity_of_form is not None, "When using forms, you should give a ref to the entity using the 'entity_of_form' kwarg"
         tokens = tokens[1:]
 
     else:

@@ -119,7 +119,7 @@ class UserRole(DictInited):
 
 class Navbar(DictInited):
 
-    class NavbarItem(DictInited):
+    class NavbarItem(DictInited, Resolvable):
         _hooks = ['resolve navbar links an its data lang']
 
         _schema = {
@@ -128,6 +128,7 @@ class Navbar(DictInited):
         }
 
         _pagelang_attrs = (('url', 'url_pl'),)
+        _resolve_attrs = ()
 
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},

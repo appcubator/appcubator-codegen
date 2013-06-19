@@ -63,6 +63,7 @@ class AppComponentFactory(object):
 
         # set references
         entity._django_model = m
+        m._entity = entity
         return m
 
     def create_relational_fields_for_model(self, entity):
@@ -335,7 +336,11 @@ class AppComponentFactory(object):
     def add_relation_assignments_to_form_receiver(self, uie):
         form_model = uie.container_info.form # bind to this name to save me some typing
         fr = uie._django_form_receiver
-        translate = lambda s: self.v1_translator.v1script_to_app_component(s, uie._django_form_receiver, py=True, this_entity=fr.locals['obj'])  # it's going to utilize args and locals from here.
+
+        def translate(s):
+            dl = datalang.parse_to_datalang(s, uie.app, entity_of_form=form_model.entity_resolved)
+            return dl.to_code(seed_id=fr.locals['obj'])
+
         if form_model.action not in ['create', 'edit']:
             return None
         # figure out which LHS things need to be bound to an identifier.
@@ -345,7 +350,7 @@ class AppComponentFactory(object):
         commit = True
         for l, r in form_model.get_actions_as_tuples():
             # translate and evalute the left side for some analysis
-            translated_l = translate(l)() # translate returns a lambda
+            translated_l = translate(l)
             toks = translated_l.split('.')
             if len(toks) > 2:
                 attr = toks[-1]
