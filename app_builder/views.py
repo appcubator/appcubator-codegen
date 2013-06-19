@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from tests import master
+from django.views.decorators.csrf import csrf_exempt
 from app_builder.analyzer import App, InvalidDict
 import simplejson
 
@@ -9,6 +10,7 @@ def test(request):
     return HttpResponse("%s<br><br>%s" % (ret_code, debug_info))
 
 
+@csrf_exempt
 def validate(request):
     if request.method == "POST":
         try:
