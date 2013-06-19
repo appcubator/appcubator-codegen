@@ -217,7 +217,7 @@ class Form(DictInited, Hooked):
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                "goto" : {"_type" : ""}
+                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)

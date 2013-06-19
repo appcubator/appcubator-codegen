@@ -61,10 +61,8 @@ class AppComponentFactory(object):
                 f._django_field_identifier = df.identifier
                 f._django_field = df
 
-        # set references to each other on both.
-        # entity reference used in v1script translation (dynamicvars.py)
+        # set references
         entity._django_model = m
-        m._entity = entity
         return m
 
     def create_relational_fields_for_model(self, entity):
