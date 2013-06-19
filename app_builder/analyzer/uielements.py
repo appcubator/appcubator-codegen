@@ -228,6 +228,11 @@ class Form(DictInited, Hooked):
                 for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
 
+                # HACK FIXME DEBUG XXX
+
+                if self.goto is None:
+                    self.goto = "internal://Homepage/"
+
 
 
             def get_actions_as_tuples(self):
