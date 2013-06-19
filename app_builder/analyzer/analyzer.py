@@ -120,7 +120,6 @@ class UserRole(DictInited):
 class Navbar(DictInited):
 
     class NavbarItem(DictInited, Resolvable):
-        _hooks = ['resolve navbar links an its data lang']
 
         _schema = {
             "url": {"_type": ""},
