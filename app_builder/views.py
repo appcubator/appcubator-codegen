@@ -22,5 +22,5 @@ def validate(request):
     except InvalidDict, e:
         return HttpResponse(str(e))
 
-    return HttpResponse("")
+    return HttpResponse("Swag!")
 
