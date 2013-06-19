@@ -328,7 +328,7 @@ class AppComponentFactory(object):
             inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
-        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto.page._django_view.identifier
+        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr
