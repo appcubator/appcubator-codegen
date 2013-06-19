@@ -28,7 +28,6 @@ def create_codes(app):
                   'resolve page and its data lang' : factory.resolve_page_and_its_datalang,
 
                   # HTML GEN STUFF
-                  'init template v1script translator': factory.init_translator,
                   'translate strings in uielements': factory.properly_name_variables_in_template,
                   'create row/col structure for nodes': factory.create_tree_structure_for_page_nodes,
                   'create tests for static pages': factory.create_tests_for_static_pages,
@@ -84,8 +83,6 @@ def create_codes(app):
         create('view for page', p)
         create('url to serve page', p)
 
-    create('init template v1script translator', app)
-
     # UIELEMENT HOOKS
     for p in app.pages:
         for uie in p.uielements:
@@ -97,7 +94,8 @@ def create_codes(app):
                     traceback.print_exc()
                     raise
 
-
+    # Nav bar
+    # TODO(nkhadke): resolve urls here.
 
     # translation of {{ page.book.name }} to proper django template code
     for p in app.pages:

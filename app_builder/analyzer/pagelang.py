@@ -46,12 +46,18 @@ def parse_to_pagelang(pagelang_string, app):
             return None
         else:
             pagelang_str = pagelang_string[len("internal://"):]
-            return pagelang_str[:pagelang_str.index('/')]
+            if '/' in pagelang_str:
+                return pagelang_str[:pagelang_str.index('/')]
+            else:
+                return pagelang_str
 
     def get_datalangs(pagelang_str):
         """ Returns a dictionary of datalang objects referenced by their keys """
-        datalang_str = pagelang_str[pagelang_str.split('/')+1:]
         datalangs = {}
+        if '/' not in pagelang_str:
+            return datalangs
+
+        datalang_str = pagelang_str[pagelang_str.index('/')+1:]
         if len(datalang_str) == 0:
             # Case where we have no datalangs
             return datalangs

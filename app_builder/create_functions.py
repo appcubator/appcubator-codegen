@@ -9,7 +9,6 @@ from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSi
 from app_builder.codes.utils import AssignStatement, FnCodeChunk
 from app_builder.imports import create_import_namespace
 from app_builder import naming
-from app_builder.dynamicvars import Translator
 
 
 class AppComponentFactory(object):
@@ -151,9 +150,6 @@ class AppComponentFactory(object):
 
 
     # HTML GEN
-
-    def init_translator(self, app):
-        self.v1_translator = Translator(app.tables)
 
     def properly_name_variables_in_template(self, page):
         def oneshot_datalang(s, req_handler):
@@ -316,7 +312,8 @@ class AppComponentFactory(object):
             pagelang_str.startswith("http://") or \
             pagelang_str.startswith("https://"):
                 try:
-                    pagelang.parse_to_datalang(pagelang_str, uie.app).to_code(context=uie.page._django_view.pc_namespace)
+                    resolved_ps = pagelang.parse_to_pagelang(pagelang_str, uie.app).to_code(context=uie.page._django_view.pc_namespace)
+                    return resolved_ps
                 except AssertionError:
                     return pagelang_str
             else:
