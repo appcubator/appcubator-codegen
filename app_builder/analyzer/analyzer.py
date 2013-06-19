@@ -294,6 +294,7 @@ class App(DictInited):
                 subclass = uie.subclass
                 subclass._path = uie._path
                 uies.append(subclass)
+                subclass.page = p
             p.uielements = uies
 
         for path, row in self.search(r'pages/\d+/uielements/\d+/container_info/row$'):

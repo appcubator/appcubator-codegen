@@ -287,6 +287,8 @@ class Form(DictInited, Hooked):
         return form
 
 class Node(DictInited, Hooked):  # a uielement with no container_info
+    _hooks = ['resolve page and its data lang']
+
     _schema = {
         "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},  # TODO may have reference
         # "isSingle": { "_type" : True }, # don't need this because it's implied from tagname
@@ -307,12 +309,17 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         return kw
 
     def visit_strings(self, f):
-        #print self.content
+        # Resolves either images or URLs
         self.content = f(self.content)
         try:
             self.content_attribs['src'] = f(self.content_attribs['src'])
         except KeyError:
             pass
+        try:
+           self.content_attribs['href'] = f(self.content_attribs['href'])
+        except KeyError:
+            pass
+
 
     def html(self):
         try:

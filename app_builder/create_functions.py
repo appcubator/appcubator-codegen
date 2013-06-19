@@ -1,6 +1,6 @@
 import re
 
-from app_builder.analyzer import datalang
+from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
@@ -9,7 +9,6 @@ from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSi
 from app_builder.codes.utils import AssignStatement, FnCodeChunk
 from app_builder.imports import create_import_namespace
 from app_builder import naming
-from app_builder.dynamicvars import Translator
 
 
 class AppComponentFactory(object):
@@ -125,13 +124,7 @@ class AppComponentFactory(object):
 
         # create a list of keyvalue pairs for the filter in the query
         filter_key_values = []
-        # TODO get the page of the uielement in a nicer way.
-        def get_parent(obj):
-            # app/pages/0/uielements/3  => app/pages/0
-            parent_path = obj._path[:obj._path.rfind('/')]
-            parent_path = parent_path[:parent_path.rfind('/')]
-            return obj.app.find(parent_path)
-        page = get_parent(uie)
+        page = uie.page
         view = page._django_view
 
         for where_clause in query.where:
@@ -157,9 +150,6 @@ class AppComponentFactory(object):
 
 
     # HTML GEN
-
-    def init_translator(self, app):
-        self.v1_translator = Translator(app.tables)
 
     def properly_name_variables_in_template(self, page):
         def oneshot_datalang(s, req_handler):
@@ -316,6 +306,19 @@ class AppComponentFactory(object):
 ## END HACKING
 
 
+    def resolve_page_and_its_datalang(self, uie):
+        def resolve_pagelang(pagelang_str):
+            if pagelang_str.startswith("internal://") or \
+            pagelang_str.startswith("http://") or \
+            pagelang_str.startswith("https://"):
+                try:
+                    resolved_ps = pagelang.parse_to_pagelang(pagelang_str, uie.app).to_code(context=uie.page._django_view.pc_namespace)
+                    return resolved_ps
+                except AssertionError:
+                    return pagelang_str
+            else:
+                return pagelang_str
+        uie.visit_strings(resolve_pagelang)
 
     def import_form_into_form_receivers(self, uie):
         f = uie._django_form
