@@ -305,6 +305,20 @@ class AppComponentFactory(object):
 
 ## END HACKING
 
+    def resolve_navbar_and_its_datalang(self, link):
+        def resolve_pagelang(pagelang_str):
+            if pagelang_str.startswith("internal://") or \
+            pagelang_str.startswith("http://") or \
+            pagelang_str.startswith("https://"):
+                try:
+                    resolved_ps = pagelang.parse_to_pagelang(pagelang_str, link.app).to_code(context=link.page._django_view.pc_namespace)
+                    return resolved_ps
+                except AssertionError:
+                    return pagelang_str
+            else:
+                return pagelang_str
+        link.visit_strings(resolve_pagelang)
+
 
     def resolve_page_and_its_datalang(self, uie):
         def resolve_pagelang(pagelang_str):

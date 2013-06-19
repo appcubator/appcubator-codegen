@@ -120,10 +120,19 @@ class UserRole(DictInited):
 class Navbar(DictInited):
 
     class NavbarItem(DictInited):
+        _hooks = ['resolve navbar links an its data lang']
+    
         _schema = {
             "url": {"_type": ""},
             "title": { "_type": "" }
         }
+
+        def visit_strings(self, f):
+            # Resolves links to pagelang and datalang
+            try:
+                self['url'] = f(self['url'])
+            except KeyError:
+                pass
 
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},
