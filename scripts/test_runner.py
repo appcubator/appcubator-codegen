@@ -11,20 +11,17 @@ import traceback
 import shlex
 import subprocess
 
-def check_exn(msg, exns=[]):
+def check_exn(msg):
     """
-    A decorator that wraps error checking and the right message to be 
+    A decorator that wraps error checking and the right message to be
     printed on success. This will make code look much cleaner. Takes in
-    a message to printed on success and a list of exns to catch.
+    a message to printed on success.
     """
-    exn_tup = tuple(exns)
     def inner_func(func):
         def wrapper(*args, **kwargs):
             try:
                 rv = func(*args, **kwargs)
-            #except exn_tup:
             except Exception:
-                print >> sys.stderr, "[test_runner] Encountered exception: ", sys.exc_info()[0]
                 print >> sys.stderr, "[test_runner] %s" % traceback.format_exc()
                 raise
             else:
@@ -46,7 +43,7 @@ def create_code(codes):
 def parse_app_state(app_state_file):
     return simplejson.load(open(app_state_file, 'r'))
 
-@check_exn("Passed analyzer stage",exns=[InvalidDict])
+@check_exn("Passed analyzer stage")
 def create_app(app_state):
     return App.create_from_dict(app_state)
 
@@ -64,13 +61,12 @@ def basic_deploy(json_file):
     coder = create_code(codes)
     fs_loc = deploy_locally(coder)
     get_rid_of_wsgi(fs_loc)
-#    syncdb(fs_loc)
+    syncdb(fs_loc)
     return fs_loc
 
-#TODO(nkhadke): FIX
 def syncdb(dest):
-    cmd = "python scripts/syncbd.py"
-    p = subprocess.Popen(shlex.split(cmd), env=self.env, stdin=ps.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd = "python scripts/syncdb.py"
+    p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     print out, err
 
@@ -96,11 +92,14 @@ def run_generic_tests(apps_interface):
 ### Main ###
 if __name__ == "__main__":
     args = sys.argv
-    apps_interface = None
-    apps_interface = AppStateTestInterface()
-    if len(args) == 2:
+    if len(args) == 1:
+        apps_interface = AppStateTestInterface()
+        print "[test_runner] Using default app_states directory."
+    elif len(args) == 2:
         apps_interface = AppStateTestInterface(app_state_dir=args[1].rstrip())
     else:
-        print "[test_runner] Using default app_states directory."
+        print >> sys.stderr, "Usage: python -m scripts.test_runner [path to app states]"
+        sys.exit(1)
+
     run_generic_tests(apps_interface)
 

@@ -15,7 +15,7 @@ class AppStateTestInterface():
         in the app_states directory. Support CRUD on these app_states
         and generates App objects from them if needed.
     """
-    
+
     def __init__(self, app_state_dir=None, forge='app_states_tmp/'):
         module_dir = os.path.dirname(__file__)
         if app_state_dir is None:
@@ -30,7 +30,7 @@ class AppStateTestInterface():
 
     def get_app_states(self):
         return self.app_states
-    
+
     def add_app_state(self, json, name):
         f = open(os.path.join(self.app_state_dir, name), "w")
         f.write(simplejson.dumps(json))
@@ -50,7 +50,7 @@ class AppStateTestInterface():
         return simplejson.loads(
             open(os.path.join(self.app_state_dir,
                               '%s' % app_state)).read())
-        
+
     def is_app_state_valid(self, app_state):
         s = self.get_app_json(app_state)
         return len(s['users']) == 1 and len(s['users'][0]['fields']) > 0
