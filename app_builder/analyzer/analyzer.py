@@ -130,7 +130,7 @@ class Navbar(DictInited):
         def visit_strings(self, f):
             # Resolves links to pagelang and datalang
             try:
-                self['url'] = f(self['url'])
+                self.url = f(self.url)
             except KeyError:
                 pass
 
@@ -140,6 +140,9 @@ class Navbar(DictInited):
         "links": {"_type": [], "_each": {"_type": NavbarItem}}
     }
 
+    def __init__(self, *args, **kwargs):
+        super(Navbar, self).__init__(*args, **kwargs)
+    
     def render(self):
         if self.brandName is None:
             self.brandName = self.app.name
@@ -306,6 +309,12 @@ class App(DictInited):
                 subclass.page = p
             p.uielements = uies
 
+        # Provide a page reference for navbar links
+        for p in self.pages:
+            for link in p.navbar.links:
+                if isinstance(link, Navbar.NavbarItem):
+                    link.page = p
+
         for path, row in self.search(r'pages/\d+/uielements/\d+/container_info/row$'):
             uies = []
             for uie in row.uielements:
@@ -331,6 +340,8 @@ class App(DictInited):
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
             rl.resolve_data()
+
+        
 
 
         return self
