@@ -12,9 +12,8 @@ def test(request):
 
 @csrf_exempt
 def validate(request):
-    app_state = request.POST['app_state']
     try:
-        app_state = simplejson.loads(app_state)
+        app_state = simplejson.loads(request.body)
     except Exception:
         return HttpResponse("Not valid json :(", status=400)
 
