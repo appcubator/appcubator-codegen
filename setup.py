@@ -8,7 +8,6 @@ setup(
     packages=['app_builder',
               'app_builder.analyzer',
               'app_builder.codes',
-              'app_builder.deployment',
               'app_builder.tests'
               ],
     package_data={"app_builder": ['code_boilerplate/*.*', 'code_boilerplate/*/*.*',
