@@ -1,5 +1,6 @@
 import re
 
+from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
@@ -8,7 +9,6 @@ from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSi
 from app_builder.codes.utils import AssignStatement, FnCodeChunk
 from app_builder.imports import create_import_namespace
 from app_builder import naming
-from app_builder.dynamicvars import Translator
 
 
 class AppComponentFactory(object):
@@ -61,8 +61,7 @@ class AppComponentFactory(object):
                 f._django_field_identifier = df.identifier
                 f._django_field = df
 
-        # set references to each other on both.
-        # entity reference used in v1script translation (dynamicvars.py)
+        # set references
         entity._django_model = m
         m._entity = entity
         return m
@@ -73,7 +72,7 @@ class AppComponentFactory(object):
         for f in filter(lambda x: x.is_relational(), entity.fields):
             # get the related django model's id (from the imports.)
             rel_model = f.entity._django_model
-            rel_model_id = m.namespace.get_by_ref(rel_model)
+            rel_model_id = rel_model.identifier
             # make an id for the related name in the related model's namespace
             # TODO FIXME potential bugs with related name and field name since they are really injected into the model.Model instance namespace
             rel_name_id = rel_model.namespace.new_identifier(f.related_name, ref=rel_model)
@@ -120,17 +119,27 @@ class AppComponentFactory(object):
     def find_or_create_query_for_view(self, uie):
 
         entity = uie.container_info.entity_resolved
-        # TODO implement filtering of queries
-        dq = DjangoQuery(entity._django_model.identifier)
+        query = uie.container_info.query
 
-        # TODO add to parent in a nicer way.
-        def get_parent(obj):
-            # app/pages/0/uielements/3  => app/pages/0
-            parent_path = obj._path[:obj._path.rfind('/')]
-            parent_path = parent_path[:parent_path.rfind('/')]
-            return obj.app.find(parent_path)
-        page = get_parent(uie)
+        # create a list of keyvalue pairs for the filter in the query
+        filter_key_values = []
+        page = uie.page
         view = page._django_view
+
+        for where_clause in query.where:
+            key = where_clause.field._django_field.identifier
+            def gen_code_for_value():
+                x = where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
+                if where_clause.equal_to_dl.result_type == 'object':
+                    return "%s.id" % x
+                return x
+            value = gen_code_for_value
+            filter_key_values.append((key, FnCodeChunk(value)))
+
+        dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
+                                                          sort_by=query.sortAccordingTo,
+                                                          limit=query.numberOfRows)
+
         view.add_query(dq)
 
         uie._django_query = dq
@@ -141,12 +150,20 @@ class AppComponentFactory(object):
 
     # HTML GEN
 
-    def init_translator(self, app):
-        self.v1_translator = Translator(app.tables)
-
     def properly_name_variables_in_template(self, page):
-        # find things in braces and replace them with this function:
-        translate = lambda m: "{{ %s }}" % self.v1_translator.v1script_to_app_component(m.group(1).strip(), page._django_view) 
+        def oneshot_datalang(s, req_handler):
+            """
+            Given a string and a request handler:
+                1. create datalang
+                2. find the context
+                3. return the result of to_code of the datalang
+            """
+            dl = datalang.parse_to_datalang(s, page.app)
+            return dl.to_code(context=page._django_view.pc_namespace)
+
+        def translate(m):
+            return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
+
         translate_all = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', translate, x)
 
         for uie in page.uielements:
@@ -287,7 +304,14 @@ class AppComponentFactory(object):
 
 ## END HACKING
 
-
+    def resolve_page_and_its_datalang(self, uie):
+        def resolve_pagelang(pagelang_str):
+            try:
+                resolved_ps = pagelang.parse_to_pagelang(pagelang_str, uie.app).to_code(context=uie.page._django_view.pc_namespace)
+                return resolved_ps
+            except AssertionError:
+                return pagelang_str
+        uie.visit_strings(resolve_pagelang)
 
     def import_form_into_form_receivers(self, uie):
         f = uie._django_form
@@ -304,7 +328,7 @@ class AppComponentFactory(object):
             inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
-        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.redirect.page._django_view.identifier
+        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr
@@ -312,7 +336,11 @@ class AppComponentFactory(object):
     def add_relation_assignments_to_form_receiver(self, uie):
         form_model = uie.container_info.form # bind to this name to save me some typing
         fr = uie._django_form_receiver
-        translate = lambda s: self.v1_translator.v1script_to_app_component(s, uie._django_form_receiver, py=True, this_entity=fr.locals['obj'])  # it's going to utilize args and locals from here.
+
+        def translate(s):
+            dl = datalang.parse_to_datalang(s, uie.app, entity_of_form=form_model.entity_resolved)
+            return dl.to_code(seed_id=fr.locals['obj'])
+
         if form_model.action not in ['create', 'edit']:
             return None
         # figure out which LHS things need to be bound to an identifier.
@@ -322,7 +350,7 @@ class AppComponentFactory(object):
         commit = True
         for l, r in form_model.get_actions_as_tuples():
             # translate and evalute the left side for some analysis
-            translated_l = translate(l)() # translate returns a lambda
+            translated_l = translate(l)
             toks = translated_l.split('.')
             if len(toks) > 2:
                 attr = toks[-1]

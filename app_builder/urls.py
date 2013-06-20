@@ -3,5 +3,6 @@ import views
 
 urlpatterns = patterns('',
   url(r'^test/$', views.test),
+  url(r'^validate/$', views.validate),
 
 )

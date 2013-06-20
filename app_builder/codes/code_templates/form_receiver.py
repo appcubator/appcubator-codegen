@@ -4,6 +4,7 @@
 {% set reverse = imports['django.url.reverse'] %}
 {% set request = locals['request'] %}
 {% set page_view_id = locals['page_view_id']() %}
+{% set redirect_url = locals['redirect_url'] %}
 
 @require_POST
 def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
@@ -14,7 +15,7 @@ def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
         {% block do_stuff_with_valid_form %}
         obj = form.save()
         {% endblock %}
-        redirect_url = {{reverse}}('{{ page_view_id }}')
+        {{redirect_url}} = {{reverse}}('{{ page_view_id }}')
         return {{JsonResponse}}(data={'redirect_to':redirect_url})
 
     return {{JsonResponse}}(errors=form.errors)

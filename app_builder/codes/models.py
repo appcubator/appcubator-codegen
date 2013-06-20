@@ -5,11 +5,19 @@ from . import env
 
 class DjangoQuery(object):
 
-    def __init__(self, model_id):
+    def __init__(self, model_id, where_data=None, sort_by=None, limit=None):
         self.model_id = model_id
+        self.where_data = where_data if where_data is not None else []
+        # TODO implement these
+        self.sort_by = sort_by
+        self.limit = limit
 
     def render(self):
-        return "%s.objects.all()" % self.model_id
+        code_line = "%s.objects.all()" % self.model_id
+        if len(self.where_data) != 0:
+            code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
+        # add on sorting and limiting here
+        return code_line
 
 
 class DjangoField(object):

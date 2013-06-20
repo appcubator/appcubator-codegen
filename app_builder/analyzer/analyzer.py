@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import os
-import os.path
 import re
-import logging
 
 
 from dict_inited import DictInited
 from utils import encode_braces, decode_braces
-from resolving import Resolvable, LinkLang, EntityLang
+from resolving import Resolvable, EntityLang
 
 from . import env
 
-logger = logging.getLogger("codegen-analyzer")
+from app_builder.analyzer import logger
 
 # tables
 
@@ -25,6 +22,22 @@ class EntityField(DictInited):
     def is_relational(self):
         return False
 
+    def get_property(self, datalang):
+        "datalang may refer to a relational field that this field has. Get it and return it."
+
+    def set_django_access_id(self, some_identifier):
+        self._django_field_id = some_identifier
+
+    def get_django_access_id(self):
+        return self._django_field_id
+
+
+    def get_translation(self, datalang):
+        """Returns a lambda which will evaluate to the tranlation.
+           Notice that it is calling get_transation of another method,
+            and eval-ing it upon the returned lambdas evaluation."""
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
+
 
 class EntityRelatedField(DictInited, Resolvable):
     _schema = {
@@ -35,12 +48,29 @@ class EntityRelatedField(DictInited, Resolvable):
     }
     _resolve_attrs = (('entity_name', 'entity'),)
 
-    def is_relational(self): 
+    def is_relational(self):
         return True
 
     def __init__(self, *args, **kwargs):
         super(EntityRelatedField, self).__init__(*args, **kwargs)
         self.entity_name = encode_braces('tables/%s' % self.entity_name)
+
+    def get_property(self, datalang):
+        "return the property that datalang is referring to. a property is something that has a django access id, and can get translation"
+        "datalang refers to some relational field, either by ways of related name or field name. return that child."
+
+    def set_django_access_id(self, some_identifier):
+        self._django_field_id = some_identifier
+
+    def get_django_access_id(self):
+        return self._django_field_id
+
+    def get_translation(self, datalang):
+        """Returns a lambda which will evaluate to the tranlation.
+           Notice that it is calling get_transation of another method,
+            and eval-ing it upon the returned lambdas evaluation."""
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
+
 
 
 class Entity(DictInited):
@@ -55,6 +85,23 @@ class Entity(DictInited):
 
     def relational_fields(self):
         return filter(lambda x: x.is_relational(), self.fields)
+
+    def get_property(self, datalang):
+        "return the property that datalang is referring to. a property is something that has a django access id, and can get translation"
+        "datalang refers to some relational field, either by ways of related name or field name. return that child."
+        # return some field matching datalang
+
+    def set_django_access_id(self, some_identifier):
+        self._django_model_id = some_identifier
+
+    def get_django_access_id(self):
+        return self._django_model_id
+
+    def get_translation(self, datalang):
+        """Returns a lambda which will evaluate to the tranlation.
+           Notice that it is calling get_transation of another method,
+            and eval-ing it upon the returned lambdas evaluation."""
+        return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
 
 
 class UserRole(DictInited):
@@ -71,11 +118,15 @@ class UserRole(DictInited):
 
 class Navbar(DictInited):
 
-    class NavbarItem(DictInited):
+    class NavbarItem(DictInited, Resolvable):
+
         _schema = {
             "url": {"_type": ""},
             "title": { "_type": "" }
         }
+
+        _pagelang_attrs = (('url', 'url_pl'),)
+        _resolve_attrs = ()
 
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},
@@ -109,8 +160,30 @@ class Page(DictInited):
     class URL(DictInited):
 
         _schema = {
-            "urlparts": {"_type": [], "_each": {"_one_of": [{"_type": ""}, {"_type": EntityLang}]}}
+            "urlparts": {"_type": [], "_each": {"_type": ""}},
+            "entities": {"_type": [], "_default": []}
         }
+        # Entities hack - frontend doesn't know about this array, so it will be default inited to [].
+        # then init function will populate it with EntityLang instances 
+        # later on, someone (analyzer post-init) will iternodes over this and resolve all the entitylangs.
+
+
+        def __init__(self, *args, **kwargs):
+            """Filters out brace-encoded strings and puts them in a separate array called entities.
+            Fills in the gaps of urlparts with None, so we know that an entity was there"""
+            super(Page.URL, self).__init__(*args, **kwargs)
+            assert len(self.entities) == 0, "Frontend shouldn't know about this..."
+            for idx, u in enumerate(self.urlparts):
+                try:
+                    entity_name = decode_braces(u)
+                except AssertionError:
+                    # means this is a normal string (not in braces), part of the url
+                    pass
+                else:
+                    # none will indicate that an ID reference was here.
+                    self.urlparts[idx] = None
+                    self.entities.append(EntityLang(entity_name=
+                                encode_braces('tables/%s' % entity_name)))
 
         def is_valid(self):
             for u in self.urlparts:
@@ -145,10 +218,10 @@ class Page(DictInited):
 
     def is_static(self):
         # returns true iff there are no tables in the url parts
-        return len(filter(lambda x: isinstance(x, EntityLang), self.url.urlparts)) == 0
+        return [] == filter(lambda x: x is None, self.url.urlparts)
 
     def get_tables_from_url(self):
-        return [l.entity for l in filter(lambda x: isinstance(x, EntityLang), self.url.urlparts)]
+        return [entlang.entity for entlang in self.url.entities]
 
 
 class Email(DictInited):
@@ -224,6 +297,7 @@ class App(DictInited):
                 subclass = uie.subclass
                 subclass._path = uie._path
                 uies.append(subclass)
+                subclass.page = p
             p.uielements = uies
 
         for path, row in self.search(r'pages/\d+/uielements/\d+/container_info/row$'):
@@ -241,15 +315,7 @@ class App(DictInited):
 
         # Fix reflang namespaces
         for path, fii in filter(lambda n: isinstance(n[1], Form.FormInfo.FormInfoInfo), self.iternodes()):
-            if fii.belongsTo is not None:
-                fii.belongsTo = encode_braces('tables/%s' % fii.belongsTo)
             fii.entity = encode_braces('tables/%s' % fii.entity)
-
-        for path, ll in filter(lambda n: isinstance(n[1], LinkLang), self.iternodes()):
-            ll.page_name = encode_braces('pages/%s' % ll.page_name)
-
-        for path, el in filter(lambda n: isinstance(n[1], EntityLang), self.iternodes()):
-            el.entity_name = encode_braces('tables/%s' % el.entity_name)
 
         for path, ii in filter(lambda n: isinstance(n[1], Iterator.IteratorInfo), self.iternodes()):
             ii.entity = encode_braces(
@@ -258,6 +324,8 @@ class App(DictInited):
         # Resolve reflangs
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
+            rl.resolve_data()
+            rl.resolve_page()
 
 
         return self

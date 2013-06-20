@@ -51,7 +51,8 @@ class DjangoFormReceiver(object):
         """
         self.identifier = identifier
         self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
-        self.locals = {'request': self.namespace.new_identifier('request')}
+        self.locals = {'request': self.namespace.new_identifier('request'),
+                       'redirect_url': self.namespace.new_identifier('redirect_url')}
         self.form_id = form_id
         self.code_path = 'webapp/form_receivers.py'
 

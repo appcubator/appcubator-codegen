@@ -4,6 +4,9 @@ from pyflakes.api import check
 
 import logging
 import traceback
+import logging
+
+logger = logging.getLogger('app_builder.controller')
 
 logger = logging.getLogger("codegen-controller")
 
@@ -28,8 +31,10 @@ def create_codes(app):
                   'url to serve page': factory.add_page_to_urls,
                   'find or add the needed data to the view': factory.find_or_create_query_for_view ,
 
+                  # PAGE AND DATALANG
+                  'resolve links href' : factory.resolve_page_and_its_datalang,
+
                   # HTML GEN STUFF
-                  'init template v1script translator': factory.init_translator,
                   'translate strings in uielements': factory.properly_name_variables_in_template,
                   'create row/col structure for nodes': factory.create_tree_structure_for_page_nodes,
                   'create tests for static pages': factory.create_tests_for_static_pages,
@@ -58,11 +63,10 @@ def create_codes(app):
 
     def create(event_name, el, *args, **kwargs):
         try:
-            logger.info(event_name)
+            logger.info("Running hook: %s" % event_name)
             c = create_map[event_name](el)
         except KeyError:
             raise
-            print "NYI: %s" % event_name
         else:
             if c is not None:
                 codes.append(c)
@@ -85,8 +89,6 @@ def create_codes(app):
         create('view for page', p)
         create('url to serve page', p)
 
-    create('init template v1script translator', app)
-
     # UIELEMENT HOOKS
     for p in app.pages:
         for uie in p.uielements:
@@ -94,11 +96,9 @@ def create_codes(app):
                 try:
                     create(hook_name, uie)
                 except Exception, e:
-                    print "Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__)
+                    logger.error("Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__))
                     traceback.print_exc()
                     raise
-
-
 
     # translation of {{ page.book.name }} to proper django template code
     for p in app.pages:

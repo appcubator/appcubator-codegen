@@ -1,11 +1,12 @@
 from dict_inited import DictInited
-from resolving import Resolvable, LinkLang
+from resolving import Resolvable
 from utils import encode_braces, decode_braces
 from copy import deepcopy
 
 from app_builder.htmlgen import Tag
 
 from . import env
+from . import logger
 
 def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
@@ -187,7 +188,6 @@ class Form(DictInited, Hooked):
 
                 def set_backend_name(self):
                     self.backend_field_name = self.name
-                    print "setting name to %s" % self.name
 
             class ButtonField(FormField, DictInited):
                 _schema = {
@@ -203,23 +203,6 @@ class Form(DictInited, Hooked):
                     """Just for consistency w other fields"""
                     pass
 
-            class FormRedirect(DictInited, Resolvable):
-                _schema = {
-                    "pageName" : {"_type" : ""},
-                }
-
-                def __init__(self, *args, **kwargs):
-                    super(Form.FormInfo.FormInfoInfo.FormRedirect, self).__init__(*args, **kwargs)
-                    self.pageName = encode_braces("pages/" + self.pageName)
-
-                _resolve_attrs = (('pageName', 'page'),)
-
-            def __init__(self, *args, **kwargs):
-                super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
-                # this is to make a proper path for resolving the field name later
-                for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
-                    f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
-
             class RelationalAction(DictInited):
                 _schema = {
                     "set_fk": {"_type": ""},
@@ -233,13 +216,24 @@ class Form(DictInited, Hooked):
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
-                #"goto": {"_type": LinkLang},
-                "belongsTo": {"_one_of": [{"_type": ""}, {"_type": None}]},  # TODO may have reference
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                "redirect" : {"_type" : FormRedirect}
+                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
+            _pagelang_attrs = (('goto', 'goto_pl'), )
+
+            def __init__(self, *args, **kwargs):
+                super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
+                for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
+                    f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
+
+                # HACK FIXME DEBUG XXX
+
+                if self.goto is None:
+                    self.goto = "internal://Homepage/"
+
+
 
             def get_actions_as_tuples(self):
                 return [(a.set_fk, a.to_object) for a in self.actions]
@@ -296,6 +290,8 @@ class Form(DictInited, Hooked):
         return form
 
 class Node(DictInited, Hooked):  # a uielement with no container_info
+    _hooks = ['resolve links href']
+
     _schema = {
         "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},  # TODO may have reference
         # "isSingle": { "_type" : True }, # don't need this because it's implied from tagname
@@ -316,12 +312,17 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         return kw
 
     def visit_strings(self, f):
-        #print self.content
+        # Resolves either images or URLs
         self.content = f(self.content)
         try:
             self.content_attribs['src'] = f(self.content_attribs['src'])
         except KeyError:
             pass
+        try:
+           self.content_attribs['href'] = f(self.content_attribs['href'])
+        except KeyError:
+            pass
+
 
     def html(self):
         try:
@@ -339,10 +340,19 @@ class Iterator(DictInited, Hooked):
     class IteratorInfo(DictInited, Resolvable):
 
         class Query(DictInited):
+
+            class WhereClause(DictInited, Resolvable):
+                _schema = {
+                        "field_name": {"_type": ""},
+                        "equal_to": {"_type": ""}
+                }
+                _resolve_attrs = (('field_name', 'field'),)
+                _datalang_attrs = (('equal_to', 'equal_to_dl'),)
+
             _schema = {
-                "belongsToUser": {"_type": True},
                 "sortAccordingTo": {"_type": ""},
-                "numberOfRows": {"_type": 0}
+                "numberOfRows": {"_type": 0},
+                "where": {"_type": [], "_each": {"_type":WhereClause}}
             }
 
         class Row(DictInited):
@@ -360,6 +370,11 @@ class Iterator(DictInited, Hooked):
         }
 
         _resolve_attrs = (("entity", "entity_resolved"),)
+
+        def __init__(self, *args, **kwargs):
+            super(Iterator.IteratorInfo, self).__init__(*args, **kwargs)
+            for w in self.query.where:
+                w.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, w.field_name))
 
     _schema = {
         "container_info": {"_type": IteratorInfo},
