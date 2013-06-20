@@ -289,6 +289,24 @@ class Form(DictInited, Hooked):
         form = Tag('form', attribs, content=fields)
         return form
 
+class ThirdPartyLogin(DictInited, Hooked):
+    """ Represents all third party logins: [linkedin, facebook, twitter]"""
+
+    _schema = {
+        "provider": {"_type" : ""},
+        "content" : {"_type" : ""}
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(ThirdPartyLogin, self).__init__(*args, **kwargs)
+
+    def html(self):
+        tpl_template = env.get_template('thirdpartylogin.html')
+        tpl = Tag('div', {}, content=tpl_template.render(context=self))
+        return tpl
+
+
+
 class Node(DictInited, Hooked):  # a uielement with no container_info
     _hooks = ['resolve links href']
 
