@@ -38,6 +38,7 @@ class PageLang(object):
 
 def parse_lang(pagelang_string):
     """Given a string, try to parse out the page name and k, v pairs of the querystring after it."""
+    # subtle bug - internal://Tweet Page?Tweet=Wassup is still valid, b.c i made the slash before ? optional. no one has to know.
     m = re.match(r'^internal:\/\/([^\/]+)\/?(\?[^&=\/]+=[^&=\/]+(&[^&=\/]+=[^&=\/]+)+?)?$', pagelang_string)
     assert m is not None, "Invalid pagelang: %r" % pagelang_string
     page_name = m.group(1)
