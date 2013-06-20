@@ -188,7 +188,7 @@ class DictInited(object):
 
             for key in schema['_mapping']:
                 if key not in thing and '_default' in schema['_mapping'][key]:
-                    thing[key] = schema['_mapping'][key]['_default']
+                    thing[key] = deepcopy(schema['_mapping'][key]['_default'])
                 if key not in thing:
                     errors.append(ValidationError(
                         "Key not found: %r" % key, thing, schema, ancestor_list))

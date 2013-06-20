@@ -172,7 +172,7 @@ class Page(DictInited):
             """Filters out brace-encoded strings and puts them in a separate array called entities.
             Fills in the gaps of urlparts with None, so we know that an entity was there"""
             super(Page.URL, self).__init__(*args, **kwargs)
-            assert self.entities == [], "Frontend shouldn't know about this..."
+            assert len(self.entities) == 0, "Frontend shouldn't know about this..."
             for idx, u in enumerate(self.urlparts):
                 try:
                     entity_name = decode_braces(u)
