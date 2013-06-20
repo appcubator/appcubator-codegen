@@ -102,6 +102,8 @@ def run_tests(dest):
     out, err = p.communicate()
     if p.returncode != 0:
         logger.error("Testing failed! Output: %s\n%s" % (out, err))
+    else:
+        logger.info("These tests passed!!! Much swag.\n\n")
     logger.debug("Test output: %s\n%s" % (out, err))
 
 
