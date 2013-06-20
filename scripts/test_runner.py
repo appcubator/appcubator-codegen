@@ -10,6 +10,7 @@ import sys
 import traceback
 import shlex
 import subprocess
+import os
 
 def check_exn(msg):
     """
@@ -66,9 +67,18 @@ def basic_deploy(json_file):
 
 def syncdb(dest):
     cmd = "python scripts/syncdb.py"
-    p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     print out, err
+
+def run_tests(dest):
+    cmd = "python scripts/test.py"
+    child_env = os.environ.copy()
+    child_env['PYTHONPATH'] = dest
+    p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=child_env)
+    out, err = p.communicate()
+    print out, err
+
 
 def get_rid_of_wsgi(dest):
     for line in fileinput.FileInput(dest + "/settings.py", inplace=True):
@@ -83,6 +93,7 @@ def run_generic_tests(apps_interface):
         print "[test_runner] Running tests for app %s [%d of %d]" %(app_state, (i+1), num_apps)
         try:
             dest = basic_deploy(app_state)
+            run_tests(dest)
         except:
             print "[test_runner] FAIL: App %s failed." % app_state
             print "[test_runner] Encountered exception: ", sys.exc_info()[0]
