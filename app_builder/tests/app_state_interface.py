@@ -4,10 +4,10 @@ import simplejson
 from app_builder.analyzer import App
 
 def get_json_names(root):
-    dirs = []
+    names = []
     root_g = os.path.join(root, "*.json")
-    for dir in glob.glob(root_g):
-        dirs.append(dir)
+    for json_name in glob.glob(root_g):
+        names.append(json_name)
     return dirs
 
 class AppStateTestInterface():
@@ -30,6 +30,9 @@ class AppStateTestInterface():
 
     def get_app_states(self):
         return self.app_states
+
+    def get_app(self, app_state):
+        return App.create_from_dict(self.get_app_json(app_state))
 
     def add_app_state(self, json, name):
         f = open(os.path.join(self.app_state_dir, name), "w")
@@ -60,7 +63,4 @@ class AppStateTestInterface():
             if not self.is_app_state_valid(app_state):
                 return False
         return True
-
-    def get_app(self, app_state):
-        return App.create_from_dict(self.get_app_json(app_state))
 

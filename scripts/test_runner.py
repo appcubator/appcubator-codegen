@@ -14,6 +14,7 @@ import simplejson
 import fileinput
 import traceback
 import logging
+import argparse
 
 
 # configure loggers
@@ -28,6 +29,9 @@ controller_logger.setLevel('ERROR')
 logger = logging.getLogger('scripts.test_runner')
 logger.setLevel('INFO')
 logger.addHandler(logging.StreamHandler())
+
+
+DEFAULT_STATE_PATH = os.path.join(os.path.dirname(__file__), '..', 'app_builder', 'tests', 'app_states')
 
 
 def check_exn(msg):
@@ -108,32 +112,39 @@ def get_rid_of_wsgi(dest):
             line = "# " + line.rstrip()
         print line.rstrip()
 
-def run_generic_tests(apps_interface):
-    app_states = apps_interface.get_app_states()
-    num_apps = len(app_states)
-    for i, app_state in enumerate(app_states):
-        logger.info("Running tests for app %s [%d of %d]" %(app_state, (i+1), num_apps))
+
+def run_generic_tests(app_state_dir, specific_state_names=None):
+    if specific_state_names is None:
+        fnames_to_test = os.listdir(app_state_dir)
+    else:
+        fnames_to_test = [ fname for fname in os.listdir(app_state_dir) if fname.endswith('.json') and fname[:-5] in specific_state_names ]
+
+    num_apps = len(fnames_to_test)
+    for i, json_file in enumerate(fnames_to_test):
+        json_file = os.path.join(app_state_dir, json_file)
+        logger.info("Running tests for app %s [%d of %d]" %(json_file, (i+1), num_apps))
         try:
-            dest = basic_deploy(app_state)
+            dest = basic_deploy(json_file)
         except:
-            logger.error("FAIL: App %s failed." % app_state)
+            logger.error("App %s failed to deploy" % json_file)
             logger.error("Encountered exception: ", sys.exc_info()[0])
         else:
-            logger.info("PASS: App %s Deployed locally at %s" % (app_state.replace('.json', ''), dest))
+            logger.info("App %s Deployed locally at %s" % (json_file.replace('.json', ''), dest))
             syncdb(dest)
             run_tests(dest)
 
-### Main ###
-if __name__ == "__main__":
-    args = sys.argv
-    if len(args) == 1:
-        apps_interface = AppStateTestInterface()
-        logger.info("Using default app_states directory.")
-    elif len(args) == 2:
-        apps_interface = AppStateTestInterface(app_state_dir=args[1].rstrip())
-    else:
-        print >> sys.stderr, "Usage: python -m scripts.test_runner [path to app states]"
-        sys.exit(1)
 
-    run_generic_tests(apps_interface)
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='Deploy and test some JSONs.')
+
+    parser.add_argument('--path', help='the path at which you can find the json', dest='app_state_path', default=DEFAULT_STATE_PATH)
+    parser.add_argument('app_state_names', metavar='json', nargs='*', help='the name of the json file, without the json ext')
+
+    args = parser.parse_args()
+
+    if len(args.app_state_names) == 0:
+        run_generic_tests(args.app_state_path)
+    else:
+        run_generic_tests(args.app_state_path, specific_state_names=args.app_state_names)
 
