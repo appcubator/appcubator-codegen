@@ -4,17 +4,30 @@ from app_builder.analyzer import App, InvalidDict
 from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
 from app_builder.tests.app_state_interface import AppStateTestInterface
-import simplejson
-import fileinput
+
+
+# configure loggers from app_builder
+from app_builder.analyzer import logger as analyzer_logger
+from app_builder.coder import logger as coder_logger
+from app_builder.controller import logger as controller_logger
+
+analyzer_logger.setLevel('ERROR')
+coder_logger.setLevel('ERROR')
+controller_logger.setLevel('ERROR')
+
+
+
+import os
 import sys
-import traceback
 import shlex
 import subprocess
-import os
+import simplejson
+import fileinput
+import traceback
 import logging
 
 logger = logging.getLogger('scripts.test_runner')
-logger.setLevel('DEBUG')
+logger.setLevel('INFO')
 logger.addHandler(logging.StreamHandler())
 
 def check_exn(msg):

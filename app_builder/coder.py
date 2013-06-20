@@ -11,7 +11,7 @@ from imports import IMPORTS
 from codes import Import
 
 
-logger = logging.getLogger("app_builder")
+logger = logging.getLogger("app_builder.coder")
 
 from os.path import join
 

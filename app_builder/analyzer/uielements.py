@@ -6,6 +6,7 @@ from copy import deepcopy
 from app_builder.htmlgen import Tag
 
 from . import env
+from . import logger
 
 def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
@@ -187,7 +188,6 @@ class Form(DictInited, Hooked):
 
                 def set_backend_name(self):
                     self.backend_field_name = self.name
-                    print "setting name to %s" % self.name
 
             class ButtonField(FormField, DictInited):
                 _schema = {

@@ -3,6 +3,9 @@ from app_builder.create_functions import AppComponentFactory
 from pyflakes.api import check
 
 import traceback
+import logging
+
+logger = logging.getLogger('app_builder.controller')
 
 def create_codes(app):
     factory = AppComponentFactory()
@@ -56,11 +59,10 @@ def create_codes(app):
 
     def create(event_name, el, *args, **kwargs):
         try:
-            print "[create hook] %s" % event_name
+            logger.info("Running hook: %s" % event_name)
             c = create_map[event_name](el)
         except KeyError:
             raise
-            print "NYI: %s" % event_name
         else:
             if c is not None:
                 codes.append(c)
@@ -90,7 +92,7 @@ def create_codes(app):
                 try:
                     create(hook_name, uie)
                 except Exception, e:
-                    print "Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__)
+                    logger.error("Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__))
                     traceback.print_exc()
                     raise
 

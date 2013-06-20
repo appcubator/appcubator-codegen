@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import logging
 
 
 from dict_inited import DictInited
@@ -10,7 +9,7 @@ from resolving import Resolvable, EntityLang
 
 from . import env
 
-logger = logging.getLogger("codegen-analyzer")
+from app_builder.analyzer import logger
 
 # tables
 

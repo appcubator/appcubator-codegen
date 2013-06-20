@@ -10,7 +10,6 @@ Codegen
 Loggers
 -------
 
-- app_builder
 - app_builder.coder
 - app_builder.analyzer
 - app_builder.controller
