@@ -11,6 +11,11 @@ import traceback
 import shlex
 import subprocess
 import os
+import logging
+
+logger = logging.getLogger('scripts.test_runner')
+logger.setLevel('DEBUG')
+logger.addHandler(logging.StreamHandler())
 
 def check_exn(msg):
     """
@@ -23,10 +28,10 @@ def check_exn(msg):
             try:
                 rv = func(*args, **kwargs)
             except Exception:
-                print >> sys.stderr, "[test_runner] %s" % traceback.format_exc()
+                logger.error(traceback.format_exc())
                 raise
             else:
-                print "[test_runner] %s" % msg
+                logger.info(msg)
                 return rv
         return wrapper
     return inner_func
@@ -62,14 +67,15 @@ def basic_deploy(json_file):
     coder = create_code(codes)
     fs_loc = deploy_locally(coder)
     get_rid_of_wsgi(fs_loc)
-    syncdb(fs_loc)
     return fs_loc
 
 def syncdb(dest):
     cmd = "python scripts/syncdb.py"
-    p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    child_env = os.environ.copy()
+    child_env['PYTHONPATH'] = dest
+    p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=child_env)
     out, err = p.communicate()
-    print out, err
+    logger.debug("Syncdb output: %s\n%s" % (out, err))
 
 def run_tests(dest):
     cmd = "python scripts/test.py"
@@ -77,35 +83,36 @@ def run_tests(dest):
     child_env['PYTHONPATH'] = dest
     p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=child_env)
     out, err = p.communicate()
-    print out, err
+    logger.debug("Test output: %s\n%s" % (out, err))
 
 
 def get_rid_of_wsgi(dest):
     for line in fileinput.FileInput(dest + "/settings.py", inplace=True):
         if "WSGI_APPLICATION" in line:
             line = "# " + line.rstrip()
-        print line.rstrip()
+            logger.debug("Result of wsgi line strip: %s" % line)
 
 def run_generic_tests(apps_interface):
     app_states = apps_interface.get_app_states()
     num_apps = len(app_states)
     for i, app_state in enumerate(app_states):
-        print "[test_runner] Running tests for app %s [%d of %d]" %(app_state, (i+1), num_apps)
+        logger.info("Running tests for app %s [%d of %d]" %(app_state, (i+1), num_apps))
         try:
             dest = basic_deploy(app_state)
-            run_tests(dest)
         except:
-            print "[test_runner] FAIL: App %s failed." % app_state
-            print "[test_runner] Encountered exception: ", sys.exc_info()[0]
+            logger.error("FAIL: App %s failed." % app_state)
+            logger.error("Encountered exception: ", sys.exc_info()[0])
         else:
-            print "[test_runner] PASS: App %s Deployed locally at %s" % (app_state.replace('.json', ''), dest)
+            logger.info("PASS: App %s Deployed locally at %s" % (app_state.replace('.json', ''), dest))
+            syncdb(dest)
+            run_tests(dest)
 
 ### Main ###
 if __name__ == "__main__":
     args = sys.argv
     if len(args) == 1:
         apps_interface = AppStateTestInterface()
-        print "[test_runner] Using default app_states directory."
+        logger.info("Using default app_states directory.")
     elif len(args) == 2:
         apps_interface = AppStateTestInterface(app_state_dir=args[1].rstrip())
     else:
