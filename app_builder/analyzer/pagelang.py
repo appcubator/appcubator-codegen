@@ -6,13 +6,6 @@ from datalang import parse_to_datalang
     or in template code (using url tag)
 """
 
-"""To code:
-In: context maybe
-Out: template code, or python reverse code
-If template, use url tag. if python use reverse.
-Get the view function name, resolve datalangs w the context.
-"""
-
 class PageLang(object):
     def __init__(self, page_str, app, page_name=None, datalangs=None, external=False):
         self.data_langs = datalangs
