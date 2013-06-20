@@ -278,7 +278,9 @@ class AppComponentFactory(object):
             fr_id = self.fr_namespace.new_identifier('Login')
             if 'django.auth.login' not in self.fr_namespace.imports():
                 self.fr_namespace.find_or_create_import('django.auth.login', 'auth_login')
-            fr = DjangoLoginFormReceiver(fr_id, uie._django_form.identifier)
+            fr = DjangoLoginFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
+            if uie.container_info.form.redirect:
+                fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
         uie._django_form_receiver = fr
         return fr
 
@@ -291,7 +293,9 @@ class AppComponentFactory(object):
                 self.fr_namespace.find_or_create_import('django.auth.login', 'auth_login')
             if 'django.auth.authenticate' not in self.fr_namespace.imports():
                 self.fr_namespace.find_or_create_import('django.auth.authenticate', 'authenticate')
-            fr = DjangoSignupFormReceiver(fr_id, uie._django_form.identifier)
+            fr = DjangoSignupFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
+            if uie.container_info.form.redirect:
+                fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
         uie._django_form_receiver = fr
         return fr
 
@@ -320,15 +324,17 @@ class AppComponentFactory(object):
 
     def create_form_receiver_for_form_object(self, uie):
         fr_id = self.fr_namespace.new_identifier(uie._django_form.identifier)
-        thing_id = uie.container_info.form.entity_resolved.name
-        fr = DjangoCustomFormReceiver(thing_id, fr_id, uie._django_form.identifier)
+        form_model = uie.container_info.form
+        thing_id = form_model.entity_resolved.name
+        fr = DjangoCustomFormReceiver(thing_id, fr_id, uie._django_form.identifier, redirect=form_model.redirect)
         args = []
         for e in uie.container_info.form.get_needed_page_entities():
             model_id = e._django_model.identifier
             inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
-        fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+        if form_model.redirect:
+            fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr

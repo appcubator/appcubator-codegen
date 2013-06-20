@@ -45,7 +45,7 @@ class DjangoPageView(object):
 
 class DjangoFormReceiver(object):
 
-    def __init__(self, identifier, form_id):
+    def __init__(self, identifier, form_id, redirect=True):
         """
         For now it'll only work with fields that are directly associate with the model
         """
@@ -55,6 +55,8 @@ class DjangoFormReceiver(object):
                        'redirect_url': self.namespace.new_identifier('redirect_url')}
         self.form_id = form_id
         self.code_path = 'webapp/form_receivers.py'
+
+        self.redirect = redirect
 
     def render(self):
         return env.get_template('form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)

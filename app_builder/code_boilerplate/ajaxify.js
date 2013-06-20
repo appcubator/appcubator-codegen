@@ -41,7 +41,11 @@ $(document).ready(function() {
             if (typeof(data.redirect_to) !== 'undefined') {
               location.href = data.redirect_to;
             } else {
-              alert("Form submitted! But... now what do I do...")
+              if (typeof(data.refresh) !== 'undefined' && data.refresh) {
+                location.reload(true);
+              } else {
+                alert("Form submitted! But... now what do I do...")
+              }
             }
           }
         },

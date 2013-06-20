@@ -221,6 +221,7 @@ class Form(DictInited, Hooked):
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
+            # overridden resolve_page function => goto_pl will only exist if redirect = True. see the code for that fn.
             _pagelang_attrs = (('goto', 'goto_pl'), )
 
             def __init__(self, *args, **kwargs):
@@ -228,12 +229,12 @@ class Form(DictInited, Hooked):
                 for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
 
-                # HACK FIXME DEBUG XXX
-
+            def resolve_page(self):
                 if self.goto is None:
-                    self.goto = "internal://Homepage/"
-
-
+                    self.redirect = False
+                else:
+                    self.redirect = True
+                    super(Form.FormInfo.FormInfoInfo, self).resolve_page()
 
             def get_actions_as_tuples(self):
                 return [(a.set_fk, a.to_object) for a in self.actions]

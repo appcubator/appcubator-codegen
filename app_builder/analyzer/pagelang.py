@@ -62,22 +62,6 @@ def parse_to_pagelang(pagelang_string, app):
     internal://Tweet_page/?Tweet=loop.Tweet& ... qstring (datalang)
     """
 
-    def get_datalangs(pagelang_str):
-        """ Returns a dictionary of datalang objects referenced by their keys """
-        datalangs = {}
-        if '/' not in pagelang_str:
-            return datalangs
-
-        datalang_str = pagelang_str[pagelang_str.index('/')+1:]
-        if len(datalang_str) == 0:
-            # Case where we have no datalangs
-            return datalangs
-        else:
-            datalang_str = datalang_str[1:] # Get rid of qn mark
-            for kv in datalang_str.split('&'):
-                (k, v) = kv.split('=')
-            return datalangs
-
     if not pagelang_string.startswith("internal://"):
         assert pagelang_string.startswith("http://") or pagelang_string.startswith("https://"), "Not a valid link bro: %r" % pagelang_string
         return PageLang(pagelang_string, app, external=True)
