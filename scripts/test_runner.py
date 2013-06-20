@@ -6,17 +6,6 @@ from app_builder.coder import Coder, write_to_fs
 from app_builder.tests.app_state_interface import AppStateTestInterface
 
 
-# configure loggers from app_builder
-from app_builder.analyzer import logger as analyzer_logger
-from app_builder.coder import logger as coder_logger
-from app_builder.controller import logger as controller_logger
-
-analyzer_logger.setLevel('ERROR')
-coder_logger.setLevel('ERROR')
-controller_logger.setLevel('ERROR')
-
-
-
 import os
 import sys
 import shlex
@@ -26,9 +15,20 @@ import fileinput
 import traceback
 import logging
 
+
+# configure loggers
+from app_builder.analyzer import logger as analyzer_logger
+from app_builder.coder import logger as coder_logger
+from app_builder.controller import logger as controller_logger
+
+analyzer_logger.setLevel('ERROR')
+coder_logger.setLevel('ERROR')
+controller_logger.setLevel('ERROR')
+
 logger = logging.getLogger('scripts.test_runner')
 logger.setLevel('INFO')
 logger.addHandler(logging.StreamHandler())
+
 
 def check_exn(msg):
     """
@@ -96,6 +96,8 @@ def run_tests(dest):
     child_env['PYTHONPATH'] = dest
     p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=child_env)
     out, err = p.communicate()
+    if p.returncode != 0:
+        logger.error("Testing failed! Output: %s\n%s" % (out, err))
     logger.debug("Test output: %s\n%s" % (out, err))
 
 
