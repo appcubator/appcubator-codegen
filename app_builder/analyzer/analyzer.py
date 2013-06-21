@@ -280,6 +280,11 @@ class App(DictInited):
         for p in self.pages:
             assert p.url.is_valid(), "Url not valid: %r" % p.url.urlparts
 
+        """
+        User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
+        for translation, normalize to CurrentUser.
+        for redirects, replace redirect portion of the code with some logic
+        """
         # create the user entity based on userconfig
         userdict = {
             "name": "User",
@@ -302,15 +307,13 @@ class App(DictInited):
                 },
             ]
         }
+        self.multiple_roles = len(self.users) > 1
+        if self.multiple_roles:
+            userdict['fields'].append({"name":"_role", "type":"text"})
 
         userentity = Entity.create_from_dict(userdict)
         userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
 
-        """
-        User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
-        for translation, normalize to CurrentUser.
-        for redirects, replace redirect portion of the code with some logic
-        """
         # combine all the fields from all the user roles
         combined_fields_from_all_roles = []
         for u in self.users:

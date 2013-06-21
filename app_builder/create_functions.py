@@ -283,8 +283,8 @@ class AppComponentFactory(object):
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
 
             # construct a roleredirect thing
-            role_linklang_map = { r.role: FnCodeChunk(lambda: r.goto_pl.to_code(template=False)) for r in uie.container_info.form.loginRoutes }
-            rr = RoleRedirectChunk(role_linklang_map)
+            role_linklang_tuples = [(r.role, FnCodeChunk(lambda: r.goto_pl.to_code(template=False))) for r in uie.container_info.form.loginRoutes]
+            rr = RoleRedirectChunk(role_linklang_tuples)
             fr.add_role_redirect(rr)
 
         uie._django_form_receiver = fr
@@ -302,6 +302,8 @@ class AppComponentFactory(object):
             fr = DjangoSignupFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
+            if uie.app.multiple_users:
+                fr.add_signup_role(uie.container_info.form.signupRole)
         uie._django_form_receiver = fr
         return fr
 

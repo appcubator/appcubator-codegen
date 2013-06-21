@@ -223,7 +223,7 @@ class Form(DictInited, Hooked):
 
                 def __init__(self, *args, **kwargs):
                     super(Form.FormInfo.FormInfoInfo.RoleRouting, self).__init__(*args, **kwargs)
-                    assert self.role in [u.name for u in self.users], "Role not recognized."
+                    assert self.role in [u.name for u in self.app.users], "Role not recognized."
 
             _schema = {
                 "entity": {"_type": ""},
@@ -231,7 +231,9 @@ class Form(DictInited, Hooked):
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
                 "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
-                "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None}
+                "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
+                "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
+
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
@@ -242,8 +244,13 @@ class Form(DictInited, Hooked):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
                 for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
-                if self.action == 'login':
+
+                if self.action == 'login' and self.app.multiple_users:
                     assert self.loginRoutes is not None, "login form must have loginRoutes"
+
+                if self.action == 'signup' and self.app.multiple_users:
+                    assert self.signupRole is not None, "signup form must have signupRole"
+                    assert self.signupRole in [u.name for u in self.app.users]
 
             def resolve_page(self):
                 if self.goto is None:
