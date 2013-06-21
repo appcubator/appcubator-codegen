@@ -157,7 +157,17 @@ from uielements import UIElement
 
 class Page(DictInited):
 
+    class AccessLevel(DictInited):
+
+        _schema = {
+            "access_level" : {"_type" : ""}
+        }
+
+        def __init__(self, *args, **kwargs):
+            super(Page.AccessLevel, self).__init__(*args, **kwargs)
+        
     class URL(DictInited):
+
 
         _schema = {
             "urlparts": {"_type": [], "_each": {"_type": ""}},
@@ -202,7 +212,7 @@ class Page(DictInited):
         "navbar": {"_type": Navbar},
         "footer": {"_type": Footer},
         "uielements": {"_type": [], "_each": {"_type": UIElement}},
-        "access_level": {"_type": ""}
+        "access_level": {"_type": AccessLevel}
     }
 
     @property
@@ -284,7 +294,7 @@ class App(DictInited):
         }
         userentity = Entity.create_from_dict(userdict)
         userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
-        userentity.user_profile_fields = [f for f in self.users[0].fields] # users[0] is the first user role. this is temp.
+        userentity.user_profile_fields = [f for f in self.users[0].fields] # users[0] is the first user role. ss is temp.
         userentity.fields.extend(self.users[0].fields)
         userentity.is_user = True
         self.tables.append(userentity)

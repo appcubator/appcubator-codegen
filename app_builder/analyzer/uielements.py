@@ -12,6 +12,7 @@ def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
                           'loop': Iterator,
                           'node': Node,
+                          'thirdpartylogin' : ThirdPartyLogin
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -290,16 +291,25 @@ class Form(DictInited, Hooked):
         form = Tag('form', attribs, content=fields)
         return form
 
-class ThirdPartyLogin(DictInited, Hooked):
+class ThirdPartyLogin(DictInited, Hooked, Resolvable):
     """ Represents all third party logins: [linkedin, facebook, twitter]"""
 
     _schema = {
         "provider": {"_type" : ""},
-        "content" : {"_type" : ""}
+        "content" : {"_type" : ""},
+        "goto" : {"_type" : ""}
     }
+    _pagelang_attrs = (('goto', 'goto_pl'), )
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
+
+    def resolve_page(self):
+        if self.goto is None:
+            self.redirect = False
+        else:
+            self.redirect = True
+            super(ThirdPartyLogin, self).resolve_page()
 
     def html(self):
         tpl_template = env.get_template('thirdpartylogin.html')
