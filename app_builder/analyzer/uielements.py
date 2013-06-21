@@ -277,16 +277,16 @@ class Form(DictInited, Hooked):
     def html(self):
         fields = ['{% csrf_token %}']
         for f in self.container_info.form.fields:
-            # here is a potentially nice place to put the django model name in.
+            # put the django model name in.
             f.set_backend_name()
             fields.extend(f.htmls())
+        fields.append(Tag('div', {'class': 'form-error field-all'}))
         try:
             post_url = self.post_url
         except AttributeError:
             post_url = "ASDFJKWTF"
         attribs = {'method': 'POST',
                   'action': post_url } # TODO fix this.
-        # TODO overlap styles here? maybe need a better solution
         form = Tag('form', attribs, content=fields)
         return form
 
