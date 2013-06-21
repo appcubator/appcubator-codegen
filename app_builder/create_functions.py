@@ -283,9 +283,10 @@ class AppComponentFactory(object):
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
 
             # construct a roleredirect thing
-            role_linklang_tuples = [(r.role, FnCodeChunk(lambda: r.goto_pl.to_code(template=False))) for r in uie.container_info.form.loginRoutes]
-            rr = RoleRedirectChunk(role_linklang_tuples)
-            fr.add_role_redirect(rr)
+            if uie.app.multiple_users:
+                role_linklang_tuples = [(r.role, FnCodeChunk(lambda: r.goto_pl.to_code(template=False))) for r in uie.container_info.form.loginRoutes]
+                rr = RoleRedirectChunk(role_linklang_tuples)
+                fr.add_role_redirect(rr)
 
         uie._django_form_receiver = fr
         return fr

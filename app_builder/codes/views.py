@@ -106,6 +106,4 @@ class DjangoSignupFormReceiver(DjangoFormReceiver):
         self.signup_role = role_name
 
     def render(self):
-        if not hasattr(self, 'signup_role'):
-            self.signup_role = None         # easier than overriding init, which is so annoying
         return env.get_template('signup_form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
