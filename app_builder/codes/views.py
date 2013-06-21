@@ -10,6 +10,7 @@ class DjangoPageView(object):
         """
         self.identifier = identifier
         self.code_path = "webapp/pages.py"
+        self.contains_user_ref = False
 
         self.locals = {}
         # args, make a namespace for the function
@@ -25,6 +26,13 @@ class DjangoPageView(object):
         for arg, data in self.args:
             name_attempt = data.get('template_id', 'BADNAME') # helps a test pass
             data['template_id'] = self.pc_namespace.new_identifier(str(name_attempt), ref=data['ref'])
+
+        # Check CurrentUser references    
+        for (arg, data) in self.args:
+            print arg, data
+            if data['model_id'] == "CurrentUser":
+                self.contains_user_ref = True
+                break
 
         # queries
         self.queries = []
