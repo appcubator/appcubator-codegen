@@ -336,7 +336,6 @@ class App(DictInited):
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
             rl.resolve_data()
-            print "PLP", rl._path
             rl.resolve_page()
 
 
