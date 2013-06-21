@@ -178,7 +178,7 @@ class Page(DictInited):
 
     #     def __init__(self, *args, **kwargs):
     #         super(Page.AccessLevel, self).__init__(*args, **kwargs)
-        
+
     class URL(DictInited):
 
 

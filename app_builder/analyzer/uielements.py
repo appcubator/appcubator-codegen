@@ -213,12 +213,25 @@ class Form(DictInited, Hooked):
                 # set fk could be something like, "this.teacher" or "CurrentUser.mygroup".
                 # to object could be something like, "Page.Teacher" or "Page.Group"
 
+            class RoleRouting(DictInited, Resolvable):
+                _schema = {
+                    "role": {"_type": ""}, # name of the user role (Student)
+                    "goto": {"_type": ""} # link lang it should redirect to
+                }
+                _resolve_attrs = ()
+                _pagelang_attrs = (('goto', 'goto_pl'),)
+
+                def __init__(self, *args, **kwargs):
+                    super(Form.FormInfo.FormInfoInfo.RoleRouting, self).__init__(*args, **kwargs)
+                    assert self.role in [u.name for u in self.users], "Role not recognized."
+
             _schema = {
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]}
+                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
+                "loginRoutes": {"_one_of": [{"_type" : RoleRouting}, {"_type": None}], "_default": None}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
@@ -229,6 +242,8 @@ class Form(DictInited, Hooked):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
                 for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
+                if self.action == 'login':
+                    assert self.loginRoutes is not None, "login form must have loginRoutes"
 
             def resolve_page(self):
                 if self.goto is None:
