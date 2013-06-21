@@ -232,7 +232,7 @@ class Form(DictInited, Hooked):
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
                 "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
                 "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
-                "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
+                "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
 
             }
 
@@ -245,6 +245,7 @@ class Form(DictInited, Hooked):
                 for f in filter(lambda x: isinstance(x, Form.FormInfo.FormInfoInfo.FormModelField), self.fields):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
 
+            def validate(self):
                 if self.action == 'login' and self.app.multiple_users:
                     assert self.loginRoutes is not None, "login form must have loginRoutes"
 

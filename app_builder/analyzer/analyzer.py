@@ -307,8 +307,8 @@ class App(DictInited):
                 },
             ]
         }
-        self.multiple_roles = len(self.users) > 1
-        if self.multiple_roles:
+        self.multiple_users = len(self.users) > 1
+        if self.multiple_users:
             userdict['fields'].append({"name":"_role", "type":"text"})
 
         userentity = Entity.create_from_dict(userdict)
@@ -368,6 +368,11 @@ class App(DictInited):
         for path, ii in filter(lambda n: isinstance(n[1], Iterator.IteratorInfo), self.iternodes()):
             ii.entity = encode_braces(
                 'tables/%s' % ii.entity)  # "Posts" => "tables/Posts"
+
+        # Second order validations
+        for path, obj in filter(lambda n: isinstance(n[1], object), self.iternodes()):
+            if hasattr(obj, 'validate'):
+                obj.validate()
 
         # Resolve reflangs
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):

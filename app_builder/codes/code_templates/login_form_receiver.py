@@ -19,8 +19,10 @@ def {{ fr.identifier }}({{request}}):
         {{login_function}}({{request}}, form.get_user())
         {% endblock %}
 
-        {% if not fr.role_redirect is undefined %}
         {% block redirect %}
+        {% if not (fr.role_redirect is undefined) %}
         {{ fr.role_redirect.render() }}
-        {% endblock %}
+        {% else %}
+{{ super() }}
         {% endif %}
+        {% endblock %}
