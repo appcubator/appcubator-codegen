@@ -45,7 +45,8 @@ class AppComponentFactory(object):
                 x = {'username': 'username',
                      'First Name': 'first_name',
                      'Last Name': 'last_name',
-                     'Email': 'email'
+                     'Email': 'email',
+                     '_role': '_role'
                     }
                 f._django_field_identifier = x[f.name]
 

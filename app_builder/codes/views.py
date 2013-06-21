@@ -29,7 +29,6 @@ class DjangoPageView(object):
 
         # Check CurrentUser references    
         for (arg, data) in self.args:
-            print arg, data
             if data['model_id'] == "CurrentUser":
                 self.contains_user_ref = True
                 break

@@ -21,7 +21,7 @@ def {{ fr.identifier }}({{request}}):
 
         {% block redirect %}
         {% if not (fr.role_redirect is undefined) %}
-        {{ fr.role_redirect.render() }}
+        {{ fr.role_redirect.render()|indent(8) }}
         {% else %}
 {{ super() }}
         {% endif %}

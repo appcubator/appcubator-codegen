@@ -216,13 +216,15 @@ class Form(DictInited, Hooked):
             class RoleRouting(DictInited, Resolvable):
                 _schema = {
                     "role": {"_type": ""}, # name of the user role (Student)
-                    "goto": {"_type": ""} # link lang it should redirect to
+                    "redirect": {"_type": ""} # link lang it should redirect to
                 }
                 _resolve_attrs = ()
-                _pagelang_attrs = (('goto', 'goto_pl'),)
+                _pagelang_attrs = (('redirect', 'goto_pl'),)
 
                 def __init__(self, *args, **kwargs):
                     super(Form.FormInfo.FormInfoInfo.RoleRouting, self).__init__(*args, **kwargs)
+
+                def validate(self):
                     assert self.role in [u.name for u in self.app.users], "Role not recognized."
 
             _schema = {
