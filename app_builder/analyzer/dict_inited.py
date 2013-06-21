@@ -81,7 +81,6 @@ class DictInited(object):
             return [cls._recursively_create(minithing, schema['_each'], data_only=data_only) for minithing in thing]
 
         elif type(thing) == type({}):
-
             if '_mapping' not in schema:
                 return thing
 

@@ -5,6 +5,7 @@
 {% set request = locals['request'] %}
 {% set page_context = locals['page_context'] %}
 
+{% if view.contains_user_ref %}@{{login_required}}{% endif %}
 @{{require_GET}}
 def {{ view.identifier }}({{request}}{% for arg, data in view.args %}, {{ arg }}{% endfor %}):
     {{page_context}} = {}

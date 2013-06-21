@@ -299,6 +299,8 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         "content" : {"_type" : ""},
         "goto" : {"_type" : ""}
     }
+
+    _resolve_attrs = ()
     _pagelang_attrs = (('goto', 'goto_pl'), )
 
     def __init__(self, *args, **kwargs):
@@ -316,6 +318,8 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         tpl = Tag('div', {}, content=tpl_template.render(context=self))
         return tpl
 
+    def visit_strings(self, f):
+        pass
 
 
 class Node(DictInited, Hooked):  # a uielement with no container_info
