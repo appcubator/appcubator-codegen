@@ -167,7 +167,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 AUTH_PROFILE_MODULE = "webapp.UserProfile"
+# IMPORTANT: Allows for the case the user cancels. Enable during debugging.
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
+
+SOCIAL_AUTH_BACKEND_ERROR_URL = '/'
+LOGIN_ERROR_URL = '/'
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
