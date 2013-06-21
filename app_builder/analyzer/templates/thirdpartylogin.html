@@ -1,1 +1,1 @@
-<a href="{{ '{%' }} url socialauth_begin '{{ context.provider }}' {{ '%}' }}" class="btn {{ context.provider }}-btn ">{{ context.content }}</a>
+<a href="{{ '{%' }} url socialauth_begin '{{ context.provider }}' {{ '%}' }}"{% if context.redirect %}?next={{ context.goto_pl.to_code() }}{% endif %} class="btn {{ context.provider }}-btn ">{{ context.content }}</a>

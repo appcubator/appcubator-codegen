@@ -170,7 +170,17 @@ from uielements import UIElement
 
 class Page(DictInited):
 
+    # class AccessLevel(DictInited):
+
+    #     _schema = {
+    #         "access_level" : {"_type" : ""}
+    #     }
+
+    #     def __init__(self, *args, **kwargs):
+    #         super(Page.AccessLevel, self).__init__(*args, **kwargs)
+        
     class URL(DictInited):
+
 
         _schema = {
             "urlparts": {"_type": [], "_each": {"_type": ""}},
@@ -215,6 +225,7 @@ class Page(DictInited):
         "navbar": {"_type": Navbar},
         "footer": {"_type": Footer},
         "uielements": {"_type": [], "_each": {"_type": UIElement}},
+        # "access_level": {"_type": AccessLevel}
         "access_level": {"_type": ""}
     }
 
