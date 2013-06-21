@@ -8,6 +8,9 @@
     {% endfor %}
 )
 
-{% if urls.has_social %}
-urlpatterns += patterns('', url(r'', include('social_auth.urls')))
+{% if not urls.first_time and urls.has_social %}
+urlpatterns += patterns('',
+    url(r'', include('social_auth.urls')),
+    url('^logout/$', logout, {"next_page" : "/"}),
+)
 {% endif %}
