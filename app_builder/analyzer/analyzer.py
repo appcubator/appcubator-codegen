@@ -11,6 +11,19 @@ from . import env
 
 from app_builder.analyzer import logger
 
+"""
+  Consists of each type of front facing primitive. This can range from different type
+  of fields, pages etc.
+
+  Each field contains a schema that specifies what the app_state for that primitive
+  must contain. Each field must have a _type that specifies its type. This can be
+  prefixed with _one_of to specify different types. For lists, we use _each to
+  signify its element's types.
+
+  ((src1,dst1), (src2, dst2), ...) is a way of specifying how src_i gets resolved to
+  dst_i for primitives that may need attributes resolved. This is stored in _resolve_attrs
+"""
+
 # tables
 
 class EntityField(DictInited):
@@ -165,7 +178,7 @@ class Page(DictInited):
 
     #     def __init__(self, *args, **kwargs):
     #         super(Page.AccessLevel, self).__init__(*args, **kwargs)
-        
+
     class URL(DictInited):
 
 
@@ -267,6 +280,11 @@ class App(DictInited):
         for p in self.pages:
             assert p.url.is_valid(), "Url not valid: %r" % p.url.urlparts
 
+        """
+        User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
+        for translation, normalize to CurrentUser.
+        for redirects, replace redirect portion of the code with some logic
+        """
         # create the user entity based on userconfig
         userdict = {
             "name": "User",
@@ -274,32 +292,56 @@ class App(DictInited):
                 {
                     "name": "username",
                     "type": "text",
-                    "required": True
                 },
                 {
                     "name": "First Name",
                     "type": "text",
-                    "required": True
                 },
                 {
                     "name": "Last Name",
                     "type": "text",
-                    "required": True
                 },
                 {
                     "name": "Email",
                     "type": "text",
-                    "required": True
                 },
             ]
         }
+        self.multiple_users = len(self.users) > 1
+        if self.multiple_users:
+            userdict['fields'].append({"name":"_role", "type":"text"})
+
         userentity = Entity.create_from_dict(userdict)
-        userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
-        userentity.user_profile_fields = [f for f in self.users[0].fields] # users[0] is the first user role. ss is temp.
-        userentity.fields.extend(self.users[0].fields)
+        user_role_field = [ f for f in userentity.fields if f.name == '_role' ][0] # linear search
+        self.user_role_field = user_role_field
+        userentity.user_fields = [f for f in userentity.fields if f is not user_role_field] # create a new list, bc the old one is mutated later
+
+        # combine all the fields from all the user roles
+        combined_fields_from_all_roles = []
+        for u in self.users:
+            combined_fields_from_all_roles.extend(u.fields)
+
+        # deduplicate by name to get the total set of fields that the userprofile will have.
+        user_profile_field_set = []
+        for field in combined_fields_from_all_roles:
+            dupe = False
+            for already_added_field in user_profile_field_set:
+                if field.name == already_added_field.name:
+                    dupe = True
+                    assert field.type == already_added_field.type, "Two user role fields had same name but different type."
+                    break
+            if not dupe:
+                user_profile_field_set.append(field)
+
+        userentity.user_profile_fields = user_profile_field_set + [user_role_field]
+
+        userentity.fields = userentity.user_fields + userentity.user_profile_fields
+
         userentity.is_user = True
+        userentity.role_names = [ u.name for u in self.users ]
+
         self.tables.append(userentity)
-        self.userentity = userentity # just a convenience for the posterity
+        self.userentity = userentity # just binding for convenience
 
         # HACK replace uielements with their subclass
         for p in self.pages:
@@ -331,6 +373,11 @@ class App(DictInited):
         for path, ii in filter(lambda n: isinstance(n[1], Iterator.IteratorInfo), self.iternodes()):
             ii.entity = encode_braces(
                 'tables/%s' % ii.entity)  # "Posts" => "tables/Posts"
+
+        # Second order validations
+        for path, obj in filter(lambda n: isinstance(n[1], object), self.iternodes()):
+            if hasattr(obj, 'validate'):
+                obj.validate()
 
         # Resolve reflangs
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):

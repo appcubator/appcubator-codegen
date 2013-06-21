@@ -29,7 +29,6 @@ class DjangoPageView(object):
 
         # Check CurrentUser references    
         for (arg, data) in self.args:
-            print arg, data
             if data['model_id'] == "CurrentUser":
                 self.contains_user_ref = True
                 break
@@ -85,7 +84,7 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
         args = [ (self.namespace.new_identifier(arg, ref=data['ref']), data) for arg, data in args ]
         for arg, data in args:
             name_attempt = data.get('inst_id', 'BADNAME') # helps a test pass
-            data['inst_id'] = self.pc_namespace.new_identifier(str(name_attempt), ref=data['ref']) 
+            data['inst_id'] = self.namespace.new_identifier(str(name_attempt), ref=data['ref']) 
         self.args.extend(args)
 
 
@@ -94,6 +93,9 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
 
 
 class DjangoLoginFormReceiver(DjangoFormReceiver):
+
+    def add_role_redirect(self, role_redirect):
+        self.role_redirect = role_redirect
 
     def render(self):
         return env.get_template('login_form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
@@ -106,6 +108,10 @@ class DjangoSignupFormReceiver(DjangoFormReceiver):
         super(DjangoSignupFormReceiver, self).__init__(identifier)
         #self.user_profile_form_id = user_profile_form_id
         """
+
+    def add_signup_role(self, role_name, role_field_id):
+        self.locals['role_field_id'] = role_field_id
+        self.signup_role = role_name
 
     def render(self):
         return env.get_template('signup_form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)

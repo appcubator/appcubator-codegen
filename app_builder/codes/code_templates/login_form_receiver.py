@@ -18,3 +18,11 @@ def {{ fr.identifier }}({{request}}):
         {% block do_stuff_with_valid_form %}
         {{login_function}}({{request}}, form.get_user())
         {% endblock %}
+
+        {% block redirect %}
+        {% if not (fr.role_redirect is undefined) %}
+        {{ fr.role_redirect.render()|indent(8) }}
+        {% else %}
+{{ super() }}
+        {% endif %}
+        {% endblock %}

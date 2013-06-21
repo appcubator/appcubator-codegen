@@ -133,6 +133,7 @@ class DjangoUserModel(DjangoModel):
         self.namespace = user_prof_identifier.ns
         self.locals = {}
         self.locals['user o2o'] = self.namespace.new_identifier('user')
+        self.is_user_model = True
 
     def create_query(self):
         raise Exception("what up brah. this is not yet implemented")

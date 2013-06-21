@@ -91,7 +91,10 @@ def datalang_to_fields(starting_ent, tokens):
 def parse_to_datalang(datalang_string, app, entity_of_form=None):
     tokens = datalang_string.split('.')
     # 1. get the seed type to start the chaining in step 2
-    if tokens[0] == 'CurrentUser':
+    if tokens[0] == 'CurrentUser' or tokens[0] in [u.name for u in app.users]:
+        if tokens[0] != 'CurrentUser':
+            # TODO security check to make sure that the user role actually has that fields
+            pass
         context_type = 'user'
         ent = filter(lambda e: e.is_user, app.tables)[0]
         tokens = tokens[1:]

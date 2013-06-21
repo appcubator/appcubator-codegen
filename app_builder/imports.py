@@ -37,10 +37,12 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.auth.logout_view':  'from django.contrib.auth.views import logout',
             'django.auth.logout':       'from django.contrib.auth import logout',
 
+            'django.signals.post_save': 'from django.db.models.signals import post_save',
+
 }
 
 
-FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User'),
+FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 'django.signals.post_save'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',
                                     'django.require_GET',
