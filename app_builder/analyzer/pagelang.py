@@ -28,24 +28,24 @@ class PageLang(object):
             for e in entities_on_page:
                 assert e in self.entity_datalang_map, "Entity %r in page context but not found in pagelang's datalangs." % e.name
 
-    def to_code(self,context=None, template=True):
+    def to_code(self, context=None, template=True):
         """ If template is false reverse is used otherwise we return the URL template tag """
-        datalang_variable_string = ''.join(['%s ' % self.entity_datalang_map[e].to_code() for e in self.page.get_tables_from_url()])
         if self.is_external:
-            if not template:
+            if template:
                 return self.page_str
+            return repr(self.page_str)
+
+        datalang_variable_string = ''.join(['%s ' % self.entity_datalang_map[e].to_code() for e in self.page.get_tables_from_url()])
+        if not template:
+            args_tuple = tuple(datalang_variable_string.split())
+            if len(list(args_tuple)) > 0:
+                args_str = ", args=%s)" % repr(args_tuple)
             else:
-                return repr(self.page_str)
-        else:
-            if not template:
-                args_tuple = tuple(datalang_variable_string.split())
                 args_str = ""
-                if len(list(args_tuple)) > 0:
-                    args_str = ", args=%s)" % repr(args_tuple) 
-                code = "reverse('webapp.pages.%s'%s)" %(self.page._django_view.identifier, args_str)
-                return code
-            else:
-                return "{%% url webapp.pages.%s %s%%}" % (self.page._django_view.identifier, datalang_variable_string)
+            code = "reverse('webapp.pages.%s'%s)" %(self.page._django_view.identifier, args_str)
+            return code
+        else:
+            return "{%% url webapp.pages.%s %s%%}" % (self.page._django_view.identifier, datalang_variable_string)
 
 def parse_lang(pagelang_string):
     """Given a string, try to parse out the page name and k, v pairs of the querystring after it."""
