@@ -4,7 +4,7 @@
 {% set reverse = imports['django.url.reverse'] %}
 {% set request = locals['request'] %}
 {% if fr.redirect %}
-{% set page_view_id = locals['page_view_id'] %}
+{% set page_view_id = locals['page_view_id']() %}
 {% set redirect_url = locals['redirect_url'] %}{# this is just the variable placeholder to avoid name collisions. not actual url. #}
 {% endif %}
 
