@@ -231,7 +231,7 @@ class Form(DictInited, Hooked):
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
                 "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
-                "loginRoutes": {"_one_of": [{"_type" : RoleRouting}, {"_type": None}], "_default": None}
+                "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None}
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)

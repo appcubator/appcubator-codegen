@@ -18,3 +18,7 @@ def {{ fr.identifier }}({{request}}):
         {% block do_stuff_with_valid_form %}
         {{login_function}}({{request}}, form.get_user())
         {% endblock %}
+
+        {% block redirect %}
+        {{ fr.role_redirect.render() }}
+        {% endblock %}

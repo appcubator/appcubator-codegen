@@ -19,12 +19,14 @@ def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
         {% block do_stuff_with_valid_form %}
         obj = form.save()
         {% endblock %}
+        {% block redirect %}
         {% if fr.redirect %}
         {{redirect_url}} = {{redirect_url_code}}
         return {{JsonResponse}}(data={'redirect_to':{{redirect_url}}})
         {% else %}
         return {{JsonResponse}}(data={'refresh':True})
         {% endif %}
+        {% endblock %}
 
     return {{JsonResponse}}(errors=form.errors)
 

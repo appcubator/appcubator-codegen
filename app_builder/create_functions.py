@@ -6,7 +6,7 @@ from app_builder.codes import DjangoPageView, DjangoTemplate
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
-from app_builder.codes.utils import AssignStatement, FnCodeChunk
+from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 
@@ -281,6 +281,12 @@ class AppComponentFactory(object):
             fr = DjangoLoginFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
+
+            # construct a roleredirect thing
+            role_linklang_map = { r.role: FnCodeChunk(lambda: r.goto_pl.to_code(template=False)) for r in uie.container_info.form.loginRoutes }
+            rr = RoleRedirectChunk(role_linklang_map)
+            fr.add_role_redirect(rr)
+
         uie._django_form_receiver = fr
         return fr
 

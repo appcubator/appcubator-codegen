@@ -87,6 +87,9 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
 
 class DjangoLoginFormReceiver(DjangoFormReceiver):
 
+    def add_role_redirect(self, role_redirect):
+        self.role_redirect = role_redirect
+
     def render(self):
         return env.get_template('login_form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
 
