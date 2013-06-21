@@ -17,7 +17,7 @@ def {{ fr.identifier }}({{request}}):
         user = form.save()
         {% if not fr.signup_role is undefined %}
         userprofile = user.get_profile()
-        userprofile._role = '{{fr.signup_role}}'
+        userprofile.{{fr.locals['role_field_id']}} = '{{fr.signup_role}}'
         userprofile.save()
         {% endif %}
         new_user = {{authenticate_function}}(username={{request}}.POST['username'],

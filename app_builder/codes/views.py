@@ -109,7 +109,8 @@ class DjangoSignupFormReceiver(DjangoFormReceiver):
         #self.user_profile_form_id = user_profile_form_id
         """
 
-    def add_signup_role(self, role_name):
+    def add_signup_role(self, role_name, role_field_id):
+        self.locals['role_field_id'] = role_field_id
         self.signup_role = role_name
 
     def render(self):

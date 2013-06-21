@@ -46,7 +46,6 @@ class AppComponentFactory(object):
                      'First Name': 'first_name',
                      'Last Name': 'last_name',
                      'Email': 'email',
-                     '_role': '_role'
                     }
                 f._django_field_identifier = x[f.name]
 
@@ -286,7 +285,8 @@ class AppComponentFactory(object):
             # construct a roleredirect thing
             if uie.app.multiple_users:
                 role_linklang_tuples = [(r.role, FnCodeChunk(lambda: r.goto_pl.to_code(template=False))) for r in uie.container_info.form.loginRoutes]
-                rr = RoleRedirectChunk(role_linklang_tuples)
+                role_field_id = uie.app.user_role_field._django_field.identifier
+                rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
                 fr.add_role_redirect(rr)
 
         uie._django_form_receiver = fr
@@ -305,7 +305,8 @@ class AppComponentFactory(object):
             if uie.container_info.form.redirect:
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
             if uie.app.multiple_users:
-                fr.add_signup_role(uie.container_info.form.signupRole)
+                role_field_id = uie.app.user_role_field._django_field.identifier
+                fr.add_signup_role(uie.container_info.form.signupRole, role_field_id)
         uie._django_form_receiver = fr
         return fr
 

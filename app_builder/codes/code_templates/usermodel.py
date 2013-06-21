@@ -15,8 +15,11 @@
     {% block instancemethods %}
     {% if not model.is_user_model is undefined and model.is_user_model%}
     @staticmethod
-    def userprofile_post_save_hook(sender, instance, created):
-        pass
+    def userprofile_post_save_hook(sender, instance, created, **kwargs):
+        try:
+            instance.get_profile()
+        except {{model.user_profile_identifier}}.DoesNotExist:
+            {{model.user_profile_identifier}}({{user}}=instance).save()
     {% endif %}
     {% endblock %}
 
