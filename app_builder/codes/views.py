@@ -77,7 +77,7 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
         args = [ (self.namespace.new_identifier(arg, ref=data['ref']), data) for arg, data in args ]
         for arg, data in args:
             name_attempt = data.get('inst_id', 'BADNAME') # helps a test pass
-            data['inst_id'] = self.pc_namespace.new_identifier(str(name_attempt), ref=data['ref']) 
+            data['inst_id'] = self.namespace.new_identifier(str(name_attempt), ref=data['ref']) 
         self.args.extend(args)
 
 

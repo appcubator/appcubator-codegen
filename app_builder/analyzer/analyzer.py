@@ -286,6 +286,11 @@ class App(DictInited):
         userentity = Entity.create_from_dict(userdict)
         userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
 
+        """
+        User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
+        for translation, normalize to CurrentUser.
+        for redirects, replace redirect portion of the code with some logic
+        """
         # combine all the fields from all the user roles
         combined_fields_from_all_roles = []
         for u in self.users:
@@ -307,6 +312,7 @@ class App(DictInited):
         userentity.is_user = True
         userentity.role_names = [ u.name for u in self.users ]
 
+        self.userentity = userentity
         self.tables.append(userentity)
 
 

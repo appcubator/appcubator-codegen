@@ -280,7 +280,7 @@ class AppComponentFactory(object):
                 self.fr_namespace.find_or_create_import('django.auth.login', 'auth_login')
             fr = DjangoLoginFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
-                fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
         uie._django_form_receiver = fr
         return fr
 
@@ -295,7 +295,7 @@ class AppComponentFactory(object):
                 self.fr_namespace.find_or_create_import('django.auth.authenticate', 'authenticate')
             fr = DjangoSignupFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
-                fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
         uie._django_form_receiver = fr
         return fr
 
@@ -334,7 +334,7 @@ class AppComponentFactory(object):
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
         if form_model.redirect:
-            fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+            fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace , template=False)
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr
