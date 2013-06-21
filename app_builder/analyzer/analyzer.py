@@ -157,14 +157,14 @@ from uielements import UIElement
 
 class Page(DictInited):
 
-    class AccessLevel(DictInited):
+    # class AccessLevel(DictInited):
 
-        _schema = {
-            "access_level" : {"_type" : ""}
-        }
+    #     _schema = {
+    #         "access_level" : {"_type" : ""}
+    #     }
 
-        def __init__(self, *args, **kwargs):
-            super(Page.AccessLevel, self).__init__(*args, **kwargs)
+    #     def __init__(self, *args, **kwargs):
+    #         super(Page.AccessLevel, self).__init__(*args, **kwargs)
         
     class URL(DictInited):
 
@@ -212,7 +212,8 @@ class Page(DictInited):
         "navbar": {"_type": Navbar},
         "footer": {"_type": Footer},
         "uielements": {"_type": [], "_each": {"_type": UIElement}},
-        "access_level": {"_type": AccessLevel}
+        # "access_level": {"_type": AccessLevel}
+        "access_level": {"_type": ""}
     }
 
     @property
@@ -335,6 +336,7 @@ class App(DictInited):
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
             rl.resolve_data()
+            print "PLP", rl._path
             rl.resolve_page()
 
 
