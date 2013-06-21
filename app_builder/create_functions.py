@@ -6,7 +6,7 @@ from app_builder.codes import DjangoPageView, DjangoTemplate
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
-from app_builder.codes.utils import AssignStatement, FnCodeChunk
+from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 
@@ -45,7 +45,7 @@ class AppComponentFactory(object):
                 x = {'username': 'username',
                      'First Name': 'first_name',
                      'Last Name': 'last_name',
-                     'Email': 'email'
+                     'Email': 'email',
                     }
                 f._django_field_identifier = x[f.name]
 
@@ -280,7 +280,15 @@ class AppComponentFactory(object):
                 self.fr_namespace.find_or_create_import('django.auth.login', 'auth_login')
             fr = DjangoLoginFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
-                fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
+
+            # construct a roleredirect thing
+            if uie.app.multiple_users:
+                role_linklang_tuples = [(r.role, FnCodeChunk(lambda: r.goto_pl.to_code(template=False))) for r in uie.container_info.form.loginRoutes]
+                role_field_id = uie.app.user_role_field._django_field.identifier
+                rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
+                fr.add_role_redirect(rr)
+
         uie._django_form_receiver = fr
         return fr
 
@@ -295,7 +303,10 @@ class AppComponentFactory(object):
                 self.fr_namespace.find_or_create_import('django.auth.authenticate', 'authenticate')
             fr = DjangoSignupFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
-                fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
+            if uie.app.multiple_users:
+                role_field_id = uie.app.user_role_field._django_field.identifier
+                fr.add_signup_role(uie.container_info.form.signupRole, role_field_id)
         uie._django_form_receiver = fr
         return fr
 
@@ -334,7 +345,7 @@ class AppComponentFactory(object):
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
         if form_model.redirect:
-            fr.locals['page_view_id'] = lambda: 'webapp.pages.%s' % uie.container_info.form.goto_pl.page._django_view.identifier
+            fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace , template=False)
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr

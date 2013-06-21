@@ -4,7 +4,7 @@
 {% set reverse = imports['django.url.reverse'] %}
 {% set request = locals['request'] %}
 {% if fr.redirect %}
-{% set page_view_id = locals['page_view_id']() %}
+{% set redirect_url_code = locals['redirect_url_code']() %}
 {% set redirect_url = locals['redirect_url'] %}{# this is just the variable placeholder to avoid name collisions. not actual url. #}
 {% endif %}
 
@@ -19,12 +19,14 @@ def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
         {% block do_stuff_with_valid_form %}
         obj = form.save()
         {% endblock %}
+        {% block redirect %}
         {% if fr.redirect %}
-        {{redirect_url}} = {{reverse}}('{{ page_view_id }}')
+        {{redirect_url}} = {{redirect_url_code}}
         return {{JsonResponse}}(data={'redirect_to':{{redirect_url}}})
         {% else %}
         return {{JsonResponse}}(data={'refresh':True})
         {% endif %}
+        {% endblock %}
 
     return {{JsonResponse}}(errors=form.errors)
 
