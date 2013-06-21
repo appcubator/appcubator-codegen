@@ -7,3 +7,7 @@
     {{url}}({{ url_string }}, '{{ function.identifier }}'),
     {% endfor %}
 )
+
+{% if urls.has_social %}
+urlpatterns += patterns('', url(r'', include('social_auth.urls')))
+{% endif %}
