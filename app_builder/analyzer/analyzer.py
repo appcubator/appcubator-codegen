@@ -312,9 +312,12 @@ class App(DictInited):
             userdict['fields'].append({"name":"_role", "type":"text"})
 
         userentity = Entity.create_from_dict(userdict)
-        user_role_field = [ f for f in userentity.fields if f.name == '_role' ][0] # linear search
-        self.user_role_field = user_role_field
-        userentity.user_fields = [f for f in userentity.fields if f is not user_role_field] # create a new list, bc the old one is mutated later
+        if self.multiple_users:
+            user_role_field = [ f for f in userentity.fields if f.name == '_role' ][0] # linear search
+            self.user_role_field = user_role_field
+            userentity.user_fields = [f for f in userentity.fields if f is not user_role_field] # create a new list, bc the old one is mutated later
+        else:
+            userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
 
         # combine all the fields from all the user roles
         combined_fields_from_all_roles = []
@@ -333,7 +336,10 @@ class App(DictInited):
             if not dupe:
                 user_profile_field_set.append(field)
 
-        userentity.user_profile_fields = user_profile_field_set + [user_role_field]
+        if self.multiple_users:
+            userentity.user_profile_fields = user_profile_field_set + [user_role_field]
+        else:
+            userentity.user_profile_fields = user_profile_field_set
 
         userentity.fields = userentity.user_fields + userentity.user_profile_fields
 
