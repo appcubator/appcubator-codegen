@@ -39,7 +39,7 @@ class PageLang(object):
         if not template:
             args_tuple = tuple(datalang_variable_string.split())
             if len(list(args_tuple)) > 0:
-                args_str = ", args=%s)" % repr(args_tuple)
+                args_str = ", args=%s" % repr(args_tuple)
             else:
                 args_str = ""
             code = "reverse('webapp.pages.%s'%s)" %(self.page._django_view.identifier, args_str)
