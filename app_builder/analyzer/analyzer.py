@@ -154,17 +154,23 @@ class Navbar(DictInited):
 
 class Footer(DictInited):
 
-    class FooterItem(DictInited):
+    class FooterItem(DictInited, Resolvable):
         _schema = {
             "url": {"_type": ""},
             "title": { "_type": "" }
         }
+
+        _pagelang_attrs = (('url', 'url_pl'),)
+        _resolve_attrs = ()
 
     _schema = {
         "customText": {"_type": ""},
         "isHidden": {"_type": True},
         "links": {"_type": [], "_each": {"_type": FooterItem}}
     }
+
+    def render(self):
+        return env.get_template('footer.html').render(footer=self)
 
 from uielements import UIElement
 
