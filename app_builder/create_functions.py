@@ -349,7 +349,7 @@ class AppComponentFactory(object):
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
         if form_model.redirect:
-            fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace , template=False)
+            fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
         fr.add_args(args)
         uie._django_form_receiver = fr
         return fr

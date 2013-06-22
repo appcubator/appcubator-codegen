@@ -28,14 +28,14 @@ class PageLang(object):
             for e in entities_on_page:
                 assert e in self.entity_datalang_map, "Entity %r in page context but not found in pagelang's datalangs." % e.name
 
-    def to_code(self, context=None, template=True):
+    def to_code(self, context=None, template=True, seed_id=None):
         """ If template is false reverse is used otherwise we return the URL template tag """
         if self.is_external:
             if template:
                 return self.page_str
             return repr(self.page_str)
 
-        datalang_variable_string = ''.join(['%s ' % self.entity_datalang_map[e].to_code() for e in self.page.get_tables_from_url()])
+        datalang_variable_string = ''.join(['%s ' % self.entity_datalang_map[e].to_code(context=context, seed_id=seed_id) for e in self.page.get_tables_from_url()])
         if not template:
             args_tuple = tuple(datalang_variable_string.split())
             if len(list(args_tuple)) > 0:
