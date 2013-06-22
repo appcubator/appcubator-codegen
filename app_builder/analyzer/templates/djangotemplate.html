@@ -28,3 +28,7 @@
     {% endif %}
 {% endfor %}
 {{ "{% endblock %}" }}
+
+{{ "{% block footer %}" }}
+{{ template.page.footer.render() }}
+{{ "{% endblock %}" }}
