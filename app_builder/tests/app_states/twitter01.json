@@ -687,7 +687,7 @@
                 ],
                 "action":"create",
                 "actions":[{
-                  "set_fk": "this.User",
+                  "set_fk": "Form.Tweet.User",
                   "to_object": "CurrentUser"
                 }],
                 "goto": "internal://My tweets/"

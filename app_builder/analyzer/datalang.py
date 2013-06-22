@@ -88,7 +88,7 @@ def datalang_to_fields(starting_ent, tokens):
 
     return (field_entity_pairs, obj_type)
 
-def parse_to_datalang(datalang_string, app, entity_of_form=None):
+def parse_to_datalang(datalang_string, app):
     tokens = datalang_string.split('.')
     # 1. get the seed type to start the chaining in step 2
     if tokens[0] == 'CurrentUser' or tokens[0] in [u.name for u in app.users]:
@@ -99,17 +99,11 @@ def parse_to_datalang(datalang_string, app, entity_of_form=None):
         ent = filter(lambda e: e.is_user, app.tables)[0]
         tokens = tokens[1:]
 
-    elif tokens[0] == 'Page' or tokens[0] == 'loop':
+    elif tokens[0] in ['Page', 'loop', 'Form']:
         upper_first_char = lambda x: x[0].upper() + x[1:].lower()
         context_type = upper_first_char(tokens[0])
         ent = app.tables[0].app.find('tables/%s' % tokens[1], name_allowed=True)
         tokens = tokens[2:]
-
-    elif tokens[0] == 'this': # for forms
-        context_type = 'Form'
-        ent = entity_of_form
-        assert entity_of_form is not None, "When using forms, you should give a ref to the entity using the 'entity_of_form' kwarg"
-        tokens = tokens[1:]
 
     else:
         raise Exception("Not Yet Implemented: %r" % tokens[0])

@@ -359,7 +359,7 @@ class AppComponentFactory(object):
         fr = uie._django_form_receiver
 
         def translate(s):
-            dl = datalang.parse_to_datalang(s, uie.app, entity_of_form=form_model.entity_resolved)
+            dl = datalang.parse_to_datalang(s, uie.app)
             return dl.to_code(seed_id=fr.locals['obj'])
 
         if form_model.action not in ['create', 'edit']:
