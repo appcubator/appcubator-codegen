@@ -24,7 +24,7 @@ class PageLang(object):
 
             # check that the data on the page matches the data in this pagelang.
             entities_on_page = self.page.get_tables_from_url()
-            assert len(entities_on_page) == len(self.entity_datalang_map), "Number of datalangs to page don't even match."
+            assert len(entities_on_page) == len(self.entity_datalang_map), "Number of datalangs to page don't even match in page lang: %r" % self.page_str
             for e in entities_on_page:
                 assert e in self.entity_datalang_map, "Entity %r in page context but not found in pagelang's datalangs." % e.name
 
