@@ -52,7 +52,7 @@ def parse_lang(pagelang_string):
     if pagelang_string is None or pagelang_string == "": import pdb; pdb.set_trace()
 
     # subtle bug - internal://Tweet Page?Tweet=Wassup is still valid, b.c i made the slash before ? optional. no one has to know.
-    m = re.match(r'^internal:\/\/([^\/]+)\/?(\?[^&=\/]+=[^&=\/]+(&[^&=\/]+=[^&=\/]+)+?)?$', pagelang_string)
+    m = re.match(r'^internal:\/\/([^\/]+)\/?(\?[^&=\/]+=[^&=\/]+(&[^&=\/]+=[^&=\/]+)*?)?$', pagelang_string)
     assert m is not None, "Invalid pagelang: %r" % pagelang_string
     page_name = m.group(1)
 
