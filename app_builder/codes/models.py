@@ -17,7 +17,7 @@ class DjangoQuery(object):
 
         if len(self.where_data) != 0:
             code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
-        # add on sorting and limiting here
+        # Natural enumeration 
         if self.sort_by is not None and self.sort_by is not "Date":
             code_line += ".order_by('%s')" % self.sort_by
         if self.limit is not -1:
