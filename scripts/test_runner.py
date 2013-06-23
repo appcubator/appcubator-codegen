@@ -15,6 +15,8 @@ import fileinput
 import traceback
 import logging
 import argparse
+import requests
+import time
 
 
 # configure loggers
@@ -94,7 +96,7 @@ def syncdb(dest):
     out, err = p.communicate()
     logger.debug("Syncdb output: %s\n%s" % (out, err))
 
-def run_tests(dest):
+def run_django_tests(dest):
     cmd = "python scripts/test.py"
     child_env = os.environ.copy()
     child_env['PYTHONPATH'] = dest
@@ -115,6 +117,25 @@ def get_rid_of_wsgi(dest):
         print line.rstrip()
 
 
+def run_acceptance_tests(splinter_file):
+    "Executes the splinter file to run the acceptance tests."
+    execfile(splinter_file, {}, {})
+
+
+def ping_until_success(url, retries=5):
+    "Holds up this process until a 200 is received from the server."
+    tries = 0
+    successful = False
+    while not successful or tries >= retries:
+        r = requests.get(url)
+        tries += 1
+        successful = r.status_code == 200
+        time.sleep(200)
+    if tries == retries:
+        raise Exception()
+    return
+
+
 def run_generic_tests(app_state_dir, specific_state_names=None):
     if specific_state_names is None:
         fnames_to_test = os.listdir(app_state_dir)
@@ -122,18 +143,31 @@ def run_generic_tests(app_state_dir, specific_state_names=None):
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir) if fname.endswith('.json') and fname[:-5] in specific_state_names ]
 
     num_apps = len(fnames_to_test)
-    for i, json_file in enumerate(fnames_to_test):
-        json_file = os.path.join(app_state_dir, json_file)
+    for i, json_file_name in enumerate(fnames_to_test):
+        json_file = os.path.join(app_state_dir, json_file_name)
         logger.info("Running tests for app %s [%d of %d]" %(json_file, (i+1), num_apps))
         try:
             dest = basic_deploy(json_file)
         except:
             logger.error("App %s failed to deploy" % json_file)
             logger.error("Encountered exception: ", sys.exc_info()[0])
+            continue
         else:
-            logger.info("App %s Deployed locally at %s" % (json_file.replace('.json', ''), dest))
+            logger.info("App %s Deployed locally at %s" % (json_file_name, dest))
             syncdb(dest)
-            run_tests(dest)
+            run_django_tests(dest)
+            splinter_file = os.path.join('%s_splinter.py' % json_file_name)
+            if os.path.isfile(splinter_file):
+                # start the server
+                cmd = "python manage.py runserver"
+                p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # wait until server is ready
+                ping_until_success('127.0.0.1:8000/')
+                run_acceptance_tests(splinter_file)
+                # kill the server
+                p.terminate()
+            else:
+                logger.warn("No splinter file found for %s" % json_file_name)
 
 
 if __name__ == "__main__":
