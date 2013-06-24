@@ -138,7 +138,7 @@ def ping_until_success(url, retries=5):
 
 def run_generic_tests(app_state_dir, specific_state_names=None):
     if specific_state_names is None:
-        fnames_to_test = os.listdir(app_state_dir)
+        fnames_to_test = [ fname for fname in os.listdir(app_state_dir)  if fname.endswith('.json') ]
     else:
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir) if fname.endswith('.json') and fname[:-5] in specific_state_names ]
 

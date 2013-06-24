@@ -5,11 +5,11 @@ from . import env
 
 class DjangoQuery(object):
 
-    def __init__(self, model_id, where_data=None, sort_by=None, limit=None):
+    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None):
         self.model_id = model_id
         self.where_data = where_data if where_data is not None else []
         # TODO implement these
-        self.sort_by = sort_by
+        self.sort_by_id = sort_by_id
         self.limit = limit
 
     def render(self):
@@ -18,8 +18,8 @@ class DjangoQuery(object):
         if len(self.where_data) != 0:
             code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
         # Natural enumeration 
-        if self.sort_by is not None and self.sort_by is not "Date":
-            code_line += ".order_by('%s')" % self.sort_by
+        if self.sort_by_id is not None:
+            code_line += ".order_by('%s')" % self.sort_by_id
         if self.limit is not -1:
             code_line += "[:%d]" % self.limit
         return code_line
@@ -117,9 +117,15 @@ class DjangoModel(object):
         self.fields.append(f)
         return f
 
-    def create_query(self): # will add more options for query later
-        q = DjangoQuery(self.identifier)
-        return q
+    def add_date_created_field(self, identifier):
+        f = DjangoField(identifier, '_CREATED', required=True, parent_model=self)
+        self.fields.append(f)
+        return f
+
+    def add_date_modified_field(self, identifier):
+        f = DjangoField(identifier, '_MODIFIED', required=True, parent_model=self)
+        self.fields.append(f)
+        return f
 
     def render(self):
         return env.get_template('model.py').render(model=self, imports=self.namespace.imports(), locals={})
@@ -139,9 +145,6 @@ class DjangoUserModel(DjangoModel):
         self.locals = {}
         self.locals['user o2o'] = self.namespace.new_identifier('user')
         self.is_user_model = True
-
-    def create_query(self):
-        raise Exception("what up brah. this is not yet implemented")
 
     def render(self):
         return env.get_template('usermodel.py').render(model=self, imports=self.namespace.imports(), locals=self.locals)
