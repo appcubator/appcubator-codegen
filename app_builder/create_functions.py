@@ -121,7 +121,7 @@ class AppComponentFactory(object):
             template_id = model_id
             args.append((e.name.lower()+'_id', {"model_id": model_id, "template_id": template_id, "ref": e._django_model}))
 
-        v = DjangoPageView(identifier, args=args)
+        v = DjangoPageView(identifier, args=args, access=page.access_level)
         page._django_view = v
         return v
 

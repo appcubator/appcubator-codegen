@@ -1,11 +1,14 @@
 {% set require_GET = imports['django.require_GET'] %}
 {% set render = imports['django.render'] %}
 {% set get_object_or_404 = imports['django.get_object_or_404'] %}
+{% set login_required = imports['django.login_required'] %}
 
 {% set request = locals['request'] %}
 {% set page_context = locals['page_context'] %}
 
-{% if view.contains_user_ref %}@{{login_required}}{% endif %}
+{% if view.login_required %}
+@{{login_required}}
+{% endif %}
 @{{require_GET}}
 def {{ view.identifier }}({{request}}{% for arg, data in view.args %}, {{ arg }}{% endfor %}):
     {{page_context}} = {}

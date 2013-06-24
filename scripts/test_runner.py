@@ -120,7 +120,7 @@ def get_rid_of_wsgi(dest):
 
 def run_acceptance_tests(splinter_file):
     "Executes the splinter file to run the acceptance tests."
-    execfile(splinter_file, {}, {})
+    execfile(splinter_file, {"__name__": "__main__"})
 
 
 def ping_until_success(url, retries=10):
@@ -173,9 +173,7 @@ def run_generic_tests(app_state_dir, specific_state_names=None):
                 finally:
                     # send sigterm to all processes in the group
                     os.killpg(p.pid, signal.SIGTERM)
-                    print "waiting"
                     p.wait()
-                    print "process with pid %d should be dead now." % p.pid
             else:
                 logger.warn("No splinter file found for %s" % json_file_name)
 
