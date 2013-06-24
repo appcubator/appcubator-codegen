@@ -290,7 +290,8 @@ class Form(DictInited, Hooked):
         }
 
     _schema = {
-        "container_info": {"_type": FormInfo}
+        "container_info": {"_type": FormInfo},
+        "class_name": {"_type": "", "_default":""}
     }
 
     def visit_strings(self, f):
@@ -312,7 +313,8 @@ class Form(DictInited, Hooked):
         except AttributeError:
             post_url = "ASDFJKWTF"
         attribs = {'method': 'POST',
-                  'action': post_url }
+                   'action': post_url,
+                   'class': self.class_name}
         form = Tag('form', attribs, content=fields)
         return form
 
