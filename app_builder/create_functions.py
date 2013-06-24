@@ -3,7 +3,7 @@ import re
 from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate
-from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, Statics
+from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk
@@ -217,24 +217,44 @@ class AppComponentFactory(object):
         app._django_fr_urls = u
         return u
 
+    def create_misc_urls(self, app):
+        url_patterns_id = self.urls_namespace.get_by_ref('MISC.urlpatterns')
+        u = DjangoURLs('', self.urls_namespace, url_patterns_id)
+        app._django_misc_urls = u
+        return u
+
+
 
     # ADDING ROUTES
 
-    def add_statics(self, app):
-        return Statics(self.urls_namespace)
+    def add_social_include_url(self, app):
+        """
+        End goal is this: url(r'', include('social_auth.urls')),
+        """
+        url_obj = app._django_misc_urls
+        social_incl_identifier = FnCodeChunk(lambda: '%s("social_auth.urls")' % self.urls_namespace.imports()['django.include'])
+        social_include_route = ("r''", social_incl_identifier)
+        url_obj.routes.append(social_include_route)
 
+    def add_logout_url(self, app):
+        """End goal is this: url('^logout/$', logout, {"next_page" : "/"}),"""
+        url_obj = app._django_misc_urls
+        logout_id = self.urls_namespace.imports()['django.auth.logout_view'] # TODO use the import instead.
+        kwargs = { "next_page": "/" }
+        logout_route = ("""r'^__logout/$'""", logout_id, kwargs)
+        url_obj.routes.append(logout_route)
 
     def add_page_to_urls(self, page):
         url_obj = page.app._django_page_urls
 
-        route = (page.url_regex, page._django_view)
+        route = (page.url_regex, FnCodeChunk(lambda: "'%s'" % page._django_view.identifier))
         url_obj.routes.append(route)
 
     def create_url_for_form_receiver(self, uie):
         url_obj = uie.app._django_fr_urls
 
         url = self.urls_namespace.new_identifier(uie._django_form.identifier)
-        route = (repr('^%s/$' % url), uie._django_form_receiver)
+        route = (repr('^%s/$' % url), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
         url_obj.routes.append(route)
 
         # this assumes the form receiver is the this module
@@ -333,8 +353,8 @@ class AppComponentFactory(object):
 
     def create_url_for_form_receiver_if_not_created(self, uie):
         url_obj = uie.app._django_fr_urls
-        for url, ref in url_obj.routes:
-            if ref == uie._django_form_receiver:
+        for url, identifier in url_obj.routes:
+            if identifier.ref == uie._django_form_receiver:
                 return None
         return self.create_url_for_form_receiver(uie)
 

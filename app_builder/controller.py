@@ -25,6 +25,9 @@ def create_codes(app):
                   # INITING FOR URLS
                   'create urls object for app': factory.create_urls,
                   'create urls object for app form receivers': factory.create_fr_urls,
+                  'create misc urls object for app': factory.create_misc_urls,
+                  'add social include url': factory.add_social_include_url,
+                  'add logout url': factory.add_logout_url,
 
                   # GET REQUEST HANDLERS
                   'view for page': factory.create_view_for_page,
@@ -53,9 +56,6 @@ def create_codes(app):
                   'create login form receiver if not exists': factory.create_login_form_receiver_if_not_created,
                   'create signup form receiver if not exists': factory.create_signup_form_receiver_if_not_created,
                   'create url for form receiver if not created': factory.create_url_for_form_receiver_if_not_created,
-
-                  # STATIC FILES
-                  'create static urls': factory.add_statics,
     }
 
 
@@ -85,6 +85,9 @@ def create_codes(app):
     # routes and functions to serve pages
     create('create urls object for app', app)
     create('create urls object for app form receivers', app)
+    create('create misc urls object for app', app)
+    create('add social include url', app)
+    create('add logout url', app)
     for p in app.pages:
         create('view for page', p)
         create('url to serve page', p)
@@ -110,7 +113,6 @@ def create_codes(app):
 
     # random app-wide stuff
     create('create tests for static pages', app)
-    create('create static urls', app)
 
     return codes
 
