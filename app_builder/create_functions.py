@@ -129,7 +129,6 @@ class AppComponentFactory(object):
 
         entity = uie.container_info.entity_resolved
         query = uie.container_info.query
-
         # create a list of keyvalue pairs for the filter in the query
         filter_key_values = []
         page = uie.page
@@ -146,12 +145,9 @@ class AppComponentFactory(object):
             filter_key_values.append((key, FnCodeChunk(value)))
 
         sort_by_id = None
-        if query.sortAccordingTo == 'Date':
-            sort_by_id = entity.created_field.identifier
-        elif query.sortAccordingTo == '-Date':
-            sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
-        else:
-            assert False
+        # TODO(nkhadke): HACK right now. Add sort validation + -ves??
+        sort_by_id = query.sortAccordingTo.split("-")[1].lower()
+        # sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
