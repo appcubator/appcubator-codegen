@@ -13,6 +13,6 @@ with Browser() as browser:
 
     if browser.is_text_present('error'):
         assert False, "Looks like there was an error siging up."
-    for e in browser.find_by_css('.form_error'):
-        assert e.value.strip() == ''
+    for e in browser.find_by_css('.form-error'):
+        assert e.value.strip() == '', "Found an error while signing up: %r" % e.value
     assert browser.url == 'http://127.0.0.1:8000/'

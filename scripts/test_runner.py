@@ -7,6 +7,7 @@ from app_builder.tests.app_state_interface import AppStateTestInterface
 
 
 import os
+import signal
 import sys
 import shlex
 import subprocess
@@ -122,7 +123,7 @@ def run_acceptance_tests(splinter_file):
     execfile(splinter_file, {}, {})
 
 
-def ping_until_success(url, retries=5):
+def ping_until_success(url, retries=10):
     "Holds up this process until a 200 is received from the server."
     tries = 0
     successful = False
@@ -131,11 +132,12 @@ def ping_until_success(url, retries=5):
             r = requests.get(url)
         except requests.exceptions.ConnectionError:
             pass
+        else:
+            successful = r.status_code == 200
         tries += 1
-        successful = r.status_code == 200
-        time.sleep(.2)
+        time.sleep(1)
     if tries == retries:
-        raise Exception()
+        raise Exception("Tried to ping until 200, but just couldn't get that dough brah.")
     return
 
 
@@ -163,12 +165,17 @@ def run_generic_tests(app_state_dir, specific_state_names=None):
             if os.path.isfile(splinter_file):
                 # start the server
                 cmd = "python manage.py runserver"
-                p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                # wait until server is ready
-                ping_until_success('http://127.0.0.1:8000/')
-                run_acceptance_tests(splinter_file)
-                # kill the server
-                p.terminate()
+                p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
+                try:
+                    # wait until server is ready
+                    ping_until_success('http://127.0.0.1:8000/')
+                    run_acceptance_tests(splinter_file)
+                finally:
+                    # send sigterm to all processes in the group
+                    os.killpg(p.pid, signal.SIGTERM)
+                    print "waiting"
+                    p.wait()
+                    print "process with pid %d should be dead now." % p.pid
             else:
                 logger.warn("No splinter file found for %s" % json_file_name)
 
