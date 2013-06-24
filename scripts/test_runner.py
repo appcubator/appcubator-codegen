@@ -105,7 +105,7 @@ def run_django_tests(dest):
     if p.returncode != 0:
         logger.error("Testing failed! Output: %s\n%s" % (out, err))
     else:
-        logger.info("These tests passed!!! Much swag.\n\n")
+        logger.info("These tests passed!!! Much swag.")
     logger.debug("Test output: %s\n%s" % (out, err))
 
 
@@ -130,7 +130,7 @@ def ping_until_success(url, retries=5):
         r = requests.get(url)
         tries += 1
         successful = r.status_code == 200
-        time.sleep(200)
+        time.sleep(.2)
     if tries == retries:
         raise Exception()
     return
@@ -156,13 +156,13 @@ def run_generic_tests(app_state_dir, specific_state_names=None):
             logger.info("App %s Deployed locally at %s" % (json_file_name, dest))
             syncdb(dest)
             run_django_tests(dest)
-            splinter_file = os.path.join('%s_splinter.py' % json_file_name)
+            splinter_file = os.path.join(app_state_dir, '%s_splinter.py' % json_file_name.replace('.json',''))
             if os.path.isfile(splinter_file):
                 # start the server
                 cmd = "python manage.py runserver"
                 p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 # wait until server is ready
-                ping_until_success('127.0.0.1:8000/')
+                ping_until_success('http://127.0.0.1:8000/')
                 run_acceptance_tests(splinter_file)
                 # kill the server
                 p.terminate()
