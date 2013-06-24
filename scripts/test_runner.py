@@ -126,8 +126,11 @@ def ping_until_success(url, retries=5):
     "Holds up this process until a 200 is received from the server."
     tries = 0
     successful = False
-    while not successful or tries >= retries:
-        r = requests.get(url)
+    while not successful and tries < retries:
+        try:
+            r = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            pass
         tries += 1
         successful = r.status_code == 200
         time.sleep(.2)
