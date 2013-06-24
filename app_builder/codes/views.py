@@ -4,13 +4,12 @@ from . import env
 
 class DjangoPageView(object):
 
-    def __init__(self, identifier, args=None, template_code_path="", queries=None):
+    def __init__(self, identifier, args=None, template_code_path="", queries=None, access='all'):
         """
         args is a list of tuples: (identifier, some_data_as_dict)
         """
         self.identifier = identifier
         self.code_path = "webapp/pages.py"
-        self.contains_user_ref = False
 
         self.locals = {}
         # args, make a namespace for the function
@@ -27,12 +26,6 @@ class DjangoPageView(object):
             name_attempt = data.get('template_id', 'BADNAME') # helps a test pass
             data['template_id'] = self.pc_namespace.new_identifier(str(name_attempt), ref=data['ref'])
 
-        # Check CurrentUser references    
-        for (arg, data) in self.args:
-            if data['model_id'] == "CurrentUser":
-                self.contains_user_ref = True
-                break
-
         # queries
         self.queries = []
         if queries is None:
@@ -41,6 +34,11 @@ class DjangoPageView(object):
             self.add_query(q_obj)
 
         self.template_code_path = template_code_path
+
+        # access level
+        self.login_required = False
+        if access == 'users':
+            self.login_required = True
 
     def add_query(self, dq_obj):
         template_id = self.pc_namespace.new_identifier('%ss' % dq_obj.model_id, ref=dq_obj) # very crude pluralize

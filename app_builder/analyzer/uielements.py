@@ -454,6 +454,22 @@ class Iterator(DictInited, Hooked):
 
     class IteratorInfo(DictInited, Resolvable):
 
+        class EnhancedQuery(DictInited):
+
+            class EnhancedWhereClause(DictInited, Resolvable):
+                _schema = {
+                        "field_name": {"_type": ""},
+                        "equal_to": {"_type": ""}
+                }
+                _resolve_attrs = (('field_name', 'field'),)
+                _datalang_attrs = (('equal_to', 'equal_to_dl'),)
+
+            _schema = {
+                "sortAccordingTo": {"_type": ""},
+                "numberOfRows": {"_type": 0},
+                "where": {"_type": [], "_each": {"_type":EnhancedWhereClause}}
+            }
+
         class Query(DictInited):
 
             class WhereClause(DictInited, Resolvable):

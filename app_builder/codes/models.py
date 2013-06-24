@@ -1,6 +1,29 @@
 from app_builder import naming
+from datetime import datetime
 
 from . import env
+
+class EnhancedDjangoQuery(object):
+
+    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None):
+        self.model_id = model_id
+        self.where_data = where_data if where_data is not None else []
+        # TODO implement these
+        self.sort_by_id = sort_by_id
+        self.limit = limit
+
+    def render(self):
+        code_line = "%s.objects.all()" % self.model_id
+
+        if len(self.where_data) != 0:
+            code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
+        # Natural enumeration 
+        if self.sort_by_id is not None:
+            code_line += ".order_by('%s')" % self.sort_by_id
+        if self.limit is not -1:
+            code_line += "[:%d]" % self.limit
+        return code_line
+
 
 
 class DjangoQuery(object):
@@ -18,6 +41,7 @@ class DjangoQuery(object):
         if len(self.where_data) != 0:
             code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
         # Natural enumeration 
+        print self.sort_by_id
         if self.sort_by_id is not None:
             code_line += ".order_by('%s')" % self.sort_by_id
         if self.limit is not -1:
@@ -55,7 +79,10 @@ class DjangoField(object):
         if field.required:
             if field.canon_type in ['text', 'email', 'image', 'file']:
                 kwargs['default'] = repr("")
-            if field.canon_type in ['float', 'date']:
+            # Date time defaults should be skipped now.
+            # if field.canon_type in ['date', '_CREATED', '_MODIFIED']:
+            #     kwargs['default'] = datetime.now
+            elif field.canon_type is 'number':
                 kwargs['default'] = 0
         else:
             kwargs['blank'] = True
