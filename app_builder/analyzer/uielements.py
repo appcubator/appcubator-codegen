@@ -353,9 +353,8 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
     _hooks = ['resolve links href']
 
     _schema = {
-        "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},  # TODO may have reference
-        # "isSingle": { "_type" : True }, # don't need this because it's implied from tagname
-        "content_attribs": {"_type": {}},  # TODO may have reference
+        "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},
+        "content_attribs": {"_type": {}},
         "class_name": {"_type": ""},
         "tagName": {"_type": ""},
     }
@@ -423,7 +422,7 @@ class Iterator(DictInited, Hooked):
             }
 
         _schema = {
-            "entity": {"_type": ""},  # TODO may have reference
+            "entity": {"_type": ""},
             "action": {"_type": ""},
             "query": {"_type": Query},
             "row": {"_type": Row}

@@ -34,13 +34,16 @@ class AppComponentFactory(object):
             user_identifier = self.model_namespace.get_by_import('django.models.User')
             user_profile_identifier = self.model_namespace.new_identifier('UserProfile', cap_words=True)
             m = DjangoUserModel(user_identifier, user_profile_identifier)
+            # fields are split into user fields and user profile fields
+            # add userprofile fields to the model
             for f in filter(lambda x: not x.is_relational(), entity.user_profile_fields):
-                #df = m.create_field(f.name, f.type, f.required)
+                # has the side effect of adding it to the model, so don't worry about that.
                 df = m.create_field(f.name, f.type, False) # make all field not required by default.
                             # the django model will create an identifier based on
                             # the name
                 f._django_field_identifier = df.identifier
                 f._django_field = df
+            # bind identifiers to the built-in user fields.
             for f in entity.user_fields:
                 x = {'username': 'username',
                      'First Name': 'first_name',
@@ -54,12 +57,18 @@ class AppComponentFactory(object):
             m = DjangoModel(identifier)
 
             for f in filter(lambda x: not x.is_relational(), entity.fields):
-                #df = m.create_field(f.name, f.type, f.required)
+                # has the side effect of adding it to the model, so don't worry about that.
                 df = m.create_field(f.name, f.type, False) # fields are not required by default.
                             # the django model will create an identifier based on
                             # the name
                 f._django_field_identifier = df.identifier
                 f._django_field = df
+
+        # add audit fields.
+        cf = m.add_date_created_field(self.model_namespace.new_identifier('date_created'))
+        entity.created_field = cf
+        mf = m.add_date_modified_field(self.model_namespace.new_identifier('date_modified'))
+        entity.modified_field = mf
 
         # set references
         entity._django_model = m
@@ -136,8 +145,16 @@ class AppComponentFactory(object):
             value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
 
+        sort_by_id = None
+        if query.sortAccordingTo == 'Date':
+            sort_by_id = entity.created_field.identifier
+        elif query.sortAccordingTo == '-Date':
+            sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
+        else:
+            assert False
+
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
-                                                          sort_by=query.sortAccordingTo,
+                                                          sort_by_id=sort_by_id,
                                                           limit=query.numberOfRows)
 
         view.add_query(dq)
@@ -384,7 +401,7 @@ class AppComponentFactory(object):
             fr.relation_assignments.append(a)
 
             # if the object created by the form is modified in relations, then commit=False
-            if l.startswith('this.'):
+            if l.startswith('Form.'):
                 commit = False
             # if other objects are modified, then save them.
             else:
