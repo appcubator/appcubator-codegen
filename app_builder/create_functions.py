@@ -384,7 +384,7 @@ class AppComponentFactory(object):
             fr.relation_assignments.append(a)
 
             # if the object created by the form is modified in relations, then commit=False
-            if l.startswith('this.'):
+            if l.startswith('Form.'):
                 commit = False
             # if other objects are modified, then save them.
             else:
