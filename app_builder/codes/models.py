@@ -1,4 +1,5 @@
 from app_builder import naming
+from datetime import datetime
 
 from . import env
 
@@ -55,7 +56,10 @@ class DjangoField(object):
         if field.required:
             if field.canon_type in ['text', 'email', 'image', 'file']:
                 kwargs['default'] = repr("")
-            if field.canon_type in ['float', 'date']:
+            # Date time defaults should be skipped now.
+            # if field.canon_type in ['date', '_CREATED', '_MODIFIED']:
+            #     kwargs['default'] = datetime.now
+            elif field.canon_type is 'number':
                 kwargs['default'] = 0
         else:
             kwargs['blank'] = True
