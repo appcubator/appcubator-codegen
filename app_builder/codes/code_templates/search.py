@@ -7,7 +7,9 @@ def search(request):
     {{page_context}} = {}
 
     query_string = {{request}}.GET['query']
-    {{page_context}}['results'] = get_results(query_string, [])
+    field = request.GET['field']
+    model_name = request.GET['model']
+    {{page_context}}['results'] = get_results(query_string, model_name, [field])
 
     return render({{request}}, "{{ view.template_code_path }}", {{page_context}})
 {% endif %}

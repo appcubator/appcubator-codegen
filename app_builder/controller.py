@@ -28,6 +28,7 @@ def create_codes(app):
                   'create misc urls object for app': factory.create_misc_urls,
                   'add social include url': factory.add_social_include_url,
                   'add logout url': factory.add_logout_url,
+                  'add search url' : factory.add_search_url,
 
                   # GET REQUEST HANDLERS
                   'view for page': factory.create_view_for_page,
@@ -94,6 +95,7 @@ def create_codes(app):
     for p in app.pages:
         create('view for page', p)
         create('url to serve page', p)
+    create('add search url', app)
 
     # UIELEMENT HOOKS
     for p in app.pages:

@@ -240,6 +240,12 @@ class AppComponentFactory(object):
         logout_route = ("""r'^__logout/$'""", logout_id, kwargs)
         url_obj.routes.append(logout_route)
 
+    def add_search_url(self, app):
+        """Adds the generic search route to webapp.pages: url('^search/$', 'search'),"""
+        url_obj = app._django_page_urls
+        search_route = ("""r'^search/$'""", "'search'")
+        url_obj.routes.append(search_route)
+
     def add_page_to_urls(self, page):
         url_obj = page.app._django_page_urls
 

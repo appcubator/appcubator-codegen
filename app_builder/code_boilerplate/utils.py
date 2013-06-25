@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.shortcuts import redirect as redirect
+from django.db.models.loading import get_model
 from django.db.models import Q
 import re
 
@@ -26,9 +27,10 @@ def get_query(query_string, search_fields):
             query = query & or_query
     return query
 
-def get_results(query_string, fields):
-	query_obj = get_query(query_string, fields)
-	return Entry.objects.filter(query_obj)
+def get_results(query_string, model_name, fields):
+    query_obj = get_query(query_string, fields)
+    model = get_model('webapp', model_name)
+    return model.objects.filter(query_obj)
 
 def json_response(data={}, errors={}, success=True):
     data.update({
