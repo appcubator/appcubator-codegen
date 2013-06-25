@@ -276,7 +276,7 @@ a:hover {
   margin-left: 0px;
   display: inline-block;
   vertical-align: top;
-/*  padding-left: 20px;*/
+  overflow: hidden;
 }
 
 .container,
