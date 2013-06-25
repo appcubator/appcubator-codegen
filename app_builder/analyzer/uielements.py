@@ -391,6 +391,13 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         except TypeError:
             content = self.content
         tag = Tag(self.tagName, self.kwargs(), content=content)
+        if self.tagName == 'img':
+            # wrap in div, except link, then wrap in a.
+            if 'href' in self.kwargs():
+                wrapper = Tag('a', {}, content=tag)
+            else:
+                wrapper = Tag('div', {}, content=tag)
+            tag = wrapper
         return tag
 
 class Gallery(DictInited, Hooked):  # a uielement with no container_info
