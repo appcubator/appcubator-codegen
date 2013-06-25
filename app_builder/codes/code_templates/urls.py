@@ -3,14 +3,14 @@
 {% set urlpatterns = locals['urlpatterns'] %}
 
 {{urlpatterns}} {% if not urls.first_time %}{{ '+' }}{% endif %}= {{patterns}}('{{ urls.module }}',
-    {% for url_string, function in urls.routes %}
-    {{url}}({{ url_string }}, '{{ function.identifier }}'),
+    {% for tup in urls.routes %}
+    {% set url_string = tup[0] %}
+    {% set view_identifier = tup[1] %}
+    {% set has_kwargs = len(tup) > 2 %}
+    {% if has_kwargs %}
+    {% set kwargs = tup[2] %}
+    {% endif %}
+    {{url}}({{ url_string }}, {{ view_identifier }}{% if has_kwargs %}, kwargs={{ kwargs_repr(kwargs) }} {% endif %}),
     {% endfor %}
 )
 
-{% if not urls.first_time and urls.has_social %}
-urlpatterns += patterns('',
-    url(r'', include('social_auth.urls')),
-    url('^logout/$', logout, {"next_page" : "/"}),
-)
-{% endif %}
