@@ -20,6 +20,19 @@ def get_uielement_by_type(type_string):
     return subclass
 
 
+# this is used in uielements whenever redirects depend on the role.
+class RoleRouting(DictInited, Resolvable):
+    _schema = {
+        "role": {"_type": ""}, # name of the user role (Student)
+        "redirect": {"_type": ""} # link lang it should redirect to
+    }
+    _resolve_attrs = ()
+    _pagelang_attrs = (('redirect', 'goto_pl'),)
+
+    def validate(self):
+        assert self.role in [u.name for u in self.app.users], "Role not recognized."
+
+
 class Layout(DictInited):
     _schema = {
         "width": {"_type": 0, "_min": 1}, # max is 64 unless this is in a row, b/c then it's absolutepositioned in px
@@ -215,20 +228,6 @@ class Form(DictInited, Hooked):
                 # set fk could be something like, "this.teacher" or "CurrentUser.mygroup".
                 # to object could be something like, "Page.Teacher" or "Page.Group"
 
-            class RoleRouting(DictInited, Resolvable):
-                _schema = {
-                    "role": {"_type": ""}, # name of the user role (Student)
-                    "redirect": {"_type": ""} # link lang it should redirect to
-                }
-                _resolve_attrs = ()
-                _pagelang_attrs = (('redirect', 'goto_pl'),)
-
-                def __init__(self, *args, **kwargs):
-                    super(Form.FormInfo.FormInfoInfo.RoleRouting, self).__init__(*args, **kwargs)
-
-                def validate(self):
-                    assert self.role in [u.name for u in self.app.users], "Role not recognized."
-
             _schema = {
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
@@ -326,7 +325,8 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
     _schema = {
         "provider": {"_type" : ""},
         "content" : {"_type" : ""},
-        "goto" : {"_type" : ""}
+        "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
+        #"goto" : {"_type" : ""} # to be decommissioned in favor of loginRoutes
     }
 
     _resolve_attrs = ()
@@ -334,6 +334,18 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
+
+    def validate(self):
+        pass
+    """
+        if self.action == 'login' and self.app.multiple_users:
+            assert self.loginRoutes is not None, "login form must have loginRoutes"
+
+        if self.action == 'signup' and self.app.multiple_users:
+            assert self.signupRole is not None, "signup form must have signupRole"
+            assert self.signupRole in [u.name for u in self.app.users]
+            """
+
 
     def resolve_page(self):
         if self.goto is None:
@@ -470,6 +482,7 @@ class Iterator(DictInited, Hooked):
 
     class IteratorInfo(DictInited, Resolvable):
 
+        """ Enhanced ___ looks like dead/inactive code """
         class EnhancedQuery(DictInited):
 
             class EnhancedWhereClause(DictInited, Resolvable):
