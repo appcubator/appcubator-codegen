@@ -335,6 +335,8 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
         if self.signupRole is not None:
             assert self.signupRole in [u.name for u in self.app.users]
+        if self.loginRoutes is not None:
+            assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
 
     def html(self):
         tpl_template = env.get_template('thirdpartylogin.html')
