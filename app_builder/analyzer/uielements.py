@@ -132,11 +132,6 @@ class Form(DictInited, Hooked):
 
                     # create the html
                     field_html = Tag(tagname, base_attribs, content=content)
-                    if field.displayType == 'email-text':
-                        decorating_wrapper = Tag('div', {'class': 'input-prepend'}, content=(
-                                Tag('span', {'class':'add-on'}, content="@"),
-                                field_html))
-                        field_html = decorating_wrapper
 
                     htmls = []
 
