@@ -1,14 +1,36 @@
 from app_builder import naming
 from . import env
 
+class DjangoPageSearch(object):
+    def __init__(self, template_code_path="", access='all', search=True):
+        """
+        fields are the fields to be queried.
+        """
+        self.fields = fields
+        self.has_search = search
+        self.code_path = "webapp/pages.py"
+
+        self.locals = {}
+        self.locals['request'] = self.namespace.new_identifier('request', ref="VIEW.REQUEST")
+        self.locals['page_context'] = self.namespace.new_identifier('page_context')
+
+        # access level
+        self.login_required = False
+        if access == 'users':
+            self.login_required = True
+
+    def render(self):
+        return env.get_template('search.py').render(view=self, locals=self.locals)
+
 
 class DjangoPageView(object):
 
-    def __init__(self, identifier, args=None, template_code_path="", queries=None, access='all'):
+    def __init__(self, identifier, args=None, template_code_path="", queries=None, access='all', search=False):
         """
         args is a list of tuples: (identifier, some_data_as_dict)
         """
         self.identifier = identifier
+        self.has_search = search
         self.code_path = "webapp/pages.py"
 
         self.locals = {}
@@ -34,6 +56,10 @@ class DjangoPageView(object):
             self.add_query(q_obj)
 
         self.template_code_path = template_code_path
+
+        # search
+        if self.has_search:
+            self.search_code_path = "search.html"
 
         # access level
         self.login_required = False

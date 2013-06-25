@@ -261,6 +261,10 @@ class AppComponentFactory(object):
         return form_obj
 
 
+    def add_search_functionality(self, app):
+        ps = DjangoPageSearch()
+        app._page_search = ps
+        return app
 
 ## START HACKING
     def create_login_form_if_not_exists(self, uie):

@@ -23,3 +23,4 @@ def {{ view.identifier }}({{request}}{% for arg, data in view.args %}, {{ arg }}
     {% endfor %}
 
     return {{render}}({{request}}, "{{ view.template_code_path }}", {{page_context}})
+    
