@@ -330,12 +330,18 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
+        if self.signupRole is not None:
+            self.action = 'signup'
+        elif self.loginRoutes is not None:
+            self.action = 'login'
+        else: assert False, "So is this signup or login?"
+
 
     def validate(self):
         assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
-        if self.signupRole is not None:
+        if self.action == 'signup':
             assert self.signupRole in [u.name for u in self.app.users]
-        if self.loginRoutes is not None:
+        if self.action == 'login':
             assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
 
     def html(self):

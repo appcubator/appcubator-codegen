@@ -122,6 +122,10 @@ def run_acceptance_tests(splinter_file):
     "Executes the splinter file to run the acceptance tests."
     execfile(splinter_file, {"__name__": "__main__"})
 
+def pause_to_test():
+    print "Pausing so you can test at localhost:8000"
+    raw_input()
+
 
 def ping_until_success(url, retries=10):
     "Holds up this process until a 200 is received from the server."
@@ -162,20 +166,21 @@ def run_generic_tests(app_state_dir, specific_state_names=None):
             syncdb(dest)
             run_django_tests(dest)
             splinter_file = os.path.join(app_state_dir, '%s_splinter.py' % json_file_name.replace('.json',''))
-            if os.path.isfile(splinter_file):
-                # start the server
-                cmd = "python manage.py runserver"
-                p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
-                try:
-                    # wait until server is ready
-                    ping_until_success('http://127.0.0.1:8000/')
+            # start the server
+            cmd = "python manage.py runserver"
+            p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
+            try:
+                # wait until server is ready
+                ping_until_success('http://127.0.0.1:8000/')
+                if os.path.isfile(splinter_file):
                     run_acceptance_tests(splinter_file)
-                finally:
-                    # send sigterm to all processes in the group
-                    os.killpg(p.pid, signal.SIGTERM)
-                    p.wait()
-            else:
-                logger.warn("No splinter file found for %s" % json_file_name)
+                else:
+                    logger.warn("No splinter file found for %s" % json_file_name)
+                    pause_to_test()
+            finally:
+                # send sigterm to all processes in the group
+                os.killpg(p.pid, signal.SIGTERM)
+                p.wait()
 
 
 if __name__ == "__main__":
