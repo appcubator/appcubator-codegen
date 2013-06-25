@@ -321,33 +321,24 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         "provider": {"_type" : ""},
         "content" : {"_type" : ""},
         "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
+        "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
         #"goto" : {"_type" : ""} # to be decommissioned in favor of loginRoutes
     }
 
     _resolve_attrs = ()
-    _pagelang_attrs = (('goto', 'goto_pl'), )
+    #_pagelang_attrs = (('goto', 'goto_pl'), )
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
 
     def validate(self):
-        pass
-    """
-        if self.action == 'login' and self.app.multiple_users:
-            assert self.loginRoutes is not None, "login form must have loginRoutes"
-
-        if self.action == 'signup' and self.app.multiple_users:
-            assert self.signupRole is not None, "signup form must have signupRole"
-            assert self.signupRole in [u.name for u in self.app.users]
-            """
-
-
-    def resolve_page(self):
-        if self.goto is None:
-            self.redirect = False
+        if not self.multiple_users:
+            # ask ilter
+            pass
         else:
-            self.redirect = True
-            super(ThirdPartyLogin, self).resolve_page()
+            assert self.signupRole is not None and self.loginRoutes is not None, "signupRole and loginRoutes can't both be null."
+            if self.signupRole is not None:
+                assert self.signupRole in [u.name for u in self.app.users]
 
     def html(self):
         tpl_template = env.get_template('thirdpartylogin.html')
