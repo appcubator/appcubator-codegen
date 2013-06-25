@@ -291,6 +291,8 @@ class App(DictInited):
         for translation, normalize to CurrentUser.
         for redirects, replace redirect portion of the code with some logic
         """
+        assert len(self.users) > 0, "Can't have empty user roles?!"
+        print "how many user roles? %r" % (self.users,)
         # create the user entity based on userconfig
         userdict = {
             "name": "User",
