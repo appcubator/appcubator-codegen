@@ -36,7 +36,6 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.auth.login':        'from django.contrib.auth import login',
             'django.auth.authenticate': 'from django.contrib.auth import authenticate',
             'django.auth.logout_view':  'from django.contrib.auth.views import logout',
-            'django.auth.logout':       'from django.contrib.auth import logout',
 
             'django.signals.post_save': 'from django.db.models.signals import post_save',
 

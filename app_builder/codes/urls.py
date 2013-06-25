@@ -29,18 +29,4 @@ class DjangoURLs(object):
         return self.outer_namespace
 
     def render(self):
-        return env.get_template('urls.py').render(urls=self, imports=self.outer_namespace.imports(), locals={'urlpatterns': self.urlpatterns_id})
-
-class Statics(object):
-
-    def __init__(self, outer_namespace):
-        self.code_path = "webapp/urls.py"
-        self.outer_namespace = outer_namespace
-
-    @property
-    def namespace(self):
-        # created to keep coder happy, since coder looks for a namespace to find imports in.
-        return self.outer_namespace
-
-    def render(self):
-        return "urlpatterns += %s()" % self.outer_namespace.imports()['django.url.statics']
+        return env.get_template('urls.py').render(urls=self, imports=self.outer_namespace.imports(), locals={'urlpatterns': self.urlpatterns_id}, kwargs_repr=repr, len=len)

@@ -2,6 +2,7 @@ from dict_inited import DictInited
 from resolving import Resolvable
 from utils import encode_braces, decode_braces
 from copy import deepcopy
+from datetime import datetime
 
 from app_builder.htmlgen import Tag
 
@@ -12,7 +13,8 @@ def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
                           'loop': Iterator,
                           'node': Node,
-                          'thirdpartylogin' : ThirdPartyLogin
+                          'thirdpartylogin' : ThirdPartyLogin,
+                          'gallery': Gallery
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -389,6 +391,76 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         except TypeError:
             content = self.content
         tag = Tag(self.tagName, self.kwargs(), content=content)
+        if self.tagName == 'img':
+            # wrap in div, except link, then wrap in a.
+            if 'href' in self.kwargs():
+                wrapper = Tag('a', {}, content=tag)
+            else:
+                wrapper = Tag('div', {}, content=tag)
+            tag = wrapper
+        return tag
+
+class Gallery(DictInited, Hooked):  # a uielement with no container_info
+    _hooks = ['resolve links href']
+
+    class GalleryInfo(DictInited):
+        class Image(DictInited):
+            _schema = {
+                "image": {"_type": ""},
+                "text": {"_type": ""}
+            }
+        _schema = {
+            "action": {"_type": ""},
+            "slides": {"_type": [], "_each": {"_type": Image}},
+            "uielements": {"_type": [], "_each": {"_type": UIElement}}
+        }
+
+    _schema = {
+        "container_info": {"_type": GalleryInfo},
+        "content_attribs": {"_type": {}}
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(Gallery, self).__init__(*args, **kwargs)
+        timeid = str(datetime.now().microsecond)
+        self.galleryid = "imageslider" + timeid
+
+    def kwargs(self):
+        kw = {}
+        kw = deepcopy(self.content_attribs)
+        kw["id"] = self.galleryid
+        kw["class"] = "carousel slide"
+        return kw
+
+    def visit_strings(self, f):
+        pass
+
+    def html(self):
+        indicators_content = []
+        for i in xrange(len(self.container_info.slides)):
+            active = ""
+            if i==0 :
+                active = "active"
+            indicators_content.append(Tag('li', {'data-target': "#"+self.galleryid, "data-slide-to": i, "class": active}, content=""))
+        indicators = Tag('ol', {'class': 'carousel-indicators'}, content=indicators_content)
+
+        items = []
+        slides = self.container_info.slides
+        for i in xrange(len(slides)):
+            imgcontent = []
+            active = ""
+            if(i==0):
+                active = "active "
+            imgcontent.append(Tag('img', {'src': slides[i].image}))
+            imgcontent.append(Tag('div', {'class': 'carousel-caption'}, Tag('p', {}, slides[i].text)))
+            items.append(Tag('div', {'class': active + "item"}, content=imgcontent))
+        slides = Tag('div', {'class': 'carousel-inner'}, content=items)
+
+        navPrev = Tag('a', {"class": "carousel-control left", "href": "#"+self.galleryid, "data-slide": "prev"}, content="&lsaquo;")
+        navNext = Tag('a', {"class": "carousel-control right", "href": "#"+self.galleryid, "data-slide": "next"}, content="&rsaquo;")
+
+        content = [indicators, slides, navPrev, navNext]
+        tag = Tag('div', self.kwargs(), content=content)
         return tag
 
 
