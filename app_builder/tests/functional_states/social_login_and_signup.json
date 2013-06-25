@@ -317,6 +317,150 @@
             "role two",
             "role three"
          ]
+      },{
+         "name":"protected one",
+         "access_level":"all-users",
+         "navbar":{
+            "isFixed":true,
+            "brandName":null,
+            "isHidden":false,
+            "links":[
+               {
+                  "url":"internal://Homepage",
+                  "title":"Homepage"
+               },
+               {
+                  "url":"internal://Registration Page",
+                  "title":"Registration Page"
+               }
+            ]
+         },
+         "footer":{
+            "isFixed":true,
+            "isHidden":false,
+            "links":[
+               {
+                  "url":"internal://Homepage",
+                  "title":"Homepage"
+               },
+               {
+                  "url":"internal://Registration Page",
+                  "title":"Registration Page"
+               }
+            ],
+            "customText":"Add custom footer text here"
+         },
+         "url":{
+            "urlparts":[
+               "r1"
+            ]
+         },
+         "uielements":[
+
+         ],
+         "page_name":"Registration Page",
+         "ind":1,
+         "user_roles":[
+            "role one",
+            "role two",
+            "role three"
+         ]
+      },{
+         "name":"protected two",
+         "access_level":"all-users",
+         "navbar":{
+            "isFixed":true,
+            "brandName":null,
+            "isHidden":false,
+            "links":[
+               {
+                  "url":"internal://Homepage",
+                  "title":"Homepage"
+               },
+               {
+                  "url":"internal://Registration Page",
+                  "title":"Registration Page"
+               }
+            ]
+         },
+         "footer":{
+            "isFixed":true,
+            "isHidden":false,
+            "links":[
+               {
+                  "url":"internal://Homepage",
+                  "title":"Homepage"
+               },
+               {
+                  "url":"internal://Registration Page",
+                  "title":"Registration Page"
+               }
+            ],
+            "customText":"Add custom footer text here"
+         },
+         "url":{
+            "urlparts":[
+               "r2"
+            ]
+         },
+         "uielements":[
+
+         ],
+         "page_name":"Registration Page",
+         "ind":1,
+         "user_roles":[
+            "role one",
+            "role two",
+            "role three"
+         ]
+      },{
+         "name":"protected three",
+         "access_level":"all-users",
+         "navbar":{
+            "isFixed":true,
+            "brandName":null,
+            "isHidden":false,
+            "links":[
+               {
+                  "url":"internal://Homepage",
+                  "title":"Homepage"
+               },
+               {
+                  "url":"internal://Registration Page",
+                  "title":"Registration Page"
+               }
+            ]
+         },
+         "footer":{
+            "isFixed":true,
+            "isHidden":false,
+            "links":[
+               {
+                  "url":"internal://Homepage",
+                  "title":"Homepage"
+               },
+               {
+                  "url":"internal://Registration Page",
+                  "title":"Registration Page"
+               }
+            ],
+            "customText":"Add custom footer text here"
+         },
+         "url":{
+            "urlparts":[
+               "r3"
+            ]
+         },
+         "uielements":[
+
+         ],
+         "page_name":"Registration Page",
+         "ind":1,
+         "user_roles":[
+            "role one",
+            "role two",
+            "role three"
+         ]
       }
    ],
    "name":"social login test"

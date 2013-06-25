@@ -332,13 +332,9 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
 
     def validate(self):
-        if not self.multiple_users:
-            # ask ilter
-            pass
-        else:
-            assert self.signupRole is not None and self.loginRoutes is not None, "signupRole and loginRoutes can't both be null."
-            if self.signupRole is not None:
-                assert self.signupRole in [u.name for u in self.app.users]
+        assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
+        if self.signupRole is not None:
+            assert self.signupRole in [u.name for u in self.app.users]
 
     def html(self):
         tpl_template = env.get_template('thirdpartylogin.html')
