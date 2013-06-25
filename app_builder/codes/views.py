@@ -2,15 +2,16 @@ from app_builder import naming
 from . import env
 
 class DjangoPageSearch(object):
-    def __init__(self, template_code_path="", access='all', search=True):
+    def __init__(self, identifier, template_code_path="search.html", access='all', search=True):
         """
-        fields are the fields to be queried.
+        Takes the last page and adds search to all pages by referencing the views/pages.py file.
         """
-        self.fields = fields
+        self.identifier = identifier
         self.has_search = search
         self.code_path = "webapp/pages.py"
 
         self.locals = {}
+        self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
         self.locals['request'] = self.namespace.new_identifier('request', ref="VIEW.REQUEST")
         self.locals['page_context'] = self.namespace.new_identifier('page_context')
 
@@ -18,6 +19,8 @@ class DjangoPageSearch(object):
         self.login_required = False
         if access == 'users':
             self.login_required = True
+
+        self.template_code_path = template_code_path
 
     def render(self):
         return env.get_template('search.py').render(view=self, locals=self.locals)

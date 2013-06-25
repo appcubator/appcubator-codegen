@@ -114,9 +114,11 @@ def create_codes(app):
     for p in app.pages:
         create('create row/col structure for nodes', p)
 
+    # Add search on last page
+    create('search rendering', app.pages[len(app.pages)-1])
+
     # random app-wide stuff
     create('create tests for static pages', app)
-    create('search rendering', app)
 
     return codes
 
