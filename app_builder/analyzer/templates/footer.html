@@ -1,11 +1,11 @@
-<div class="navbar" id="footer">
+<div class="footer">
   <div class="container">
-    <ul class="nav pull-left" id="links">
+    <ul class="footer-links">
       {% for l in footer.links %}
       <li><a href="{{ l.url_pl.to_code() }}" class="menu-item">{{ l.title }}</a></li>
       {% endfor %}
     </ul>
-    <p id="customText" class="pull-left muted">{{ footer.customText }}</p>
+    <p class="footer-text muted">{{ footer.customText }}</p>
   </div>
   <div class="clearfix"></div>
 </div>

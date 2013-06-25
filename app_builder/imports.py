@@ -18,6 +18,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 
             'django.simplejson':        'from django.utils import simplejson',
             'django.JsonResponse':      'from webapp.utils import JsonResponse', # assumes that it's copied from code_boilerplate folder
+            'django.search':            'from webapp.utils import get_results',
 
             'django.patterns':          'from django.conf.urls import patterns',
             'django.include':           'from django.conf.urls import include',
@@ -49,6 +50,7 @@ FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 
                                     'django.csrf_exempt',
                                     'django.simplejson',
                                     'django.redirect',
+                                    'django.search',
                                     'django.render',
                                     'django.render_to_response',
                                     'django.get_object_or_404'),

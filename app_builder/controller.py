@@ -37,6 +37,9 @@ def create_codes(app):
                   # PAGE AND DATALANG
                   'resolve links href' : factory.resolve_page_and_its_datalang,
 
+                  # Search
+                  'search rendering' : factory.add_search_functionality,
+
                   # HTML GEN STUFF
                   'translate strings in uielements': factory.properly_name_variables_in_template,
                   'create row/col structure for nodes': factory.create_tree_structure_for_page_nodes,
@@ -110,6 +113,9 @@ def create_codes(app):
     # create html nodes and structure for pages
     for p in app.pages:
         create('create row/col structure for nodes', p)
+
+    # Add search on last page
+    create('search rendering', app.pages[len(app.pages)-1])
 
     # random app-wide stuff
     create('create tests for static pages', app)

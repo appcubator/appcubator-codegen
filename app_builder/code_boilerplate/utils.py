@@ -26,6 +26,10 @@ def get_query(query_string, search_fields):
             query = query & or_query
     return query
 
+def get_results(query_string, fields):
+	query_obj = get_query(query_string, fields)
+	return Entry.objects.filter(query_obj)
+
 def json_response(data={}, errors={}, success=True):
     data.update({
         'errors': errors,

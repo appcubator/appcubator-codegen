@@ -2,7 +2,7 @@ import re
 
 from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
-from app_builder.codes import DjangoPageView, DjangoTemplate
+from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
@@ -146,7 +146,7 @@ class AppComponentFactory(object):
 
         sort_by_id = None
         # TODO(nkhadke): HACK right now. Add sort validation + -ves??
-        sort_by_id = query.sortAccordingTo.split("-")[1].lower()
+        sort_by_id = "date_created"
         # sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
@@ -281,6 +281,9 @@ class AppComponentFactory(object):
         return form_obj
 
 
+    def add_search_functionality(self, page):
+        ps = DjangoPageSearch(self.view_namespace.new_identifier(page.name))
+        return ps
 
 ## START HACKING
     def create_login_form_if_not_exists(self, uie):
