@@ -22,6 +22,12 @@ class AppComponentFactory(object):
         self.urls_namespace = create_import_namespace('webapp/urls.py')
         self.tests_namespace = create_import_namespace('webapp/tests.py')
 
+        self.userrole_namespace = naming.Namespace()
+
+    def setup_userrole_namespace(self, app):
+        for role in app.userentity.role_names:
+            self.userrole_namespace.new_identifier(role, ref=role)
+        app.userentity.get_role_id = lambda x: self.userrole_namespace.get_by_ref(x)
 
     # MODELS
 
@@ -352,7 +358,7 @@ class AppComponentFactory(object):
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
             if uie.app.multiple_users:
                 role_field_id = uie.app.user_role_field._django_field.identifier
-                fr.add_signup_role(uie.container_info.form.signupRole, role_field_id)
+                fr.add_signup_role(self.userrole_namespace.get_by_ref(uie.container_info.form.signupRole), role_field_id)
         uie._django_form_receiver = fr
         return fr
 

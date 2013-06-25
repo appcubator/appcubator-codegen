@@ -15,6 +15,7 @@ def create_codes(app):
     factory = AppComponentFactory()
 
     create_map = {# MODELS
+                  'setup user roles namespace': factory.setup_userrole_namespace,
                   'create model for entity': factory.create_model,
                   'create relational fields for entity': factory.create_relational_fields_for_model,
                   'import model into views': lambda entity: factory.import_model_into_namespace(entity, 'views'),
@@ -85,6 +86,8 @@ def create_codes(app):
         create('import model into forms', ent)
         create('import model into form receivers', ent)
         create('import model into tests', ent)
+
+    create('setup user roles namespace', app)
 
     # routes and functions to serve pages
     create('create urls object for app', app)

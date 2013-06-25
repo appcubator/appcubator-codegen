@@ -336,13 +336,18 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
             self.action = 'login'
         else: assert False, "So is this signup or login?"
 
-
     def validate(self):
         assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
         if self.action == 'signup':
             assert self.signupRole in [u.name for u in self.app.users]
         if self.action == 'login':
             assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+
+    def query_string(self):
+        query_string = "?action=%s" % self.action
+        if self.action == 'signup':
+            query_string += "&role=%s" % self.app.userentity.get_role_id(self.signupRole)
+        return query_string
 
     def html(self):
         tpl_template = env.get_template('thirdpartylogin.html')

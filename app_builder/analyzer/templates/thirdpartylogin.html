@@ -1,1 +1,1 @@
-<a href="{{ '{%' }} url socialauth_begin '{{ context.provider }}' {{ '%}' }}{% if context.app.multiple_users %}?action={{ context.action }}{% endif %}" class="btn {{ context.provider }}-btn ">{{ context.content }}</a>
+<a href="{{ '{%' }} url socialauth_begin '{{ context.provider }}' {{ '%}' }}{{ context.query_string() }}" class="btn {{ context.provider }}-btn ">{{ context.content }}</a>
