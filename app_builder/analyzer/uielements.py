@@ -228,9 +228,11 @@ class Form(DictInited, Hooked):
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
                 "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
+
                 "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
+                    # or (checked in validate, which is called in app's create from dict)
                 "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
+                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
 
             }
 
@@ -321,7 +323,9 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
     _schema = {
         "provider": {"_type" : ""},
         "content" : {"_type" : ""},
+
         "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
+                # or (checked in validate, which is called in app's create from dict)
         "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
         "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
     }
@@ -331,6 +335,9 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
+
+        # set up the action, just in case this is multi-user.
+        # if single user, then action is completely ignored by codegen backend.
         if self.signupRole is not None:
             self.action = 'signup'
         elif self.loginRoutes is not None:
@@ -339,11 +346,14 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
 
     def validate(self):
         assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
-        if self.action == 'signup':
-            assert self.signupRole in [u.name for u in self.app.users]
-            assert self.goto is not None
-        if self.action == 'login':
+        if self.app.multiple_users:
+            if self.action == 'signup':
+                assert self.signupRole in [u.name for u in self.app.users]
+                assert self.goto is not None
+        elif self.action != 'signup':
             assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+        else:
+            assert False, "Can't have signup social button if there's only 1 user role."
 
     def resolve_page(self):
         if self.action == 'login':

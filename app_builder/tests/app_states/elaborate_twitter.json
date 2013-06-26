@@ -207,31 +207,6 @@
                 },
                 {
                     "layout": {
-                        "top": 20,
-                        "left": 7,
-                        "height": 2,
-                        "width": 4,
-                        "t_padding": 0,
-                        "b_padding": 0,
-                        "l_padding": 0,
-                        "r_padding": 0,
-                        "alignment": "left"
-                    },
-                    "data": {
-                        "action": "thirdpartylogin",
-                        "provider": "facebook",
-                        "content": "Login w/ Facebook",
-                        "container_info": {
-                            "action": "thirdpartylogin",
-                            "uielements": []
-                        },
-                        "goto": "internal://Homepage",
-                        "content_attribs": {}
-                    },
-                    "type": "thirdpartylogin"
-                },
-                {
-                    "layout": {
                         "top": 25,
                         "left": 7,
                         "height": 23,

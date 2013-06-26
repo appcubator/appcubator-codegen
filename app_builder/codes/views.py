@@ -4,31 +4,39 @@ from . import env
 
 class SocialAuthHandler(object):
 
-    def __init__(self, identifier, role_field_id):
+    def __init__(self, identifier):
         self.identifier = identifier
         self.namespace = naming.Namespace(parent_namespace=identifier.ns)
         self.code_path = 'webapp/form_receivers.py'
         self.locals = {"request": self.namespace.new_identifier('request')}
         self.redirect = False
         self.signup_role_redirect_map = {}
-        self.role_field_id = role_field_id
 
     def add_role_redirect(self, role_redirect):
         assert not hasattr(self, 'role_redirect'), "There were multiple login with facebook buttons in the app. Butwai."
         self.role_redirect = role_redirect
 
-    def add_signup_role_redirect(self, signup_role_id, redirect_to):
+    def add_signup_role_redirect(self, signup_role_id, redirect_to, role_field_id=None):
+        """OK for role_field_id to be None in the single user case."""
         assert signup_role_id not in self.signup_role_redirect_map, "There were multiple signup buttons with the same signupRole. Butwai."
         self.signup_role_redirect_map[signup_role_id] = redirect_to
+        self._update_signup_redirect_chunk(role_field_id)
+
+    def _update_signup_redirect_chunk(self, role_field_id):
+        assert len(self.signup_role_redirect_map) > 0, "Only update it if there is some role mapping!"
+        if len(self.signup_role_redirect_map) == 1:
+            rr = FnCodeChunk(lambda: "redirect(%s)" % self.signup_role_redirect_map.values[0].to_code(template=False))
+        else:
+            role_linklang_tuples = []
+            for role_id, redirect_to in self.signup_role_redirect_map.items():
+                fn = FnCodeChunk(lambda: redirect_to.to_code(template=False))
+                role_linklang_tuples.append((role_id, fn))
+            rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
+        self.signup_role_redirect = rr
 
     def render(self):
-        role_linklang_tuples = []
-        for role_id, redirect_to in self.signup_role_redirect_map.items():
-            fn = FnCodeChunk(lambda: redirect_to.to_code(template=False))
-            role_linklang_tuples.append((role_id, fn))
-        rr = RoleRedirectChunk(role_linklang_tuples, self.role_field_id)
 
-        return env.get_template("socialauth_receiver.py").render(fr=self, locals=self.locals, imports=self.namespace.imports(), signup_role_redirect=rr)
+        return env.get_template("socialauth_receiver.py").render(fr=self, locals=self.locals, imports=self.namespace.imports())
 
 
 class DjangoPageSearch(object):

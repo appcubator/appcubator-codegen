@@ -21,6 +21,6 @@ def {{ fr.identifier }}({{request}}):
         role = request.GET['role']
         userprofile.role = role
         userprofile.save()
-        {{ signup_role_redirect.render(ajax=False)|indent(8) }}
+        {{ fr.signup_role_redirect.render(ajax=False)|indent(8) }}
     else:
         assert False

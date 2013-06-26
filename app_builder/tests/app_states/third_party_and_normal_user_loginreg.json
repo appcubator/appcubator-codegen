@@ -136,7 +136,7 @@
                         "action": "thirdpartylogin",
                         "provider": "facebook",
                         "content": "Login w/ Facebook",
-                        "goto": "internal://Homepage",
+                        "loginRoutes": [{ "role": "User", "redirect": "internal://Homepage" }],
                         "content_attribs": {},
                         "container_info": {
                             "uielements": []
@@ -160,7 +160,7 @@
                         "action": "thirdpartylogin",
                         "provider": "twitter",
                         "content": "Login w/ Twitter",
-                        "goto": "internal://Homepage",
+                        "loginRoutes": [{ "role": "User", "redirect": "internal://Homepage" }],
                         "content_attribs": {},
                         "container_info": {
                             "uielements": []

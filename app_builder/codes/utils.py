@@ -3,6 +3,7 @@ class RoleRedirectChunk(object):
         "role_codechunk_tuples maps the role to the code which will evaluate to the URL of the redirect"
         self.role_codechunk_tuples = role_codechunk_tuples
         self.role_field_id = role_field_id
+
     def render(self, ajax=True):
         if len(self.role_codechunk_tuples) == 0:
             assert False, "wtf, empty map?"
@@ -22,7 +23,6 @@ class RoleRedirectChunk(object):
             accum += "\nelif request.user.get_profile().%s == '%s':\n    return %s" % (self.role_field_id, tup[0], code_for_redirect(tup[1]))
         accum += "\nelse:\n    assert False, 'Role can\\'t have value %r' % request.user.get_profile()." + str(self.role_field_id,) # inconvenient to use a format string here
         return accum
-
 
 
 class FnCodeChunk(object):
