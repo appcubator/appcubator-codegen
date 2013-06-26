@@ -1,6 +1,20 @@
 from app_builder import naming
 from . import env
 
+class SocialAuthHandler(object):
+
+    def __init__(self, identifier):
+        self.identifier = identifier
+        self.namespace = naming.Namespace(parent_namespace=identifier.ns)
+        self.code_path = 'webapp/form_receivers.py'
+        self.locals = {"request": self.namespace.new_identifier('request')}
+        self.redirect = False
+
+
+    def render(self):
+        return env.get_template("socialauth_receiver.py").render(fr=self, locals=self.locals, imports=self.namespace.imports())
+
+
 class DjangoPageSearch(object):
     def __init__(self, identifier, template_code_path="search.html", access='all', search=True):
         """

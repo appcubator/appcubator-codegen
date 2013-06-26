@@ -2,7 +2,7 @@ import re
 
 from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
-from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch
+from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, SocialAuthHandler
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
@@ -376,14 +376,6 @@ class AppComponentFactory(object):
         return self.create_url_for_form_receiver(uie)
 
     def create_socialauth_login_handler_if_not_exists(self, uie):
-
-        # just to pass test
-        class SocialAuthHandler(object):
-            def __init__(self, a):
-                self.code_path = 'webapp/form_receivers.py'
-                pass
-            def render(self):
-                return ""
 
         # find or create socialauth login_handler
         if hasattr(self, 'social_auth_handler'):
