@@ -11,12 +11,12 @@ def {{ fr.identifier }}({{request}}):
     userprofile = request.user.get_profile()
     action = request.GET['action']
     if action == 'login':
-        if userprofile.role is not None:
+        if userprofile.role not in ['', None]:
             return # haven't yet signed up
         # put role-based redirect here.
         {{ fr.role_redirect.render()|indent(8) }}
     elif action == 'signup':
-        if userprofile.role is not None:
+        if userprofile.role not in ['', None]:
             return # already signed up
         role = request.GET['role']
         userprofile.role = role

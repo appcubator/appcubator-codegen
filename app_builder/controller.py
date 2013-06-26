@@ -28,6 +28,7 @@ def create_codes(app):
                   'create urls object for app form receivers': factory.create_fr_urls,
                   'create misc urls object for app': factory.create_misc_urls,
                   'add social include url': factory.add_social_include_url,
+                  "create url for socialauth login handler if not created": factory.create_url_for_socialauth_login_handler_if_not_created,
                   'add logout url': factory.add_logout_url,
                   'add search url' : factory.add_search_url,
 

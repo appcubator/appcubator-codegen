@@ -375,6 +375,17 @@ class AppComponentFactory(object):
                 return None
         return self.create_url_for_form_receiver(uie)
 
+    def create_url_for_socialauth_login_handler_if_not_created(self, uie):
+        if hasattr(self, 'social_auth_handler_url'):
+            return
+
+        url_obj = uie.app._django_fr_urls
+
+        route = (repr('^___social_auth_callback/$'), FnCodeChunk(lambda: "'%s'" % self.social_auth_handler.identifier))
+        self.social_auth_handler_url = route
+        url_obj.routes.append(route)
+        return url_obj
+
     def create_socialauth_login_handler_if_not_exists(self, uie):
 
         # find or create socialauth login_handler
