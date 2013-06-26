@@ -14,17 +14,13 @@ def {{ fr.identifier }}({{request}}):
         if userprofile.role is not None:
             return # haven't yet signed up
         # put role-based redirect here.
+        {{ fr.role_redirect.render()|indent(8) }}
     elif action == 'signup':
         if userprofile.role is not None:
             return # already signed up
         role = request.GET['role']
         userprofile.role = role
         userprofile.save()
-        {% if fr.redirect %}
-        {{redirect_url}} = {{redirect_url_code}}
-        return {{JsonResponse}}(data={'redirect_to':{{redirect_url}}})
-        {% else %}
-        return {{JsonResponse}}(data={'refresh':True})
-        {% endif %}
+        {{ signup_role_redirect.render()|indent(8) }}
     else:
         assert False

@@ -167,7 +167,8 @@
                   "action":"thirdpartylogin",
                   "provider":"facebook",
                   "content":"Login w/ Facebook",
-                  "signupRole": "role one"
+                  "signupRole": "role one",
+                  "goto": "internal://protected three/"
                },
                "type":"thirdpartylogin"
             },
@@ -187,7 +188,8 @@
                   "action":"thirdpartylogin",
                   "provider":"facebook",
                   "content":"Login w/ Facebook",
-                  "signupRole": "role two"
+                  "signupRole": "role two",
+                  "goto": "internal://protected two/"
                },
                "type":"thirdpartylogin"
             },
@@ -207,7 +209,8 @@
                   "action":"thirdpartylogin",
                   "provider":"facebook",
                   "content":"Login w/ Facebook",
-                  "signupRole": "role three"
+                  "signupRole": "role three",
+                  "goto": "internal://protected one/"
                },
                "type":"thirdpartylogin"
             },

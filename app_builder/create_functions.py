@@ -344,7 +344,7 @@ class AppComponentFactory(object):
 
             # construct a roleredirect thing
             if uie.app.multiple_users:
-                rr = create_role_redirect_chunk_from_login_routes(uie.container_info.loginRoutes, uie.app)
+                rr = self.create_role_redirect_chunk_from_login_routes(uie.container_info.loginRoutes, uie.app)
                 fr.add_role_redirect(rr)
 
         uie._django_form_receiver = fr
@@ -383,19 +383,21 @@ class AppComponentFactory(object):
             created = False
         else:
             sh_id = self.fr_namespace.new_identifier('socialauth_success_callback')
-            sh = SocialAuthHandler(sh_id)
+            role_field_id = uie.app.user_role_field._django_field.identifier
+            sh = SocialAuthHandler(sh_id, role_field_id)
             self.social_auth_handler = sh
             created = True
 
         # modify the handler to add the new information in this uie
         # add the role redirect chunk
         if uie.action == 'login':
-            r = uie.loginRoutes
-            pass
+            rr = self.create_role_redirect_chunk_from_login_routes(uie.loginRoutes, uie.app)
+            sh.add_role_redirect(rr)
 
         # add the mapping from this signup role to goto_pl to either this or the existing handler
         else:
             assert uie.action =='signup', "social action not supported: %r" % uie.action
+            sh.add_signup_role_redirect(uie.app.userentity.get_role_id(uie.signupRole), uie.goto_pl)
 
         # return only if new hander was actually created here.
         return sh if created else None

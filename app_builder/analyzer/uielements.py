@@ -323,11 +323,11 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         "content" : {"_type" : ""},
         "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
         "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
-        #"goto" : {"_type" : ""} # to be decommissioned in favor of loginRoutes
+        "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
     }
 
     _resolve_attrs = ()
-    #_pagelang_attrs = (('goto', 'goto_pl'), )
+    _pagelang_attrs = (('goto', 'goto_pl'), )
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
@@ -341,8 +341,15 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
         if self.action == 'signup':
             assert self.signupRole in [u.name for u in self.app.users]
+            assert self.goto is not None
         if self.action == 'login':
             assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+
+    def resolve_page(self):
+        if self.action == 'login':
+            pass
+        else:
+            super(ThirdPartyLogin, self).resolve_page()
 
     def query_string(self):
         query_string = "?action=%s" % self.action
