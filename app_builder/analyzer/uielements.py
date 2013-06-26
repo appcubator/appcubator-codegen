@@ -316,6 +316,7 @@ class Form(DictInited, Hooked):
 
 class ThirdPartyLogin(DictInited, Hooked, Resolvable):
     """ Represents all third party logins: [linkedin, facebook, twitter]"""
+    _hooks = ["create socialauth login handler"]
 
     _schema = {
         "provider": {"_type" : ""},

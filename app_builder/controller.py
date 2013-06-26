@@ -35,6 +35,7 @@ def create_codes(app):
                   'view for page': factory.create_view_for_page,
                   'url to serve page': factory.add_page_to_urls,
                   'find or add the needed data to the view': factory.find_or_create_query_for_view ,
+                  'create socialauth login handler': factory.create_socialauth_login_handler_if_not_exists,
 
                   # PAGE AND DATALANG
                   'resolve links href' : factory.resolve_page_and_its_datalang,

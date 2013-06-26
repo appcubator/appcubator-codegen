@@ -297,7 +297,6 @@ class AppComponentFactory(object):
         ps = DjangoPageSearch(self.view_namespace.new_identifier(page.name))
         return ps
 
-## START HACKING
     def create_login_form_if_not_exists(self, uie):
         if hasattr(self, '_django_login_form'):
             form_obj = self._django_login_form
@@ -319,6 +318,19 @@ class AppComponentFactory(object):
         uie._django_form = form_obj
         return form_obj
 
+
+    ## FORM RECEIVERS
+
+    def create_role_redirect_chunk_from_login_routes(self, loginRoutes, app):
+        def create_tuple_from_loginroute(r):
+            role = r.role
+            fn = FnCodeChunk(lambda: r.goto_pl.to_code(template=False))
+            return (role, fn)
+        role_linklang_tuples = [ create_tuple_from_loginroute(r) for r in loginRoutes ]
+        role_field_id = app.user_role_field._django_field.identifier
+        rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
+        return rr
+
     def create_login_form_receiver_if_not_created(self, uie):
         if hasattr(self, '_django_login_form_receiver'):
             fr = self._django_login_form_receiver
@@ -332,13 +344,7 @@ class AppComponentFactory(object):
 
             # construct a roleredirect thing
             if uie.app.multiple_users:
-                def create_tuple_from_loginroute(r):
-                    role = r.role
-                    fn = FnCodeChunk(lambda: r.goto_pl.to_code(template=False))
-                    return (role, fn)
-                role_linklang_tuples = [ create_tuple_from_loginroute(r) for r in uie.container_info.form.loginRoutes ]
-                role_field_id = uie.app.user_role_field._django_field.identifier
-                rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
+                rr = create_role_redirect_chunk_from_login_routes(uie.container_info.loginRoutes, uie.app)
                 fr.add_role_redirect(rr)
 
         uie._django_form_receiver = fr
@@ -369,7 +375,39 @@ class AppComponentFactory(object):
                 return None
         return self.create_url_for_form_receiver(uie)
 
-## END HACKING
+    def create_socialauth_login_handler_if_not_exists(self, uie):
+
+        # just to pass test
+        class SocialAuthHandler(object):
+            def __init__(self, a):
+                self.code_path = 'webapp/form_receivers.py'
+                pass
+            def render(self):
+                return ""
+
+        # find or create socialauth login_handler
+        if hasattr(self, 'social_auth_handler'):
+            sh = self.social_auth_handler
+            created = False
+        else:
+            sh_id = self.fr_namespace.new_identifier('socialauth_success_callback')
+            sh = SocialAuthHandler(sh_id)
+            self.social_auth_handler = sh
+            created = True
+
+        # modify the handler to add the new information in this uie
+        # add the role redirect chunk
+        if uie.action == 'login':
+            r = uie.loginRoutes
+            pass
+
+        # add the mapping from this signup role to goto_pl to either this or the existing handler
+        else:
+            assert uie.action =='signup', "social action not supported: %r" % uie.action
+
+        # return only if new hander was actually created here.
+        return sh if created else None
+
 
     def resolve_page_and_its_datalang(self, uie):
         def resolve_pagelang(pagelang_str):
