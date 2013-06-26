@@ -6,6 +6,7 @@ import re
 from dict_inited import DictInited
 from utils import encode_braces, decode_braces
 from resolving import Resolvable, EntityLang
+from copy import deepcopy
 
 from . import env
 
@@ -190,7 +191,7 @@ class Page(DictInited):
 
         _schema = {
             "urlparts": {"_type": [], "_each": {"_type": ""}},
-            "entities": {"_type": [], "_default": []}
+            "entities": {"_type": [], "_each": {"_type": EntityLang}, "_default": deepcopy([])}
         }
         # Entities hack - frontend doesn't know about this array, so it will be default inited to [].
         # then init function will populate it with EntityLang instances 
@@ -392,10 +393,12 @@ class App(DictInited):
             if hasattr(obj, 'validate'):
                 obj.validate()
 
-        # Resolve reflangs
+        # THEN Resolve reflangs not in entities
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
+        for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve_data()
+        for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve_page()
 
 
