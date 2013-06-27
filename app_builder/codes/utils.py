@@ -37,7 +37,7 @@ class FnCodeChunk(object):
     def __call__(s):
         return s.fn()
 
-    def render(s):
+    def render(s, **kwargs):
         return str(s)
 
 

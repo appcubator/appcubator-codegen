@@ -145,7 +145,7 @@ def ping_until_success(url, retries=10):
     return
 
 
-def run_generic_tests(app_state_dir, specific_state_names=None):
+def run_generic_tests(app_state_dir, specific_state_names=None, pause=True):
     if specific_state_names is None:
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir)  if fname.endswith('.json') ]
     else:
@@ -176,7 +176,8 @@ def run_generic_tests(app_state_dir, specific_state_names=None):
                     run_acceptance_tests(splinter_file)
                 else:
                     logger.warn("No splinter file found for %s" % json_file_name)
-                    pause_to_test()
+                    if pause:
+                        pause_to_test()
             finally:
                 # send sigterm to all processes in the group
                 os.killpg(p.pid, signal.SIGTERM)
@@ -188,6 +189,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Deploy and test some JSONs.')
 
     parser.add_argument('--path', help='the path at which you can find the json', dest='app_state_path', default=DEFAULT_STATE_PATH)
+    parser.add_argument('--no-pause', help='use this flag if you don\'t want to pause for nonexistent splinter', action='store_const', const=True, dest='no_pause', default=False)
     parser.add_argument('app_state_names', metavar='json', nargs='*', help='the name of the json file, without the json ext')
 
     args = parser.parse_args()
@@ -195,5 +197,5 @@ if __name__ == "__main__":
     if len(args.app_state_names) == 0:
         run_generic_tests(args.app_state_path)
     else:
-        run_generic_tests(args.app_state_path, specific_state_names=args.app_state_names)
+        run_generic_tests(args.app_state_path, specific_state_names=args.app_state_names, pause=(not args.no_pause))
 

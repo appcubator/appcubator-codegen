@@ -332,7 +332,7 @@ class AppComponentFactory(object):
             rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
         else:
             assert len(loginRoutes) == 1, "I checked this sometime before but just wanna make sure."
-            rr = FnCodeChunk(lambda: "redirect(%s)" % loginRoutes[0].to_code(template=False))
+            rr = FnCodeChunk(lambda: "redirect(%s)" % loginRoutes[0].goto_pl.to_code(template=False))
         return rr
 
     def create_login_form_receiver_if_not_created(self, uie):
@@ -380,26 +380,37 @@ class AppComponentFactory(object):
         return self.create_url_for_form_receiver(uie)
 
     def create_url_for_socialauth_login_handler_if_not_created(self, uie):
-        if hasattr(self, 'social_auth_handler_url'):
-            return
+        """
+        Create URL for success callback of django-social-auth.
+        Creates if not exists. Max one per provider may be created.
+        Book-keeping done in self.self.social_auth_used_provider_urls,
+            which is a dict from provider to url.
+        """
+        try:
+            if uie.provider in self.social_auth_used_provider_urls:
+                return
+        except AttributeError: # lazy init
+            self.social_auth_used_provider_urls = {}
 
         url_obj = uie.app._django_fr_urls
 
-        route = (repr('^___social_auth_callback/$'), FnCodeChunk(lambda: "'%s'" % self.social_auth_handler.identifier))
-        self.social_auth_handler_url = route
+        # one url might be, __facebook_social_auth_callback. one per each provider only.
+        route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "'%s'" % self.social_auth_provider_handlers[uie.provider].identifier))
+        self.social_auth_used_provider_urls[uie.provider] = route # bookkeeping
         url_obj.routes.append(route)
         return url_obj
 
     def create_socialauth_login_handler_if_not_exists(self, uie):
 
-        # find or create socialauth login_handler
-        if hasattr(self, 'social_auth_handler'):
-            sh = self.social_auth_handler
+        if not hasattr(self, 'social_auth_provider_handlers'):
+            self.social_auth_provider_handlers = {}
+        try:
+            sh = self.social_auth_provider_handlers[uie.provider]
             created = False
-        else:
+        except KeyError: # lazy init
             sh_id = self.fr_namespace.new_identifier('socialauth_success_callback')
             sh = SocialAuthHandler(sh_id)
-            self.social_auth_handler = sh
+            self.social_auth_provider_handlers[uie.provider] = sh # bookkeeping
             created = True
 
         # modify the handler to add the new information in this uie

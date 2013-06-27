@@ -317,8 +317,16 @@ class Form(DictInited, Hooked):
         return form
 
 class ThirdPartyLogin(DictInited, Hooked, Resolvable):
-    """ Represents all third party logins: [linkedin, facebook, twitter]"""
-    _hooks = ["create socialauth login handler", "create url for socialauth login handler if not created"]
+    """ Represents all third party logins: [linkedin, facebook, twitter]
+            aight, the way it'll work is, the button will pass login vs. signup as GET params, and try to authenticate via facebook
+            if success, it'll redirect to a custom handler
+            then, based on the login vs success, and whether _role is Null, it'll do some actions
+            in the login case where the user has not signed up (role is null), it'll delete the user that was created in the FB button process, and redirect to home
+            in the signup case where the user is already signed up, it'll redirect to home.
+            other cases work as expected """
+
+    _hooks = ["create socialauth login handler",
+              "create url for socialauth login handler if not created"]
 
     _schema = {
         "provider": {"_type" : ""},
@@ -335,7 +343,7 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
 
     def __init__(self, *args, **kwargs):
         super(ThirdPartyLogin, self).__init__(*args, **kwargs)
-
+        assert self.provider in ['facebook', 'twitter', 'linkedin'], "Invalid provider: %r" % self.provider
         # set up the action, just in case this is multi-user.
         # if single user, then action is completely ignored by codegen backend.
         if self.signupRole is not None:
