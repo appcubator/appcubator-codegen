@@ -41,7 +41,8 @@ class SplinterTestCase(unittest.TestCase):
     def setUp(self):
         # start the server
         cmd = "python manage.py testserver"
-        self.p = subprocess.Popen(shlex.split(cmd), cwd=self.__class__.APP_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
+        self.p = subprocess.Popen(shlex.split(cmd), cwd=self.__class__.APP_DIR,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
         # wait until server is ready
         ping_until_success('http://127.0.0.1:8000/')
 
