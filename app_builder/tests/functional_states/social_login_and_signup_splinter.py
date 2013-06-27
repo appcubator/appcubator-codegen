@@ -83,10 +83,10 @@ class TestSup(SplinterTestCase):
         self.login.click()
         self.assertIn('r1', self.route(self.browser.url))
 
-    """
-    def test_no_login_before_signing_up(self):
-        pass
-        """
+    def test_cant_login_before_signup(self):
+        self.login.click()
+        self.login_to_facebook()
+        self.assertEqual('/#_=_', self.route(self.browser.url))
 
 if __name__ == "__main__":
 
@@ -104,7 +104,9 @@ if __name__ == "__main__":
     signup_twice_suite = unittest.TestSuite([TestSup('test_signup_twice_not_allowed')])
 
     login_redirect_suite = unittest.TestSuite(map(TestSup, login_redirect_test_names))
+    cant_login_before_signup_suite = unittest.TestSuite([TestSup('test_cant_login_before_signup')])
 
-    #unittest.TextTestRunner(verbosity=2).run(signup_redirect_suite)
+    unittest.TextTestRunner(verbosity=2).run(signup_redirect_suite)
     unittest.TextTestRunner(verbosity=2).run(signup_twice_suite)
     unittest.TextTestRunner(verbosity=2).run(login_redirect_suite)
+    unittest.TextTestRunner(verbosity=2).run(cant_login_before_signup_suite)
