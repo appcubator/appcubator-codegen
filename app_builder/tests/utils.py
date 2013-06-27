@@ -48,8 +48,8 @@ class SplinterTestCase(unittest.TestCase):
 
         self.browser = Browser()
         self.prefix = "http://127.0.0.1:8000"
-        self.url = lambda x: prefix + str(x)
-        self.route = lambda x: x.replace(prefix, "")
+        self.url = lambda x: self.prefix + str(x)
+        self.route = lambda x: x.replace(self.prefix, "")
 
 
     def tearDown(self):
