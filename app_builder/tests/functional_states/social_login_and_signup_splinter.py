@@ -11,12 +11,26 @@ class TestSup(SplinterTestCase):
     def setUp(self):
         super(TestSup, self).setUp()
         self.browser.visit(self.url('/'))
-        fb_buttons = self.browser.find_by_css('.facebook-btn')
 
-        self.signup_role_one = fb_buttons[0]
-        self.signup_role_two = fb_buttons[1]
-        self.signup_role_three = fb_buttons[2]
-        self.login = fb_buttons[3]
+    @property
+    def signup_role_one(self):
+        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        return fb_buttons[0]
+
+    @property
+    def signup_role_two(self):
+        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        return fb_buttons[1]
+
+    @property
+    def signup_role_three(self):
+        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        return fb_buttons[2]
+
+    @property
+    def login(self):
+        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        return fb_buttons[3]
 
     def login_to_facebook(self):
         assert 'facebook.com' in self.browser.url
@@ -41,65 +55,40 @@ class TestSup(SplinterTestCase):
         self.login_to_facebook()
         self.assertIn('r1', self.browser.url)
 
-    """
     def test_signup_twice_not_allowed(self):
-        pass
+        self.signup_role_three.click()
+        self.login_to_facebook()
+        self.browser.visit(self.url('/'))
+        self.signup_role_three.click()
+        self.assertEqual('/#_=_', self.route(self.browser.url))
+
     def test_login_and_logout_after_signup_works_properly(self):
-        pass
+        self.signup_role_three.click()
+        self.login_to_facebook()
+        self.browser.visit(self.url('/'))
+        self.login.click()
+        self.assertIn('r3', self.route(self.browser.url))
+    """
     def test_no_login_before_signing_up(self):
         pass
         """
 
-
-def main():
-    """
-    Multi user social auth test.
-    """
-
-
-    ### Ignore below, it's just sample code.
-
-
-    def test_logged_out():
-        # try to go to restricted page, get redirected to home.
-        browser.visit(url('/restricted'))
-        assert route(browser.url) != '/restricted/', "Access control didn't prevent me from visiting restricted page."
-        # i'm ignoring the ?next for now tho.
-        assert route(browser.url) == '/?next=/restricted/', "Not logged in, bounced to %r instead of homepage" % route(browser.url)
-
-
-    # try to signup, expect to be redirected to restricted.
-    browser.visit(url('/'))
-    signup_form = browser.find_by_tag('form')[1]
-    signup_form.find_by_name('username').fill('karan')
-    signup_form.find_by_name('password1').fill('123')
-    signup_form.find_by_name('password2').fill('123')
-    signup_form.find_by_name('email').fill('k@k.com')
-    signup_form.find_by_css('input.btn').click()
-
-    if browser.is_text_present('error'):
-        assert False, "Looks like there was an error siging up."
-    for e in browser.find_by_css('.form-error'):
-        assert e.value.strip() == '', "Found an error while signing up: %r" % e.value
-
-    assert route(browser.url) == '/restricted/'
-
-    # try to logout, access restricted, then login, access restricted
-    browser.find_by_id('logout')[0].click()
-    assert route(browser.url) == '/'
-    test_logged_out()
-
-    login_form = browser.find_by_tag('form')[0]
-    login_form.find_by_name('username').fill('karan')
-    login_form.find_by_name('password').fill('123')
-    login_form.find_by_css('input.btn').click()
-    time.sleep(1)
-    assert route(browser.url) == '/restricted/', "Did not redirect to restricted. Ended up at %r" % route(browser.url)
-
-
-
 if __name__ == "__main__":
-    #main()
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestSup)
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    #unittest.main(argv=('test',))
+
+    signup_redirect_test_names = ['test_signup_button_creates_and_redirects_based_on_role_three',
+                                  'test_signup_button_creates_and_redirects_based_on_role_two',
+                                  'test_signup_button_creates_and_redirects_based_on_role_one',
+                                  ]
+
+    login_redirect_test_names = ['test_login_and_logout_after_signup_works_properly',
+                                # 'test_login_and_logout_after_signup_works_properly',
+                                 ]
+
+    signup_redirect_suite = unittest.TestSuite(map(TestSup, signup_redirect_test_names))
+    signup_twice_suite = unittest.TestSuite([TestSup('test_signup_twice_not_allowed')])
+
+    login_redirect_suite = unittest.TestSuite(map(TestSup, login_redirect_test_names))
+
+    #unittest.TextTestRunner(verbosity=2).run(signup_redirect_suite)
+    unittest.TextTestRunner(verbosity=2).run(signup_twice_suite)
+    unittest.TextTestRunner(verbosity=2).run(login_redirect_suite)

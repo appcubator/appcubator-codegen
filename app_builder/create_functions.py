@@ -326,7 +326,7 @@ class AppComponentFactory(object):
             def create_tuple_from_loginroute(r):
                 role = r.role
                 fn = FnCodeChunk(lambda: r.goto_pl.to_code(template=False))
-                return (role, fn)
+                return (app.userentity.get_role_id(role), fn)
             role_linklang_tuples = [ create_tuple_from_loginroute(r) for r in loginRoutes ]
             role_field_id = app.user_role_field._django_field.identifier
             rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
