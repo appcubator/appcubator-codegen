@@ -251,6 +251,7 @@ class Form(DictInited, Hooked):
 
                 if self.action == 'signup' and self.app.multiple_users:
                     assert self.signupRole is not None, "signup form must have signupRole"
+                    assert self.goto is not None, "signup form must have goto"
                     assert self.signupRole in [u.name for u in self.app.users]
 
             def resolve_page(self):
