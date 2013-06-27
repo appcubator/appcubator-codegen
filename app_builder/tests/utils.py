@@ -1,6 +1,7 @@
 import os, os.path
 import unittest
 from app_builder.analyzer.analyzer import App
+from splinter import Browser
 
 MASTER_APP_STATE = os.path.join(os.path.dirname(__file__), "app_states", "master_state.json")
 
@@ -43,7 +44,16 @@ class SplinterTestCase(unittest.TestCase):
         self.p = subprocess.Popen(shlex.split(cmd), cwd=self.__class__.APP_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
         # wait until server is ready
         ping_until_success('http://127.0.0.1:8000/')
+
+        self.browser = Browser()
+        self.prefix = "http://127.0.0.1:8000"
+        self.url = lambda x: prefix + str(x)
+        self.route = lambda x: x.replace(prefix, "")
+
+
     def tearDown(self):
+        self.browser.quit()
+
         # send sigterm to all processes in the group
         os.killpg(self.p.pid, signal.SIGTERM)
         self.p.wait()
