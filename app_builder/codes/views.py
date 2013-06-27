@@ -29,7 +29,7 @@ class SocialAuthHandler(object):
         else:
             role_linklang_tuples = []
             for role_id, redirect_to in self.signup_role_redirect_map.items():
-                fn = FnCodeChunk(lambda: redirect_to.to_code(template=False))
+                fn = FnCodeChunk(lambda redirect_to=redirect_to: redirect_to.to_code(template=False))
                 role_linklang_tuples.append((role_id, fn))
             rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
         self.signup_role_redirect = rr

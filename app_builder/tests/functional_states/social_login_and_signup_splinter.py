@@ -26,10 +26,20 @@ class TestSup(SplinterTestCase):
         passwd_input.fill(os.environ['FB_PASSWD'])
         self.browser.find_by_name('login')[0].click()
 
-    def test_signup_button_creates_and_redirects_based_on_role(self):
+    def test_signup_button_creates_and_redirects_based_on_role_one(self):
         self.signup_role_one.click()
         self.login_to_facebook()
-        raw_input()
+        self.assertIn('r3', self.browser.url)
+
+    def test_signup_button_creates_and_redirects_based_on_role_two(self):
+        self.signup_role_two.click()
+        self.login_to_facebook()
+        self.assertIn('r2', self.browser.url)
+
+    def test_signup_button_creates_and_redirects_based_on_role_three(self):
+        self.signup_role_three.click()
+        self.login_to_facebook()
+        self.assertIn('r1', self.browser.url)
 
     """
     def test_signup_twice_not_allowed(self):

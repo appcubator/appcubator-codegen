@@ -368,7 +368,7 @@ class AppComponentFactory(object):
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
             if uie.app.multiple_users:
                 role_field_id = uie.app.user_role_field._django_field.identifier
-                fr.add_signup_role(self.userrole_namespace.get_by_ref(uie.container_info.form.signupRole), role_field_id)
+                fr.add_signup_role(self.app.userentity.get_role_id(uie.container_info.form.signupRole), role_field_id)
         uie._django_form_receiver = fr
         return fr
 
