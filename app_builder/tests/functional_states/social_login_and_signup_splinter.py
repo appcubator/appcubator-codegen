@@ -62,12 +62,27 @@ class TestSup(SplinterTestCase):
         self.signup_role_three.click()
         self.assertEqual('/#_=_', self.route(self.browser.url))
 
-    def test_login_and_logout_after_signup_works_properly(self):
+    def test_login_and_logout_after_signup_works_properly_three(self):
         self.signup_role_three.click()
         self.login_to_facebook()
         self.browser.visit(self.url('/'))
         self.login.click()
         self.assertIn('r3', self.route(self.browser.url))
+
+    def test_login_and_logout_after_signup_works_properly_two(self):
+        self.signup_role_two.click()
+        self.login_to_facebook()
+        self.browser.visit(self.url('/'))
+        self.login.click()
+        self.assertIn('r2', self.route(self.browser.url))
+
+    def test_login_and_logout_after_signup_works_properly_one(self):
+        self.signup_role_one.click()
+        self.login_to_facebook()
+        self.browser.visit(self.url('/'))
+        self.login.click()
+        self.assertIn('r1', self.route(self.browser.url))
+
     """
     def test_no_login_before_signing_up(self):
         pass
@@ -80,8 +95,9 @@ if __name__ == "__main__":
                                   'test_signup_button_creates_and_redirects_based_on_role_one',
                                   ]
 
-    login_redirect_test_names = ['test_login_and_logout_after_signup_works_properly',
-                                # 'test_login_and_logout_after_signup_works_properly',
+    login_redirect_test_names = ['test_login_and_logout_after_signup_works_properly_one',
+                                 'test_login_and_logout_after_signup_works_properly_two',
+                                 'test_login_and_logout_after_signup_works_properly_three',
                                  ]
 
     signup_redirect_suite = unittest.TestSuite(map(TestSup, signup_redirect_test_names))
