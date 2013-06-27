@@ -42,7 +42,7 @@ def create_codes(app):
                   'resolve links href' : factory.resolve_page_and_its_datalang,
 
                   # Search
-                  'search rendering' : factory.add_search_functionality,
+                  'search code generation' : factory.add_search_functionality,
 
                   # HTML GEN STUFF
                   'translate strings in uielements': factory.properly_name_variables_in_template,
@@ -100,7 +100,6 @@ def create_codes(app):
     for p in app.pages:
         create('view for page', p)
         create('url to serve page', p)
-    create('add search url', app)
 
     # UIELEMENT HOOKS
     for p in app.pages:

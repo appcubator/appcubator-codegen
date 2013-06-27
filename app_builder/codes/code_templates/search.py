@@ -1,15 +1,15 @@
 {% set request = locals['request'] %}
 {% set page_context = locals['page_context'] %}
+{% set entity = locals['entity'] %}
 
 {% if view.has_search %}
 @require_GET
-def search(request):
+def {{view.identifer}}(request):
     {{page_context}} = {}
 
     query_string = {{request}}.GET['query']
     field = request.GET['field']
-    model_name = request.GET['model']
-    {{page_context}}['results'] = get_results(query_string, model_name, [field])
+    {{page_context}}['results'] = get_results(query_string, {{entity}}, [field])
 
     return render({{request}}, "{{ view.template_code_path }}", {{page_context}})
 {% endif %}

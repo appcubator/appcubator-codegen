@@ -44,7 +44,7 @@ class DjangoPageSearch(object):
         """
         Takes the last page and adds search to all pages by referencing the views/pages.py file.
         """
-        self.identifier = identifier
+        self.identifier = "search_%s" % identifier
         self.has_search = search
         self.code_path = "webapp/pages.py"
 
@@ -52,6 +52,7 @@ class DjangoPageSearch(object):
         self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
         self.locals['request'] = self.namespace.new_identifier('request', ref="VIEW.REQUEST")
         self.locals['page_context'] = self.namespace.new_identifier('page_context')
+        self.locals['entity'] = identifier
 
         # access level
         self.login_required = False

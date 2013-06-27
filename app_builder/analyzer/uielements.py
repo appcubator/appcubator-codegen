@@ -14,6 +14,7 @@ def get_uielement_by_type(type_string):
                           'loop': Iterator,
                           'node': Node,
                           'thirdpartylogin' : ThirdPartyLogin,
+                          'search' : Search,
                           'gallery': Gallery
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
@@ -383,6 +384,36 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
     def visit_strings(self, f):
         pass
 
+class Search(DictInited):
+    """ Wrapper class for search """
+
+    class SearchBox(DictInited, Hooked):
+        """ Represents a search box """
+
+        _hooks = ["add search url",
+                  "search code generation"]
+
+        _schema = {
+            'searchOn' : {"_type" : ""},
+            'searchFields' : {
+                "_type" : [], "_each": {"_type": ""}
+            }
+        }
+
+        def __init__(self, *args, **kwargs):
+            super(SearchBox, self).__init__(*args, **kwargs)
+            self.searchOn = self.searchOn.lower()
+
+        def html(self):
+            tpl_template = env.get_template('search_box.html')
+            tpl = Tag('div', {}, content=tpl_template.render(context=self))
+            return tpl
+
+        def visit_strings(self, f):
+            pass
+
+    def visit_strings(self, f):
+        pass
 
 class Node(DictInited, Hooked):  # a uielement with no container_info
     _hooks = ['resolve links href']
