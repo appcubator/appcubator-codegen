@@ -131,8 +131,17 @@ class AppComponentFactory(object):
         page._django_view = v
         return v
 
-    def find_or_create_search_for_view(self, uie):
 
+    def add_search_functionality(self, search):
+        search_identifier = self.view_namespace.new_identifier(search.searchQuery.searchOn)
+        pc_namespace = search.searchQuery.searchPageResolved._django_view.pc_namespace
+        ps = DjangoPageSearch(search_identifier, pc_namespace)
+        return ps
+
+
+    def find_or_create_search_for_view(self, uie):
+        """Uie is a search result list.
+        This adds the call to the search function."""
         entity = uie.container_info.entity_resolved
         searchList = uie.container_info.search
 
@@ -145,6 +154,8 @@ class AppComponentFactory(object):
         view.add_search(ds)
 
         uie._django_search = ds
+        uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
+
 
     def find_or_create_query_for_view(self, uie):
 
@@ -309,10 +320,6 @@ class AppComponentFactory(object):
         uie._django_form = form_obj
         return form_obj
 
-
-    def add_search_functionality(self, search):
-        ps = DjangoPageSearch(search.searchQuery.searchOn)
-        return ps
 
     def create_login_form_if_not_exists(self, uie):
         if hasattr(self, '_django_login_form'):

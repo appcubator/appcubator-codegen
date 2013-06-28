@@ -1,6 +1,7 @@
 {% set request = locals['request'] %}
 {% set page_context = locals['page_context'] %}
 {% set entity = locals['entity'] %}
+{% set results = locals['results'] %}
 
 {% if view.has_search %}
 def {{view.identifier}}({{request}}, page_context):
@@ -8,5 +9,5 @@ def {{view.identifier}}({{request}}, page_context):
 	    return
     query_string = {{request}}.GET['query']
     field = request.GET['field']
-    {{page_context}}['results'] = get_results(query_string, "{{entity}}", [field])
+    {{page_context}}['{{results}}'] = get_results(query_string, "{{entity}}", [field])
 {% endif %}

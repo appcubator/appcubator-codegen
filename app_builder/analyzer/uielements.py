@@ -388,10 +388,9 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
 class Search(DictInited, Hooked):
     """ Wrapper class for search """
 
-    _hooks = ["add search url",
-              "search code generation"]
+    _hooks = ["search code generation"]
 
-    class SearchBox(DictInited):
+    class SearchBox(DictInited, Resolvable):
         """ Represents a search box """
 
         _schema = {
@@ -402,8 +401,11 @@ class Search(DictInited, Hooked):
             }
         }
 
+        _resolve_attrs = (("searchPage", "searchPageResolved"),)
+
         def __init__(self, *args, **kwargs):
             super(Search.SearchBox, self).__init__(*args, **kwargs)
+            self.searchPage = encode_braces('pages/%s' % self.searchPage)
     
     def html(self):
         tpl_template = env.get_template('search_box.html')
@@ -534,8 +536,12 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
 class Iterator(DictInited, Hooked):
 
-    _hooks = ['find or add the needed data to the view',
-              'find or add the needed search to the view']
+    @property
+    def hooks(self):
+        if self.container_info.query is None:
+            return ['find or add the needed search to the view']
+        else:
+            return ['find or add the needed data to the view']
 
     class IteratorInfo(DictInited, Resolvable):
 
@@ -570,9 +576,10 @@ class Iterator(DictInited, Hooked):
 
         _schema = {
             "entity": {"_type": ""},
-            "action": {"_type": ""},
-            "query": {"_type": Query},
-            "search": {"_type": SearchQuery},
+            "query": {"_one_of": [{"_type" : Query}, {"_type": None}], "_default": None},
+                # one or the other. validated in validate function.
+            "search": {"_one_of": [{"_type" : SearchQuery}, {"_type": None}], "_default": None},
+
             "row": {"_type": Row}
         }
 
@@ -580,8 +587,15 @@ class Iterator(DictInited, Hooked):
 
         def __init__(self, *args, **kwargs):
             super(Iterator.IteratorInfo, self).__init__(*args, **kwargs)
-            for w in self.query.where:
-                w.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, w.field_name))
+
+            if self.query is not None:
+                for w in self.query.where:
+                    w.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, w.field_name))
+
+        def validate(self):
+            assert (self.query is None) != (self.search is None), "Can't tell whether search or query??? q: %r, s: %r" % (self.query, self.search)
+            self.action = 'search' if self.search is not None else 'query'
+
 
     _schema = {
         "container_info": {"_type": IteratorInfo},

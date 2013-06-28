@@ -45,10 +45,10 @@ class SplinterTestCase(unittest.TestCase):
         self.p = subprocess.Popen(shlex.split(cmd), cwd=self.__class__.APP_DIR,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
         # wait until server is ready
-        ping_until_success('http://appcubator.com:8000/')
+        ping_until_success('http://localhost:8000/')
 
         self.browser = Browser()
-        self.prefix = "http://appcubator.com:8000"
+        self.prefix = "http://localhost:8000"
         self.url = lambda x: self.prefix + str(x)
         self.route = lambda x: x.replace(self.prefix, "")
 

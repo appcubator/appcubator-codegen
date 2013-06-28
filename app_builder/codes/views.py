@@ -40,7 +40,7 @@ class SocialAuthHandler(object):
 
 
 class DjangoPageSearch(object):
-    def __init__(self, identifier, template_code_path="search.html", access='all', search=True):
+    def __init__(self, identifier, pc_namespace, template_code_path="search.html", access='all', search=True):
         """
         Takes the last page and adds search to all pages by referencing the views/pages.py file.
         """
@@ -49,10 +49,14 @@ class DjangoPageSearch(object):
         self.code_path = "webapp/pages.py"
 
         self.locals = {}
-        self.namespace = naming.Namespace()
+        self.namespace = naming.Namespace(parent_namespace=identifier.ns)
         self.locals['request'] = self.namespace.new_identifier('request', ref="VIEW.REQUEST")
         self.locals['page_context'] = self.namespace.new_identifier('page_context')
         self.locals['entity'] = identifier.__str__()
+
+        self.pc_namespace = pc_namespace
+        self.results_id = pc_namespace.new_identifier('results', ref="RESULTS_ID")
+        self.locals['results'] = self.results_id
 
         # access level
         self.login_required = False
