@@ -9,7 +9,7 @@ def {{view.identifier}}(request):
 
     query_string = {{request}}.GET['query']
     field = request.GET['field']
-    {{page_context}}['results'] = get_results(query_string, {{entity}}, [field])
+    {{page_context}}['results'] = get_results(query_string, "{{entity}}", [field])
 
     return render({{request}}, "{{ view.template_code_path }}", {{page_context}})
 {% endif %}

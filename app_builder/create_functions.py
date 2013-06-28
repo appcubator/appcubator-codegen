@@ -295,7 +295,7 @@ class AppComponentFactory(object):
 
 
     def add_search_functionality(self, search):
-        ps = DjangoPageSearch(self.view_namespace.new_identifier(search.searchQuery.searchOn))
+        ps = DjangoPageSearch(search.searchQuery.searchOn)
         return ps
 
     def create_login_form_if_not_exists(self, uie):

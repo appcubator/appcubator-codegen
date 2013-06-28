@@ -52,7 +52,7 @@ class DjangoPageSearch(object):
         self.namespace = naming.Namespace()
         self.locals['request'] = self.namespace.new_identifier('request', ref="VIEW.REQUEST")
         self.locals['page_context'] = self.namespace.new_identifier('page_context')
-        self.locals['entity'] = identifier
+        self.locals['entity'] = identifier.__str__()
 
         # access level
         self.login_required = False
