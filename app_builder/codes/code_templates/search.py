@@ -4,7 +4,7 @@
 
 {% if view.has_search %}
 @require_GET
-def {{view.identifer}}(request):
+def {{view.identifier}}(request):
     {{page_context}} = {}
 
     query_string = {{request}}.GET['query']

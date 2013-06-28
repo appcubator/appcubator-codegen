@@ -384,14 +384,14 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
     def visit_strings(self, f):
         pass
 
-class Search(DictInited):
+class Search(DictInited, Hooked):
     """ Wrapper class for search """
 
-    class SearchBox(DictInited, Hooked):
-        """ Represents a search box """
+    _hooks = ["add search url",
+              "search code generation"]
 
-        _hooks = ["add search url",
-                  "search code generation"]
+    class SearchBox(DictInited):
+        """ Represents a search box """
 
         _schema = {
             'searchOn' : {"_type" : ""},
@@ -401,16 +401,18 @@ class Search(DictInited):
         }
 
         def __init__(self, *args, **kwargs):
-            super(SearchBox, self).__init__(*args, **kwargs)
-            self.searchOn = self.searchOn.lower()
-
-        def html(self):
-            tpl_template = env.get_template('search_box.html')
-            tpl = Tag('div', {}, content=tpl_template.render(context=self))
-            return tpl
+            super(Search.SearchBox, self).__init__(*args, **kwargs)
+    
+    def html(self):
+        tpl_template = env.get_template('search_box.html')
+        self.searchMethod = "search_%s" % self.searchQuery.searchOn.lower()
+        tpl = Tag('div', {}, content=tpl_template.render(context=self))
+        return tpl
 
         def visit_strings(self, f):
             pass
+
+    _schema = {"searchQuery" : {"_type" : SearchBox }}
 
     def visit_strings(self, f):
         pass

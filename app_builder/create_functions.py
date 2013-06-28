@@ -246,10 +246,11 @@ class AppComponentFactory(object):
         logout_route = ("""r'^__logout/$'""", logout_id, kwargs)
         url_obj.routes.append(logout_route)
 
-    def add_search_url(self, searchBox):
+    def add_search_url(self, search):
+        searchBox = search.searchQuery
         """Adds the generic search route to webapp.pages: url('^search/$', 'search'),"""
         url_obj = searchBox.app._django_page_urls
-        search_route = ("""r'^search_%s/$'""" % searchBox.searchOn, "'search_%s'" % searchBox.searchOn)
+        search_route = ("""r'^search_%s/$'""" % searchBox.searchOn, "'search_%s'" % searchBox.searchOn.lower())
         url_obj.routes.append(search_route)
 
     def add_page_to_urls(self, page):
@@ -293,8 +294,8 @@ class AppComponentFactory(object):
         return form_obj
 
 
-    def add_search_functionality(self, searchBox):
-        ps = DjangoPageSearch(self.view_namespace.new_identifier(searchBox.searchOn))
+    def add_search_functionality(self, search):
+        ps = DjangoPageSearch(self.view_namespace.new_identifier(search.searchQuery.searchOn))
         return ps
 
     def create_login_form_if_not_exists(self, uie):
