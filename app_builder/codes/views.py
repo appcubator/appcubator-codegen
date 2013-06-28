@@ -67,12 +67,12 @@ class DjangoPageSearch(object):
 
 class DjangoPageView(object):
 
-    def __init__(self, identifier, args=None, template_code_path="", queries=None, access='all', search=False):
+    def __init__(self, identifier, args=None, template_code_path="", queries=None, access='all', searches=None):
         """
         args is a list of tuples: (identifier, some_data_as_dict)
         """
         self.identifier = identifier
-        self.has_search = search
+        self.has_search = searches is not None
         self.code_path = "webapp/pages.py"
 
         self.locals = {}
@@ -100,13 +100,20 @@ class DjangoPageView(object):
         self.template_code_path = template_code_path
 
         # search
-        if self.has_search:
-            self.search_code_path = "search.html"
+        self.searches = []
+        if not self.has_search:
+            searches = []
+        for s_obj in searches:
+            self.add_search(s_obj)
+        # self.search_code_path = "search.html"
 
         # access level
         self.login_required = False
         if access == 'users':
             self.login_required = True
+
+    def add_search(self, ds_obj):
+        self.searches.append(ds_obj.render())
 
     def add_query(self, dq_obj):
         template_id = self.pc_namespace.new_identifier('%ss' % dq_obj.model_id, ref=dq_obj) # very crude pluralize

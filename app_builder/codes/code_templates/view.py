@@ -22,5 +22,10 @@ def {{ view.identifier }}({{request}}{% for arg, data in view.args %}, {{ arg }}
     {{page_context}}['{{ template_id }}'] = {{ query }}
     {% endfor %}
 
+                                                            {# search #}
+    {% for search_call in view.searches %}
+    {{search_call}}({{request}}, {{page_context}})
+    {% endfor %}
+
     return {{render}}({{request}}, "{{ view.template_code_path }}", {{page_context}})
     

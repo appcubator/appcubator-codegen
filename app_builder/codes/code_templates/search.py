@@ -3,13 +3,10 @@
 {% set entity = locals['entity'] %}
 
 {% if view.has_search %}
-@require_GET
-def {{view.identifier}}(request):
-    {{page_context}} = {}
-
+def {{view.identifier}}({{request}}, page_context):
+    if 'query' not in {{request}}.GET:
+	    return
     query_string = {{request}}.GET['query']
     field = request.GET['field']
     {{page_context}}['results'] = get_results(query_string, "{{entity}}", [field])
-
-    return render({{request}}, "{{ view.template_code_path }}", {{page_context}})
 {% endif %}

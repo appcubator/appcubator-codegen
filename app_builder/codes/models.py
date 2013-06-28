@@ -3,23 +3,17 @@ from datetime import datetime
 
 from . import env
 
-class EnhancedDjangoQuery(object):
+class SearchQuery(object):
 
-    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None):
+    def __init__(self, model_id, sort_by_id=None, limit=None):
         self.model_id = model_id
-        self.where_data = where_data if where_data is not None else []
         # TODO implement these
         self.sort_by_id = sort_by_id
         self.limit = limit
 
     def render(self):
-        code_line = "%s.objects.all()" % self.model_id
+        code_line = "search_%s" % self.model_id.__str__().lower()
 
-        if len(self.where_data) != 0:
-            code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
-        # Natural enumeration 
-        if self.sort_by_id is not None:
-            code_line += ".order_by('%s')" % self.sort_by_id
         if self.limit is not -1:
             code_line += "[:%d]" % self.limit
         return code_line

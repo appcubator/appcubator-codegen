@@ -3,7 +3,7 @@ import re
 from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, SocialAuthHandler
-from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery
+from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, SearchQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk
@@ -131,6 +131,21 @@ class AppComponentFactory(object):
         page._django_view = v
         return v
 
+    def find_or_create_search_for_view(self, uie):
+
+        entity = uie.container_info.entity_resolved
+        searchList = uie.container_info.search
+
+        # create a list of keyvalue pairs for the filter in the query
+        page = uie.page
+        view = page._django_view
+
+        ds = SearchQuery(entity._django_model.identifier, limit=searchList.numberOfRows)
+
+        view.add_search(ds)
+
+        uie._django_search = ds
+
     def find_or_create_query_for_view(self, uie):
 
         entity = uie.container_info.entity_resolved
@@ -160,7 +175,7 @@ class AppComponentFactory(object):
                                                           limit=query.numberOfRows)
 
         view.add_query(dq)
-
+ 
         uie._django_query = dq
         uie._django_query_id = view.pc_namespace.get_by_ref(dq)
 
@@ -247,11 +262,12 @@ class AppComponentFactory(object):
         url_obj.routes.append(logout_route)
 
     def add_search_url(self, search):
-        searchBox = search.searchQuery
-        """Adds the generic search route to webapp.pages: url('^search/$', 'search'),"""
-        url_obj = searchBox.app._django_page_urls
-        search_route = ("""r'^search_%s/$'""" % searchBox.searchOn, "'search_%s'" % searchBox.searchOn.lower())
-        url_obj.routes.append(search_route)
+        """ TODO not needed till AJAX search """
+        # searchBox = search.searchQuery
+        # """Adds the generic search route to webapp.pages: url('^<page with search>/$', '<method for that page>'),"""
+        # url_obj = searchBox.app._django_page_urls
+        # search_route = ("""r'^search_%s/$'""" % searchBox.searchOn.lower(), "'search_%s'" % searchBox.searchOn.lower())
+        # url_obj.routes.append(search_route)
 
     def add_page_to_urls(self, page):
         url_obj = page.app._django_page_urls

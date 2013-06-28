@@ -396,6 +396,7 @@ class Search(DictInited, Hooked):
 
         _schema = {
             'searchOn' : {"_type" : ""},
+            'searchPage' : {"_type" : ""},
             'searchFields' : {
                 "_type" : [], "_each": {"_type": ""}
             }
@@ -411,7 +412,7 @@ class Search(DictInited, Hooked):
         return tpl
 
         def visit_strings(self, f):
-            pass
+            self.searchPage = self.searchPage.lower()
 
     _schema = {"searchQuery" : {"_type" : SearchBox }}
 
@@ -533,25 +534,15 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
 class Iterator(DictInited, Hooked):
 
-    _hooks = ['find or add the needed data to the view']
+    _hooks = ['find or add the needed data to the view',
+              'find or add the needed search to the view']
 
     class IteratorInfo(DictInited, Resolvable):
 
-        """ Enhanced ___ looks like dead/inactive code """
-        class EnhancedQuery(DictInited):
-
-            class EnhancedWhereClause(DictInited, Resolvable):
-                _schema = {
-                        "field_name": {"_type": ""},
-                        "equal_to": {"_type": ""}
-                }
-                _resolve_attrs = (('field_name', 'field'),)
-                _datalang_attrs = (('equal_to', 'equal_to_dl'),)
-
+        """ Search Lists """
+        class SearchQuery(DictInited):
             _schema = {
-                "sortAccordingTo": {"_type": ""},
                 "numberOfRows": {"_type": 0},
-                "where": {"_type": [], "_each": {"_type":EnhancedWhereClause}}
             }
 
         class Query(DictInited):
@@ -581,6 +572,7 @@ class Iterator(DictInited, Hooked):
             "entity": {"_type": ""},
             "action": {"_type": ""},
             "query": {"_type": Query},
+            "search": {"_type": SearchQuery},
             "row": {"_type": Row}
         }
 
