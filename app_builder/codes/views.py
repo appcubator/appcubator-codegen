@@ -160,6 +160,7 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
 class DjangoLoginFormReceiver(DjangoFormReceiver):
 
     def add_role_redirect(self, role_redirect):
+        assert not hasattr(self, 'role_redirect'), "There were multiple login with facebook buttons in the app. Butwai."
         self.role_redirect = role_redirect
 
     def render(self):

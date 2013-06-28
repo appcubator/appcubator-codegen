@@ -7,14 +7,14 @@ class RoleRedirectChunk(object):
     def render(self, ajax=True):
         if len(self.role_codechunk_tuples) == 0:
             assert False, "wtf, empty map?"
-        elif len(self.role_codechunk_tuples) == 1:
-            return str(self.role_codechunk_tuples[0])
 
         if ajax:
             code_for_redirect = lambda x: "JsonResponse(data={'redirect_to': %s})" % x
         else:
             code_for_redirect = lambda x: "redirect(%s)" % x
 
+        if len(self.role_codechunk_tuples) == 1:
+            return "return %s" % code_for_redirect(self.role_codechunk_tuples[0][1])
 
         # if x redirect to y, [elif x redirect to y]*, else assert false structure
         accum = ""

@@ -134,8 +134,7 @@
                 "actions":[
 
                 ],
-                "belongsTo":null,
-                "goto":"internal://Some Restricted Page/"
+                "loginRoutes": [{ "role": "User", "redirect": "internal://Some Restricted Page/"}]
               },
               "uielements":[
 
@@ -221,6 +220,7 @@
                   }
                 ],
                 "goto":"internal://Some Restricted Page/",
+                "signupRole": "User",
                 "name":"Sign Up",
                 "actions":[
 

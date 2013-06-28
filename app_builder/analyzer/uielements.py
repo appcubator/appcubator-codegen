@@ -232,7 +232,7 @@ class Form(DictInited, Hooked):
                 "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
                     # or (checked in validate, which is called in app's create from dict)
                 "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
-                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}]},
+                "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
 
             }
 
@@ -246,13 +246,17 @@ class Form(DictInited, Hooked):
                     f.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, f.field_name))
 
             def validate(self):
-                if self.action == 'login' and self.app.multiple_users:
-                    assert self.loginRoutes is not None, "login form must have loginRoutes"
+                if self.action in ['login', 'signup']:
+                    assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
+                if self.action == 'login':
+                    assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+                    assert self.goto is None, "Login form must use loginRoutes, not goto"
+                else:
+                    assert self.goto is not None, "All forms other than login form must have goto"
 
-                if self.action == 'signup' and self.app.multiple_users:
+                if self.action == 'signup':
                     assert self.signupRole is not None, "signup form must have signupRole"
-                    assert self.goto is not None, "signup form must have goto"
-                    assert self.signupRole in [u.name for u in self.app.users]
+                    assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
 
             def resolve_page(self):
                 if self.goto is None:

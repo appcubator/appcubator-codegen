@@ -46,7 +46,6 @@ class TestLoginSignup(SplinterTestCase):
     def test_signup_redirect(self):
         # try to signup, expect to be redirected to restricted.
         self.signup()
-        raw_input()
         self.assertFalse(self.browser.is_text_present('error'), msg="Looks like there was an error siging up.")
         for e in self.browser.find_by_css('.form-error'):
             self.assertEqual(e.value.strip(), '', msg="Found an error while signing up: %r" % e.value)
