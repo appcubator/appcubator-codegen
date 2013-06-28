@@ -118,34 +118,26 @@ def get_rid_of_wsgi(dest):
         print line.rstrip()
 
 
-def run_acceptance_tests(splinter_file):
-    "Executes the splinter file to run the acceptance tests."
-    execfile(splinter_file, {"__name__": "__main__"})
+def run_tests_for_json_file(json_file):
+    json_file_name = os.path.basename(json_file)
+    try:
+        dest = basic_deploy(json_file)
+    except:
+        logger.error("App %s failed to deploy" % json_file)
+        logger.error("Encountered exception: ", sys.exc_info()[0])
+        return
 
-def pause_to_test():
-    print "Pausing so you can test at localhost:8000"
-    raw_input()
-
-
-def ping_until_success(url, retries=10):
-    "Holds up this process until a 200 is received from the server."
-    tries = 0
-    successful = False
-    while not successful and tries < retries:
-        try:
-            r = requests.get(url)
-        except requests.exceptions.ConnectionError:
-            pass
-        else:
-            successful = r.status_code == 200
-        tries += 1
-        time.sleep(1)
-    if tries == retries:
-        raise Exception("Tried to ping until 200, but just couldn't get that dough brah.")
-    return
+    logger.info("App %s Deployed locally at %s" % (json_file_name, dest))
+    syncdb(dest) # this may not be necessary since we're using testserver instead of runserver.
+    run_django_tests(dest)
+    splinter_file = os.path.join('%s_splinter.py' % json_file.replace('.json',''))
+    if os.path.isfile(splinter_file):
+        execfile(splinter_file, {"__name__": "__main__", "APP_DIR": dest}) # this runs the main test file, which is unittest driven
+    else:
+        logger.warn("No splinter file found for %s" % json_file_name)
 
 
-def run_generic_tests(app_state_dir, specific_state_names=None, pause=True):
+def run_tests_in_dir(app_state_dir, specific_state_names=None):
     if specific_state_names is None:
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir)  if fname.endswith('.json') ]
     else:
@@ -153,35 +145,10 @@ def run_generic_tests(app_state_dir, specific_state_names=None, pause=True):
 
     num_apps = len(fnames_to_test)
     for i, json_file_name in enumerate(fnames_to_test):
+        logger.info("Running tests for app %s [%d of %d]" %(json_file_name, (i+1), num_apps))
         json_file = os.path.join(app_state_dir, json_file_name)
-        logger.info("Running tests for app %s [%d of %d]" %(json_file, (i+1), num_apps))
-        try:
-            dest = basic_deploy(json_file)
-        except:
-            logger.error("App %s failed to deploy" % json_file)
-            logger.error("Encountered exception: ", sys.exc_info()[0])
-            continue
-        else:
-            logger.info("App %s Deployed locally at %s" % (json_file_name, dest))
-            syncdb(dest)
-            run_django_tests(dest)
-            splinter_file = os.path.join(app_state_dir, '%s_splinter.py' % json_file_name.replace('.json',''))
-            # start the server
-            cmd = "python manage.py runserver"
-            p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
-            try:
-                # wait until server is ready
-                ping_until_success('http://127.0.0.1:8000/')
-                if os.path.isfile(splinter_file):
-                    run_acceptance_tests(splinter_file)
-                else:
-                    logger.warn("No splinter file found for %s" % json_file_name)
-                    if pause:
-                        pause_to_test()
-            finally:
-                # send sigterm to all processes in the group
-                os.killpg(p.pid, signal.SIGTERM)
-                p.wait()
+        logger.info("Json file at %s" % json_file)
+        run_tests_for_json_file(json_file)
 
 
 if __name__ == "__main__":
@@ -189,13 +156,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Deploy and test some JSONs.')
 
     parser.add_argument('--path', help='the path at which you can find the json', dest='app_state_path', default=DEFAULT_STATE_PATH)
-    parser.add_argument('--no-pause', help='use this flag if you don\'t want to pause for nonexistent splinter', action='store_const', const=True, dest='no_pause', default=False)
     parser.add_argument('app_state_names', metavar='json', nargs='*', help='the name of the json file, without the json ext')
 
     args = parser.parse_args()
 
     if len(args.app_state_names) == 0:
-        run_generic_tests(args.app_state_path)
+        run_tests_in_dir(args.app_state_path)
     else:
-        run_generic_tests(args.app_state_path, specific_state_names=args.app_state_names, pause=(not args.no_pause))
+        run_tests_in_dir(args.app_state_path, specific_state_names=args.app_state_names)
 
