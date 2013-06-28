@@ -388,13 +388,19 @@ class AppComponentFactory(object):
 
         url_obj = uie.app._django_fr_urls
 
-        # one url might be, __facebook_social_auth_callback. one per each provider only.
-        route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "'%s'" % self.social_auth_provider_handlers[uie.provider].identifier))
-        self.social_auth_used_provider_urls[uie.provider] = route # bookkeeping
+        if uie.app.multiple_users:
+            # one url might be, __facebook_social_auth_callback. one per each provider only.
+            route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "'%s'" % self.social_auth_provider_handlers[uie.provider].identifier))
+            self.social_auth_used_provider_urls[uie.provider] = route # bookkeeping
+        else:
+            route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "lambda r: %s.as_view(url=%s)(r)" % (self.urls_namespace.imports()['django.cbv.redirect_view'], uie.loginRoutes[0].goto_pl.to_code(template=False))))
         url_obj.routes.append(route)
-        return url_obj
+        # dont return url obj - it already exists.
 
     def create_socialauth_login_handler_if_not_exists(self, uie):
+
+        if not uie.app.multiple_users:
+            return
 
         if not hasattr(self, 'social_auth_provider_handlers'):
             self.social_auth_provider_handlers = {}
