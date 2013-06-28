@@ -346,17 +346,13 @@ class AppComponentFactory(object):
     ## FORM RECEIVERS
 
     def create_role_redirect_chunk_from_login_routes(self, loginRoutes, app):
-        if app.multiple_users:
-            def create_tuple_from_loginroute(r):
-                role = r.role
-                fn = FnCodeChunk(lambda: r.goto_pl.to_code(template=False))
-                return (app.userentity.get_role_id(role), fn)
-            role_linklang_tuples = [ create_tuple_from_loginroute(r) for r in loginRoutes ]
-            role_field_id = app.user_role_field._django_field.identifier
-            rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
-        else:
-            assert len(loginRoutes) == 1, "I checked this sometime before but just wanna make sure."
-            rr = FnCodeChunk(lambda: "redirect(%s)" % loginRoutes[0].goto_pl.to_code(template=False))
+        def create_tuple_from_loginroute(r):
+            role = r.role
+            fn = FnCodeChunk(lambda: r.goto_pl.to_code(template=False))
+            return (app.userentity.get_role_id(role), fn)
+        role_linklang_tuples = [ create_tuple_from_loginroute(r) for r in loginRoutes ]
+        role_field_id = app.user_role_field._django_field.identifier if app.multiple_users else None
+        rr = RoleRedirectChunk(role_linklang_tuples, role_field_id)
         return rr
 
     def create_login_form_receiver_if_not_created(self, uie):
@@ -367,13 +363,10 @@ class AppComponentFactory(object):
             if 'django.auth.login' not in self.fr_namespace.imports():
                 self.fr_namespace.find_or_create_import('django.auth.login', 'auth_login')
             fr = DjangoLoginFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
-            if uie.container_info.form.redirect:
-                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
 
             # construct a roleredirect thing
-            if uie.app.multiple_users:
-                rr = self.create_role_redirect_chunk_from_login_routes(uie.container_info.form.loginRoutes, uie.app)
-                fr.add_role_redirect(rr)
+            rr = self.create_role_redirect_chunk_from_login_routes(uie.container_info.form.loginRoutes, uie.app)
+            fr.add_role_redirect(rr)
 
         uie._django_form_receiver = fr
         return fr
@@ -392,7 +385,7 @@ class AppComponentFactory(object):
                 fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
             if uie.app.multiple_users:
                 role_field_id = uie.app.user_role_field._django_field.identifier
-                fr.add_signup_role(self.app.userentity.get_role_id(uie.container_info.form.signupRole), role_field_id)
+                fr.add_signup_role(uie.app.userentity.get_role_id(uie.container_info.form.signupRole), role_field_id)
         uie._django_form_receiver = fr
         return fr
 
@@ -418,13 +411,19 @@ class AppComponentFactory(object):
 
         url_obj = uie.app._django_fr_urls
 
-        # one url might be, __facebook_social_auth_callback. one per each provider only.
-        route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "'%s'" % self.social_auth_provider_handlers[uie.provider].identifier))
-        self.social_auth_used_provider_urls[uie.provider] = route # bookkeeping
+        if uie.app.multiple_users:
+            # one url might be, __facebook_social_auth_callback. one per each provider only.
+            route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "'%s'" % self.social_auth_provider_handlers[uie.provider].identifier))
+            self.social_auth_used_provider_urls[uie.provider] = route # bookkeeping
+        else:
+            route = (repr('^__%s_social_auth_callback/$' % uie.provider), FnCodeChunk(lambda: "lambda r: %s.as_view(url=%s)(r)" % (self.urls_namespace.imports()['django.cbv.redirect_view'], uie.loginRoutes[0].goto_pl.to_code(template=False))))
         url_obj.routes.append(route)
-        return url_obj
+        # dont return url obj - it already exists.
 
     def create_socialauth_login_handler_if_not_exists(self, uie):
+
+        if not uie.app.multiple_users:
+            return
 
         if not hasattr(self, 'social_auth_provider_handlers'):
             self.social_auth_provider_handlers = {}
