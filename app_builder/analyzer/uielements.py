@@ -3,6 +3,7 @@ from resolving import Resolvable
 from utils import encode_braces, decode_braces
 from copy import deepcopy
 from datetime import datetime
+import simplejson
 
 from app_builder.htmlgen import Tag
 
@@ -395,7 +396,6 @@ class Search(DictInited, Hooked):
     _hooks = ["search code generation"]
 
     class SearchBox(DictInited, Resolvable):
-        """ Represents a search box """
 
         _schema = {
             'searchOn' : {"_type" : ""},
@@ -405,15 +405,23 @@ class Search(DictInited, Hooked):
             }
         }
 
-        _resolve_attrs = (("searchPage", "searchPageResolved"),)
+        _resolve_attrs = (("searchPage", "searchPageResolved"),
+                          ("searchFields", "searchFieldsResolved"),
+                          ("searchOn", "searchOnResolved"))
 
         def __init__(self, *args, **kwargs):
+
             super(Search.SearchBox, self).__init__(*args, **kwargs)
+            self.searchFields = [encode_braces('tables/%s/fields/%s' % (self.searchOn, fname)) for fname in self.searchFields]
+            self.searchOn = encode_braces('tables/%s' % self.searchOn)
             self.searchPage = encode_braces('pages/%s' % self.searchPage)
+
     
     def html(self):
+        list_of_field_ids = [str(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
+        self.field_json = simplejson.dumps(list_of_field_ids)
         tpl_template = env.get_template('search_box.html')
-        self.searchMethod = "search_%s" % self.searchQuery.searchOn.lower()
+        self.searchMethod = "search_%s" % self.searchQuery.searchOnResolved.name.lower()
         tpl = Tag('div', {}, content=tpl_template.render(context=self))
         return tpl
 

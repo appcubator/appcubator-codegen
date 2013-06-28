@@ -11,11 +11,18 @@ class Resolvable(object):
     """
 
     def resolve(self):
+        # this works for list, the resolve_data and resolve_page don't yet, unfortunately.
         assert hasattr(self, 'app'), "You must have something at attribute \"app\""
         for src_attr, dest_attr in self.__class__._resolve_attrs:
-            path_string = decode_braces(getattr(self, src_attr))
-            setattr(self, dest_attr,  self.app.find(
-                path_string, name_allowed=True))
+            if type(getattr(self, src_attr)) in [list, tuple]:
+                dest_list = []
+                for src_thing in getattr(self, src_attr):
+                    path_string = decode_braces(src_thing)
+                    dest_list.append(self.app.find(path_string, name_allowed=True))
+                setattr(self, dest_attr, dest_list)
+            else:
+                path_string = decode_braces(getattr(self, src_attr))
+                setattr(self, dest_attr,  self.app.find(path_string, name_allowed=True))
 
     def resolve_data(self):
         if not hasattr(self.__class__, '_datalang_attrs'):
