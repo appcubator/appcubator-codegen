@@ -24,6 +24,7 @@ def ping_until_success(url, retries=8):
     successful = False
     while not successful and tries < retries:
         try:
+            print "Trying to connect to server"
             r = requests.get(url)
         except requests.exceptions.ConnectionError:
             pass
