@@ -6,3 +6,5 @@ tempdb
 dist_static
 *~
 \#*#
+.DS_Store
+*/.DS_Store

@@ -14,7 +14,7 @@ $(document).ready(function() {
       });
   }
 
-  $('form').each(function(ind, this_form) {
+  $('form:not(.search-box)').each(function(ind, this_form) {
 
     $(this_form).submit(function(e) {
       var self = this;

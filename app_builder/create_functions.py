@@ -133,9 +133,10 @@ class AppComponentFactory(object):
 
 
     def add_search_functionality(self, search):
-        search_identifier = self.view_namespace.new_identifier(search.searchQuery.searchOn)
+        search_identifier = self.view_namespace.new_identifier(search.searchQuery.searchOnResolved.name)
         pc_namespace = search.searchQuery.searchPageResolved._django_view.pc_namespace
-        ps = DjangoPageSearch(search_identifier, pc_namespace)
+        model_id = search.searchQuery.searchOnResolved._django_model.identifier
+        ps = DjangoPageSearch(search_identifier, pc_namespace, model_id)
         return ps
 
 

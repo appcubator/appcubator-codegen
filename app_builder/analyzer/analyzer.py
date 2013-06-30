@@ -406,7 +406,6 @@ class App(DictInited):
             if hasattr(obj, 'validate'):
                 obj.validate()
 
-        # THEN Resolve reflangs not in entities
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
