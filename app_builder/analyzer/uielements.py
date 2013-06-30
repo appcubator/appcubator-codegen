@@ -8,6 +8,8 @@ from app_builder.htmlgen import Tag
 
 from . import env
 from . import logger
+from . import UserInputError
+from . import assert_raise
 
 def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
@@ -31,7 +33,8 @@ class RoleRouting(DictInited, Resolvable):
     _pagelang_attrs = (('redirect', 'goto_pl'),)
 
     def validate(self):
-        assert self.role in [u.name for u in self.app.users], "Role not recognized."
+        assert_raise(self.role in [u.name for u in self.app.users],
+                UserInputError("This role was not recognized: %r Maybe you had it once and then deleted it?" % self.role, self._path))
 
 
 class Layout(DictInited):
@@ -250,7 +253,8 @@ class Form(DictInited, Hooked):
                 if self.action in ['login', 'signup']:
                     assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
                 if self.action == 'login':
-                    assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+                    assert_raise(len(self.loginRoutes) == len(self.app.users),
+                            UserInputError("You added or deleted a user role, so you need to update the redirecting post-login.", self._path + "/loginRoutes"))
                     assert self.goto is None, "Login form must use loginRoutes, not goto"
                 else:
                     assert self.goto is not None, "All forms other than login form must have goto"

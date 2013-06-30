@@ -71,7 +71,9 @@ def parse_app_state(app_state_file):
 
 @check_exn("Passed analyzer stage")
 def create_app(app_state):
-    return App.create_from_dict(app_state)
+    app = App.create_from_dict(app_state)
+    import pdb; pdb.set_trace()
+    return app
 
 @check_exn("Deployed locally.")
 def deploy_locally(coder):

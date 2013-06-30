@@ -2,10 +2,10 @@
 
 from copy import deepcopy
 import re
+from app_builder.codes.utils import FnCodeChunk
 
 
 class ValidationError(object):
-
     """Represents a validation error"""
 
     def __init__(self, msg, thing, schema, ancestor_list):
@@ -21,13 +21,13 @@ class ValidationError(object):
         return self.__unicode__()
 
 class InvalidDict(Exception):
+    # uses parent init which takes 1 positional argument and stores in self.message
+
     def __str__(self):
         return '\n\n'.join([str(e) for e in self.message])
-    pass
 
 
 class DictInited(object):
-
     """Base class for dict_inited objects.
     Includes creation code and validation code"""
 
@@ -39,6 +39,7 @@ class DictInited(object):
         assert isinstance(data, dict), "Input to init must be a dict"
         for name, value in data.items():
             setattr(self, name, value)
+
 
     @classmethod
     def _recursively_create(cls, thing, schema, data_only=False):

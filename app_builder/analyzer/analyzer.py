@@ -9,6 +9,8 @@ from resolving import Resolvable, EntityLang
 from copy import deepcopy
 
 from . import env
+from . import UserInputError
+from . import assert_raise
 
 from app_builder.analyzer import logger
 
@@ -24,6 +26,7 @@ from app_builder.analyzer import logger
   ((src1,dst1), (src2, dst2), ...) is a way of specifying how src_i gets resolved to
   dst_i for primitives that may need attributes resolved. This is stored in _resolve_attrs
 """
+
 
 # tables
 
@@ -84,7 +87,6 @@ class EntityRelatedField(DictInited, Resolvable):
            Notice that it is calling get_transation of another method,
             and eval-ing it upon the returned lambdas evaluation."""
         return lambda: '%s.%s' % (self.get_django_access_id(), self.get_property(datalang).get_translation(datalang)()) # whatup function linked list continuation!
-
 
 
 class Entity(DictInited):
@@ -279,20 +281,25 @@ class App(DictInited):
         "emails": {"_type": [], "_each": {"_type": Email}},
     }
 
+    def __init__(self, *args, **kwargs):
+        self._path = ""
+        super(App, self).__init__(*args, **kwargs)
+
     @classmethod
     def create_from_dict(cls, data, *args, **kwargs):
         # preprocess data
         self = super(App, cls).create_from_dict(data, *args, **kwargs)
 
         for p in self.pages:
-            assert p.url.is_valid(), "Url not valid: %r" % p.url.urlparts
+            assert_raise(p.url.is_valid(),
+                    UserInputError("The URL %r is not valid. URL must be alphanumeric, _, -." % p.url.urlparts, p.url._path))
 
         """
         User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
         for translation, normalize to CurrentUser.
         for redirects, replace redirect portion of the code with some logic
         """
-        assert len(self.users) > 0, "Can't have empty user roles?!"
+        assert_raise(len(self.users) > 0, UserInputError("You should have at least one type of User.", "app/users"))
         # create the user entity based on userconfig
         userdict = {
             "name": "User",
@@ -339,7 +346,8 @@ class App(DictInited):
             for already_added_field in user_profile_field_set:
                 if field.name == already_added_field.name:
                     dupe = True
-                    assert field.type == already_added_field.type, "Two user role fields had same name but different type."
+                    assert_raise(field.type == already_added_field.type,
+                            UserInputError("Two user role fields had same name but different type.", field._path))
                     break
             if not dupe:
                 user_profile_field_set.append(field)
@@ -362,8 +370,8 @@ class App(DictInited):
             uies = []
             for uie in p.uielements:
                 subclass = uie.subclass
-                subclass._path = uie._path
                 uies.append(subclass)
+                #subclass._path = uie._path
                 subclass.page = p
             p.uielements = uies
 
@@ -371,10 +379,15 @@ class App(DictInited):
             uies = []
             for uie in row.uielements:
                 subclass = uie.subclass
-                subclass._path = uie._path
+                #subclass._path = uie._path
                 uies.append(subclass)
             row.uielements = uies
 
+        for p, e in self.search(r'^pages/\d+/uielements/\d+'):
+            try:
+                e._path = p
+            except AttributeError:
+                pass
 
         # HACK give everything a reference to the app
         for path, obj in filter(lambda u: isinstance(u[1], DictInited), self.iternodes()):
