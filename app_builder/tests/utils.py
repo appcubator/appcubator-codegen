@@ -40,15 +40,20 @@ def ping_until_success(url, retries=8):
 import signal, subprocess, shlex
 class SplinterTestCase(unittest.TestCase):
     def setUp(self):
+        port = self.__class__.PORT
+        hostname = "testing.appcubator.com"
+        url = "http://%s:%d/" % (hostname, port)
+
         # start the server
-        cmd = "python manage.py testserver"
+        cmd = "python manage.py testserver --addrport %d" % port
         self.p = subprocess.Popen(shlex.split(cmd), cwd=self.__class__.APP_DIR,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
+
         # wait until server is ready
-        ping_until_success('http://localhost:8000/')
+        ping_until_success(url)
 
         self.browser = Browser()
-        self.prefix = "http://localhost:8000"
+        self.prefix = url[:-1] # without the ending fwd slash
         self.url = lambda x: self.prefix + str(x)
         self.route = lambda x: x.replace(self.prefix, "")
 

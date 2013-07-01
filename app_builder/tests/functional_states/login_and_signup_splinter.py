@@ -6,6 +6,11 @@ class TestLoginSignup(SplinterTestCase):
 
     APP_DIR = APP_DIR # binds APP_DIR, a variable injected into the namespace by testrunner, to the class,
                       # so that SplinterTestCase knows how to start the server
+    try:
+        PORT = PORT
+    except NameError, e:
+        print "E: %s" % e 
+        PORT = 8000
 
     def setUp(self):
         super(TestLoginSignup, self).setUp()

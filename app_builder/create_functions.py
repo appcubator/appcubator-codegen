@@ -208,7 +208,10 @@ class AppComponentFactory(object):
             return dl.to_code(context=page._django_view.pc_namespace)
 
         def translate(m):
-            return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
+            try:
+                return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
+            except Exception:
+                logger.error("oneshot datalang blew up here...")
 
         translate_all = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', translate, x)
 

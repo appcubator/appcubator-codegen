@@ -11,10 +11,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+import random
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(os.path.dirname(__file__), 'db'),
+        'TEST_NAME': 'test_%d_db' % random.randint(0,1000000)
     }
 }
 

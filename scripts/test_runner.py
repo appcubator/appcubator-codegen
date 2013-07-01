@@ -18,6 +18,7 @@ import logging
 import argparse
 import requests
 import time
+from multiprocessing import Process
 
 
 # configure loggers
@@ -34,7 +35,7 @@ logger.setLevel('INFO')
 logger.addHandler(logging.StreamHandler())
 
 
-DEFAULT_STATE_PATH = os.path.join(os.path.dirname(__file__), '..', 'app_builder', 'tests', 'app_states')
+DEFAULT_STATE_PATH = os.path.join(os.path.dirname(__file__), '..', 'app_builder', 'tests', 'functional_states')
 
 
 def check_exn(msg):
@@ -72,7 +73,6 @@ def parse_app_state(app_state_file):
 @check_exn("Passed analyzer stage")
 def create_app(app_state):
     app = App.create_from_dict(app_state)
-    import pdb; pdb.set_trace()
     return app
 
 @check_exn("Deployed locally.")
@@ -120,7 +120,7 @@ def get_rid_of_wsgi(dest):
         print line.rstrip()
 
 
-def run_tests_for_json_file(json_file):
+def run_tests_for_json_file(json_file, port=8000):
     json_file_name = os.path.basename(json_file)
     try:
         dest = basic_deploy(json_file)
@@ -134,24 +134,40 @@ def run_tests_for_json_file(json_file):
     run_django_tests(dest)
     splinter_file = os.path.join('%s_splinter.py' % json_file.replace('.json',''))
     if os.path.isfile(splinter_file):
-        execfile(splinter_file, {"__name__": "__main__", "APP_DIR": dest}) # this runs the main test file, which is unittest driven
+        execfile(splinter_file, {"__name__": "__main__", "APP_DIR": dest, "PORT": port}) # this runs the main test file, which is unittest driven
     else:
         logger.warn("No splinter file found for %s" % json_file_name)
 
 
-def run_tests_in_dir(app_state_dir, specific_state_names=None):
+def run_tests_in_dir(app_state_dir, specific_state_names=None, parallel=True):
     if specific_state_names is None:
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir)  if fname.endswith('.json') ]
     else:
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir) if fname.endswith('.json') and fname[:-5] in specific_state_names ]
 
     num_apps = len(fnames_to_test)
-    for i, json_file_name in enumerate(fnames_to_test):
-        logger.info("Running tests for app %s [%d of %d]" %(json_file_name, (i+1), num_apps))
-        json_file = os.path.join(app_state_dir, json_file_name)
-        logger.info("Json file at %s" % json_file)
-        run_tests_for_json_file(json_file)
+    processes = []
+    port = 8001
 
+    for i, json_file_name in enumerate(fnames_to_test):
+        def test_f(port,
+                json_file_name=json_file_name, app_state_dir=app_state_dir, i=i, num_apps=num_apps, logger=logger):
+            logger.info("Running tests for app %s [%d of %d]" %(json_file_name, (i+1), num_apps))
+            json_file = os.path.join(app_state_dir, json_file_name)
+            logger.info("Json file at %s" % json_file)
+            run_tests_for_json_file(json_file, port=port)
+
+        p = Process(target=test_f, args=(port,))
+        if parallel:
+            port += 1
+        p.start()
+        processes.append(p)
+        if not parallel:
+            p.join()
+
+    if parallel:
+        for p in processes:
+            p.join()
 
 if __name__ == "__main__":
 
