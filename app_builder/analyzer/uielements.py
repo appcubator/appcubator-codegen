@@ -11,6 +11,7 @@ from . import env
 from . import logger
 from . import UserInputError
 from . import assert_raise
+from . import pagelang
 
 def get_uielement_by_type(type_string):
     UIELEMENT_TYPE_MAP = {'form': Form,
@@ -451,6 +452,14 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         super(Node, self).__init__(*args, **kwargs)
         if self.content is None:
             self.content = ""
+
+    def validate(self):
+        v = lambda s: pagelang.parse_to_pagelang(s, self.app)
+        # converts to pagelang just for validation
+        try:
+            v(self.content_attribs['href'])
+        except KeyError:
+            pass
 
     def kwargs(self):
         kw = {}
