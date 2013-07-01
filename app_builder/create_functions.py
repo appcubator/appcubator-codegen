@@ -157,7 +157,8 @@ class AppComponentFactory(object):
         view.add_search(ds)
 
         uie._django_search = ds
-        uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
+        # TODO(nkhadke/ksikka): Is this needed?
+        # uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
 
 
     def find_or_create_query_for_view(self, uie):
