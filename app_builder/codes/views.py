@@ -109,7 +109,6 @@ class DjangoPageView(object):
             searches = []
         for s_obj in searches:
             self.add_search(s_obj)
-        # self.search_code_path = "search.html"
 
         # access level
         self.login_required = False

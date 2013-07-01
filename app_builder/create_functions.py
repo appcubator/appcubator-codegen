@@ -150,7 +150,9 @@ class AppComponentFactory(object):
         page = uie.page
         view = page._django_view
 
-        ds = SearchQuery(entity._django_model.identifier, limit=searchList.numberOfRows)
+        # ds = SearchQuery(entity._django_model.identifier, limit=searchList.numberOfRows)
+        # TODO(nkhadke): Add number of rows in next push 
+        ds = SearchQuery(entity._django_model.identifier)
 
         view.add_search(ds)
 
