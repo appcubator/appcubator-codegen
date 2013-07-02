@@ -562,7 +562,7 @@ class Iterator(DictInited, Hooked):
 
     @property
     def hooks(self):
-        if self.container_info.query is None or self.container_info.query.where is not []:
+        if self.container_info.search is not None:
             return ['find or add the needed search to the view']
         else:
             return ['find or add the needed data to the view']
