@@ -155,14 +155,18 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
         self.relation_assignments = []
         self.commit = True
         self.after_save_saves = []
+        self.edit = False
 
     def add_args(self, args):
-        args = [ (self.namespace.new_identifier(arg, ref=data['ref']), data) for arg, data in args ]
+        args = [ (self.namespace.new_identifier(arg, ref=('num_id', data['ref'])), data) for arg, data in args ]
         for arg, data in args:
             name_attempt = data.get('inst_id', 'BADNAME') # helps a test pass
             data['inst_id'] = self.namespace.new_identifier(str(name_attempt), ref=data['ref']) 
         self.args.extend(args)
 
+    def bind_instance_from_url(self, inst_id):
+        self.edit = True
+        self.edit_inst_id = inst_id
 
     def render(self):
         return env.get_template('form_receiver_custom_1.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)

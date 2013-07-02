@@ -489,14 +489,16 @@ class AppComponentFactory(object):
         thing_id = form_model.entity_resolved.name
         fr = DjangoCustomFormReceiver(thing_id, fr_id, uie._django_form.identifier, redirect=form_model.redirect)
         args = []
-        for e in uie.container_info.form.get_needed_page_entities():
+        for e in form_model.get_needed_page_entities():
             model_id = e._django_model.identifier
-            inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
+            inst_id = str(model_id) # FIXME poor naming. this is just a proposed name, follow the add args code
             args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id}))
-        fr.locals['obj'].ref = uie.container_info.form.entity_resolved
+        fr.locals['obj'].ref = form_model.entity_resolved
         if form_model.redirect:
-            fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
+            fr.locals['redirect_url_code'] = lambda: form_model.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
         fr.add_args(args)
+        if form_model.action == 'edit':
+            fr.bind_instance_from_url(fr.namespace.get_by_ref(form_model.edit_dl.final_type()[1]._django_model))
         uie._django_form_receiver = fr
         return fr
 

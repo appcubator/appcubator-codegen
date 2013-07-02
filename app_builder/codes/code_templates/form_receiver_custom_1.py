@@ -13,7 +13,11 @@
     {% for arg, arg_data in fr.args %}
     {{ arg_data.inst_id }} = {{get_object_or_404}}({{ arg_data.model_id }}, pk={{ arg }})
     {% endfor %}
+    {% if fr.edit %}
+    form = {{ fr.form_id }}({{request}}.POST, instance={{fr.edit_inst_id}})
+    {% else %}
     form = {{ fr.form_id }}({{request}}.POST)
+    {% endif %}
     {% endblock %}
 
         {% block do_stuff_with_valid_form %}
