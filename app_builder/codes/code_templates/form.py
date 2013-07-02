@@ -4,4 +4,4 @@ class {% block class_name %}{{ form.identifier }}{% endblock %}({{forms}}.ModelF
 
     class Meta:
         model = {{ form.model_id }}
-        included_fields = ({{ form.included_field_string }})
+        fields = ({{ form.included_field_string }})
