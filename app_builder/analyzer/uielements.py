@@ -239,12 +239,15 @@ class Form(DictInited, Hooked):
                     # or (checked in validate, which is called in app's create from dict)
                 "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
                 "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
+                "editOn" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
 
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
             # overridden resolve_page function => goto_pl will only exist if redirect = True. see the code for that fn.
             _pagelang_attrs = (('goto', 'goto_pl'), )
+            # overridden resolve_data function => edit_entity will only exist if editOn not none. see the code for that fn.
+            _datalang_attrs = (('editOn', 'edit_entity'), )
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
@@ -265,12 +268,22 @@ class Form(DictInited, Hooked):
                     assert self.signupRole is not None, "signup form must have signupRole"
                     assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
 
+                assert (self.action == 'edit') == (self.editOn is not None), "Editform takes editOn arg."
+
             def resolve_page(self):
                 if self.goto is None:
                     self.redirect = False
                 else:
                     self.redirect = True
                     super(Form.FormInfo.FormInfoInfo, self).resolve_page()
+
+            def resolve_data(self):
+                if self.action == "edit":
+                    super(Form.FormInfo.FormInfoInfo, self).resolve_data()
+                else:
+                    pass
+
+
 
             def get_actions_as_tuples(self):
                 return [(a.set_fk, a.to_object) for a in self.actions]
@@ -318,10 +331,7 @@ class Form(DictInited, Hooked):
             f.set_backend_name()
             fields.extend(f.htmls())
         fields.append(Tag('div', {'class': 'form-error field-all'}))
-        try:
-            post_url = self.post_url
-        except AttributeError:
-            post_url = "ASDFJKWTF"
+        post_url = self.post_url
         attribs = {'method': 'POST',
                    'action': post_url,
                    'class': self.class_name}
