@@ -10,6 +10,9 @@ from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectCh
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 
+import logging
+logger = logging.getLogger("app_builder.create_functions")
+logger.addHandler(logging.StreamHandler())
 
 class AppComponentFactory(object):
 
@@ -465,6 +468,7 @@ class AppComponentFactory(object):
                 resolved_ps = pagelang.parse_to_pagelang(pagelang_str, uie.app).to_code(context=uie.page._django_view.pc_namespace)
                 return resolved_ps
             except AssertionError:
+                logger.error("Couldn't resolve this one: %r" % pagelang_str)
                 return pagelang_str
         uie.visit_strings(resolve_pagelang)
 

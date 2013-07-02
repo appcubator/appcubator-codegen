@@ -430,6 +430,7 @@ class Search(DictInited, Hooked):
         return tpl
 
         def visit_strings(self, f):
+            # TODO butwhy is this here?
             self.searchPage = self.searchPage.lower()
 
     _schema = {"searchQuery" : {"_type" : SearchBox }}
@@ -560,12 +561,15 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
 class Iterator(DictInited, Hooked):
 
+    
     @property
     def hooks(self):
         if self.container_info.search is not None:
-            return ['find or add the needed search to the view']
+            hooks = ['find or add the needed search to the view']
         else:
-            return ['find or add the needed data to the view']
+            hooks = ['find or add the needed data to the view']
+        hooks += ['resolve links href']
+        return hooks
 
     class IteratorInfo(DictInited, Resolvable):
 
@@ -628,7 +632,6 @@ class Iterator(DictInited, Hooked):
     def visit_strings(self, f):
         for uie in self.container_info.row.uielements:
             uie.visit_strings(f)
-
 
     def html(self):
         inner_htmls = []

@@ -33,7 +33,7 @@ class TestCreateSimpleList(SplinterTestCase):
         text_field.fill(s)
         submit_field.click()
 
-    def test_create(self):
+    def x_test_create(self):
         self.browser.find_by_css('.facebook-btn')[0].click()
         self.login_to_facebook()
         self.tweet('abcdefghijklmnopqrstuvwxyz')
@@ -41,7 +41,12 @@ class TestCreateSimpleList(SplinterTestCase):
         self.assertTrue(self.browser.is_text_present('abcdefghijklmnopqrstuvwxyz'))
 
     def test_edit(self):
-        pass
+        self.browser.find_by_css('.facebook-btn')[0].click()
+        self.login_to_facebook()
+        self.tweet('abcdefghijklmnopqrstuvwxyz')
+        self.browser.visit(self.url('/Tweet_Feed/'))
+        self.assertTrue(self.browser.is_text_present('abcdefghijklmnopqrstuvwxyz'))
+        time.sleep(500)
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCreateSimpleList)
