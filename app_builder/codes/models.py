@@ -5,7 +5,7 @@ from . import env
 
 class SearchQuery(object):
 
-    def __init__(self, model_id, sort_by_id=None, limit=None):
+    def __init__(self, model_id, sort_by_id=None, limit=-1):
         self.model_id = model_id
         # TODO implement these
         self.sort_by_id = sort_by_id

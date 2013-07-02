@@ -415,7 +415,6 @@ class Search(DictInited, Hooked):
                           ("searchOn", "searchOnResolved"))
 
         def __init__(self, *args, **kwargs):
-
             super(Search.SearchBox, self).__init__(*args, **kwargs)
             self.searchFields = [encode_braces('tables/%s/fields/%s' % (self.searchOn, fname)) for fname in self.searchFields]
             self.searchOn = encode_braces('tables/%s' % self.searchOn)
@@ -563,7 +562,7 @@ class Iterator(DictInited, Hooked):
 
     @property
     def hooks(self):
-        if self.container_info.query is None:
+        if self.container_info.query is None or self.container_info.query.where is not []:
             return ['find or add the needed search to the view']
         else:
             return ['find or add the needed data to the view']

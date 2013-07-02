@@ -150,12 +150,15 @@ class AppComponentFactory(object):
         page = uie.page
         view = page._django_view
 
-        ds = SearchQuery(entity._django_model.identifier, limit=searchList.numberOfRows)
+        # ds = SearchQuery(entity._django_model.identifier, limit=searchList.numberOfRows)
+        # TODO(nkhadke): Add number of rows in next push 
+        ds = SearchQuery(entity._django_model.identifier)
 
         view.add_search(ds)
 
         uie._django_search = ds
-        uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
+        # TODO(nkhadke/ksikka): Is this needed?
+        # uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
 
 
     def find_or_create_query_for_view(self, uie):
