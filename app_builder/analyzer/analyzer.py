@@ -398,7 +398,6 @@ class App(DictInited):
 
         # Second order validations
         for path, obj in filter(lambda n: isinstance(n[1], object), self.iternodes()):
-            logger.info("path: %s" % path)
             if hasattr(obj, 'validate'):
                 obj.validate()
 
