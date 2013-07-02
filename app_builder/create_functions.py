@@ -213,13 +213,16 @@ class AppComponentFactory(object):
             dl = datalang.parse_to_datalang(s, page.app)
             return dl.to_code(context=page._django_view.pc_namespace)
 
-        def translate(m):
+        def translate(m, template=True):
             try:
-                return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
+                djang_code = oneshot_datalang(m.group(1).strip(), page._django_view)
+                if not template:
+                    return djang_code
+                return "{{ %s }}" % djang_code
             except Exception:
                 logger.error("oneshot datalang blew up here...")
 
-        translate_all = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', translate, x)
+        translate_all = lambda x, template=True: re.sub(r'\{\{ ?([^\}]*) ?\}\}', lambda x: translate(x, template=template), x)
 
         for uie in page.uielements:
             uie.visit_strings(translate_all)
@@ -300,7 +303,9 @@ class AppComponentFactory(object):
         url_obj = uie.app._django_fr_urls
 
         url = self.urls_namespace.new_identifier(uie._django_form.identifier)
-        route = (repr('^%s/$' % url), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
+        num_args = len(uie.container_info.form.get_needed_page_entities())
+        arg_str = "(\d+)/" * num_args
+        route = (repr('^%s/%s$' % (url, arg_str)), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
         url_obj.routes.append(route)
 
         # this assumes the form receiver is the this module
@@ -487,7 +492,7 @@ class AppComponentFactory(object):
         for e in uie.container_info.form.get_needed_page_entities():
             model_id = e._django_model.identifier
             inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
-            args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
+            args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id}))
         fr.locals['obj'].ref = uie.container_info.form.entity_resolved
         if form_model.redirect:
             fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])

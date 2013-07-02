@@ -300,14 +300,17 @@ class Form(DictInited, Hooked):
 
             def get_needed_page_entities(self):
                 # collect all refs in actions
-                data_refs = ( item for tup in self.get_actions_as_tuples() for item in tup )
-                entities = []
+                data_refs = [ item for tup in self.get_actions_as_tuples() for item in tup ]
 
+                if self.action == 'edit':
+                    data_refs.append(self.editOn) # the string version... it's ghetto but it works
+
+                entities = []
                 for ref in data_refs:
                     toks = ref.split('.')
                     if toks[0] == 'Page':
                         name_of_type_of_inst_needed_from_page = toks[1]
-                        entity = self.app.find('entities/%s' % name_of_type_of_inst_needed_from_page, name_allowed=True)
+                        entity = self.app.find('tables/%s' % name_of_type_of_inst_needed_from_page, name_allowed=True)
                         entities.append(entity)
                 return entities
 
@@ -322,8 +325,7 @@ class Form(DictInited, Hooked):
     }
 
     def visit_strings(self, f):
-        "Translator: This is a form, nothing to do."
-        pass
+        self.post_url = f(self.post_url, template=False)
 
     def set_post_url(self, url):
         self.post_url = url
