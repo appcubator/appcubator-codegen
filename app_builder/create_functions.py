@@ -183,17 +183,16 @@ class AppComponentFactory(object):
             value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
 
-        sort_by_id = None
         # TODO(nkhadke): HACK right now. Add sort validation + -ves??
-        sort_by_id = "date_created"
-        # sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
+        #sort_by_id = entity.created_field.identifier
+        sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
                                                           limit=query.numberOfRows)
 
         view.add_query(dq)
- 
+
         uie._django_query = dq
         uie._django_query_id = view.pc_namespace.get_by_ref(dq)
 
