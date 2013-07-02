@@ -56,8 +56,6 @@ class EntityLang(DictInited, Resolvable):
     page.Tweet.content.whatever blah blah
     CurrentUser.First Name
     Student.grades
-    Student.grades?number=50
-
 
     # new link lang is going to be:
     internal://<page name>/?<urldata type>=<datalang> & so on.

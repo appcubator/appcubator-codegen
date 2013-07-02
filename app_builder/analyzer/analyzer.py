@@ -215,7 +215,7 @@ class Page(DictInited):
                         logger.error("Page URL %s is not valid." % u)
                         return False
                 except TypeError:
-                    logger.error("Page URL %s encountered TypeError" % u)
+                    logger.info("Page URL %s encountered TypeError" % u)
             return True
 
 
@@ -361,7 +361,6 @@ class App(DictInited):
             for uie in p.uielements:
                 subclass = uie.subclass
                 uies.append(subclass)
-                #subclass._path = uie._path
                 subclass.page = p
             p.uielements = uies
 
@@ -369,7 +368,6 @@ class App(DictInited):
             uies = []
             for uie in row.uielements:
                 subclass = uie.subclass
-                #subclass._path = uie._path
                 uies.append(subclass)
             row.uielements = uies
 
@@ -391,17 +389,18 @@ class App(DictInited):
             ii.entity = encode_braces(
                 'tables/%s' % ii.entity)  # "Posts" => "tables/Posts"
 
-        # Second order validations
-        for path, obj in filter(lambda n: isinstance(n[1], object), self.iternodes()):
-            if hasattr(obj, 'validate'):
-                obj.validate()
-
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve()
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve_data()
         for path, rl in filter(lambda n: isinstance(n[1], Resolvable), self.iternodes()):
             rl.resolve_page()
+
+        # Second order validations
+        for path, obj in filter(lambda n: isinstance(n[1], object), self.iternodes()):
+            logger.info("path: %s" % path)
+            if hasattr(obj, 'validate'):
+                obj.validate()
 
 
         return self
