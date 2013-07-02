@@ -125,7 +125,7 @@ class Form(DictInited, Hooked):
 
             class FormField(object):
 
-                def htmls(field):
+                def htmls(field, edit_inst_code_fn=None):
                     base_attribs = {}
                     tagname = 'input'
                     content=None
@@ -136,12 +136,16 @@ class Form(DictInited, Hooked):
                                         'placeholder': field.placeholder,
                                         'name': field.backend_field_name
                                        }
+
                         if field.displayType == 'password-text':
                             base_attribs['type'] = 'password'
 
                         if field.displayType == 'paragraph-text':
                             del base_attribs['type']
                             tagname = 'textarea'
+
+                        if edit_inst_code_fn is not None:
+                            base_attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
 
                     elif field.displayType == 'button':
                         base_attribs['type'] = 'submit'
@@ -246,8 +250,8 @@ class Form(DictInited, Hooked):
             _resolve_attrs = (('entity', 'entity_resolved'),)
             # overridden resolve_page function => goto_pl will only exist if redirect = True. see the code for that fn.
             _pagelang_attrs = (('goto', 'goto_pl'), )
-            # overridden resolve_data function => edit_entity will only exist if editOn not none. see the code for that fn.
-            _datalang_attrs = (('editOn', 'edit_entity'), )
+            # overridden resolve_data function => edit_dl will only exist if editOn not none. see the code for that fn.
+            _datalang_attrs = (('editOn', 'edit_dl'), )
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
@@ -329,7 +333,11 @@ class Form(DictInited, Hooked):
         for f in self.container_info.form.fields:
             # put the django model name in.
             f.set_backend_name()
-            fields.extend(f.htmls())
+            edit_inst_code_fn = None
+            if self.container_info.form.action == 'edit':
+                edit_dl = self.container_info.form.edit_dl
+                edit_inst_code_fn = lambda: edit_dl.to_code(context=self.page._django_view.pc_namespace)
+            fields.extend(f.htmls(edit_inst_code_fn=edit_inst_code_fn))
         fields.append(Tag('div', {'class': 'form-error field-all'}))
         post_url = self.post_url
         attribs = {'method': 'POST',

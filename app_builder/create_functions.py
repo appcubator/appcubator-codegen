@@ -322,9 +322,10 @@ class AppComponentFactory(object):
         field_ids = []
         for f in form_model.fields:
             try:
-                assert not f.is_relational()
+                assert not f.is_relational(), "Form can't handle relational fields right now"
                 field_ids.append(f.model_field._django_field_identifier)
             except AttributeError:
+                # this is for buttons and non-model fields
                 pass
         form_obj = DjangoForm(form_id, model_id, field_ids)
         uie._django_form = form_obj

@@ -366,7 +366,6 @@
                     "data": {
                         "container_info": {
                             "entity": "Tweet",
-                            "action": "create",
                             "form": {
                                 "entity": "Tweet",
                                 "goto": "internal://Homepage",
@@ -391,7 +390,7 @@
                                         ]
                                     }
                                 ],
-                                "action": "create",
+                                "action": "edit",
                                 "actions": []
                             }
                         },
