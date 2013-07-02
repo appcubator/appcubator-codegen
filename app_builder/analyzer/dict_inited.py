@@ -12,7 +12,7 @@ class ValidationError(object):
         self.msg = msg
         self.thing = thing
         self.schema = schema
-        self.path = '/'.join([str(i) for i in ancestor_list])
+        self.path = '/'.join([unicode(i) for i in ancestor_list])
 
     def __unicode__(self):
         return u"Error found in %r: %r\n(Thing, Schema) = %r" % (self.path, self.msg, (self.thing, self.schema))
@@ -24,7 +24,7 @@ class InvalidDict(Exception):
     # uses parent init which takes 1 positional argument and stores in self.message
 
     def __str__(self):
-        return '\n\n'.join([str(e) for e in self.message])
+        return '\n\n'.join([unicode(e) for e in self.message])
 
 
 class DictInited(object):
@@ -311,7 +311,7 @@ class DictInited(object):
                 node_stack.extend([(path + '/' + k, v)
                                   for k, v in obj.iteritems()])
             elif type(obj) == list:
-                node_stack.extend([(path + '/' + str(i), v)
+                node_stack.extend([(path + '/' + unicode(i), v)
                                   for i, v in enumerate(obj)])
             elif isinstance(obj, DictInited):
                 node_stack.extend([(path + '/' + attr, getattr(obj, attr))

@@ -179,9 +179,9 @@ class Form(DictInited, Hooked):
                 _schema = {
                     "field_name": {"_type": ""},
                     "placeholder": {"_type": ""},
-                    "label": {"_type": ""},
+                    "label": {"_type": "", "_default": ""},
                     "displayType": {"_type": ""},
-                    "options": {"_type": [], "_default": [], "_each": {"_type": ""}}  # XXX what is this, in more detail?
+                    "options": {"_type": [], "_default": deepcopy([]), "_each": {"_type": ""}}  # XXX what is this, in more detail?
                 }
 
                 _resolve_attrs = (('field_name', 'model_field'),)
@@ -442,7 +442,7 @@ class Search(DictInited, Hooked):
 
     
     def html(self):
-        list_of_field_ids = [str(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
+        list_of_field_ids = [unicode(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
         self.field_json = simplejson.dumps(list_of_field_ids)
         tpl_template = env.get_template('search_box.html')
         self.searchMethod = "search_%s" % self.searchQuery.searchOnResolved.name.lower()
@@ -537,7 +537,7 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
     def __init__(self, *args, **kwargs):
         super(Gallery, self).__init__(*args, **kwargs)
-        timeid = str(datetime.now().microsecond)
+        timeid = unicode(datetime.now().microsecond)
         self.galleryid = "imageslider" + timeid
 
     def kwargs(self):
