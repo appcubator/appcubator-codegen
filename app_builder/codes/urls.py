@@ -8,7 +8,7 @@ class DjangoURLs(object):
     Represents a set of URL - function mappings.
     """
 
-    def __init__(self, module_string, outer_namespace, urlpatterns_id, first_time=False, has_social=True):
+    def __init__(self, module_string, outer_namespace, urlpatterns_id, first_time=False, has_social=True, has_admin=False):
         """
         Module string = the string ref to the module that these URLs will belong to.
         Module namespace = the namespace this code will be dropped into
@@ -22,6 +22,7 @@ class DjangoURLs(object):
         self.code_path = "webapp/urls.py"
         self.first_time = first_time
         self.has_social = has_social
+        self.has_admin = has_admin
 
     @property
     def namespace(self):

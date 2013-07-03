@@ -254,7 +254,7 @@ class AppComponentFactory(object):
 
     def create_misc_urls(self, app):
         url_patterns_id = self.urls_namespace.get_by_ref('MISC.urlpatterns')
-        u = DjangoURLs('', self.urls_namespace, url_patterns_id)
+        u = DjangoURLs('', self.urls_namespace, url_patterns_id, has_admin=True)
         app._django_misc_urls = u
         return u
 
@@ -305,6 +305,12 @@ class AppComponentFactory(object):
         if data_string != '':
             data_string += ' ' # just for formatting.
         uie.set_post_url('{%% url webapp.form_receivers.%s %s%%}' % (uie._django_form_receiver.identifier, data_string))
+
+    def add_admin_url(self, app):
+        """ Adds the following: url(r'^admin/', include(admin.site.urls)) """
+        url_obj = app._django_misc_urls
+        admin_route = ("""r'^admin/'""", 'include(admin.site.urls)')
+        url_obj.routes.append(admin_route)
 
 
     # FORMS

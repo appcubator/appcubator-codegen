@@ -31,6 +31,7 @@ def create_codes(app):
                   "create url for socialauth login handler if not created": factory.create_url_for_socialauth_login_handler_if_not_created,
                   'add logout url': factory.add_logout_url,
                   'add search url' : factory.add_search_url,
+                  'add admin url' : factory.add_admin_url,
 
                   # GET REQUEST HANDLERS
                   'view for page': factory.create_view_for_page,
@@ -97,6 +98,7 @@ def create_codes(app):
     create('create urls object for app form receivers', app)
     create('create misc urls object for app', app)
     create('add social include url', app)
+    create('add admin url', app)
     create('add logout url', app)
     for p in app.pages:
         create('view for page', p)
