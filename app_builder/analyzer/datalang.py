@@ -43,7 +43,7 @@ class DataLang(object):
         def get_accessor(field):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
             return field._django_field_identifier
-        return ''.join([str(seed_id)] + ['.%s' % get_accessor(f) for f in self.fields])
+        return ''.join([unicode(seed_id)] + ['.%s' % get_accessor(f) for f in self.fields])
 
 
 def datalang_to_fields(starting_ent, tokens):

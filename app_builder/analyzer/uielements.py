@@ -125,7 +125,7 @@ class Form(DictInited, Hooked):
 
             class FormField(object):
 
-                def htmls(field):
+                def htmls(field, edit_inst_code_fn=None):
                     base_attribs = {}
                     tagname = 'input'
                     content=None
@@ -136,12 +136,16 @@ class Form(DictInited, Hooked):
                                         'placeholder': field.placeholder,
                                         'name': field.backend_field_name
                                        }
+
                         if field.displayType == 'password-text':
                             base_attribs['type'] = 'password'
 
                         if field.displayType == 'paragraph-text':
                             del base_attribs['type']
                             tagname = 'textarea'
+
+                        if edit_inst_code_fn is not None:
+                            base_attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
 
                     elif field.displayType == 'button':
                         base_attribs['type'] = 'submit'
@@ -175,9 +179,9 @@ class Form(DictInited, Hooked):
                 _schema = {
                     "field_name": {"_type": ""},
                     "placeholder": {"_type": ""},
-                    "label": {"_type": ""},
+                    "label": {"_type": "", "_default": ""},
                     "displayType": {"_type": ""},
-                    "options": {"_type": [], "_default": [], "_each": {"_type": ""}}  # XXX what is this, in more detail?
+                    "options": {"_type": [], "_default": deepcopy([]), "_each": {"_type": ""}}  # XXX what is this, in more detail?
                 }
 
                 _resolve_attrs = (('field_name', 'model_field'),)
@@ -239,12 +243,15 @@ class Form(DictInited, Hooked):
                     # or (checked in validate, which is called in app's create from dict)
                 "signupRole" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
                 "goto" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
+                "editOn" : {"_one_of": [{"_type" : ""}, {"_type": None}], "_default": None},
 
             }
 
             _resolve_attrs = (('entity', 'entity_resolved'),)
             # overridden resolve_page function => goto_pl will only exist if redirect = True. see the code for that fn.
             _pagelang_attrs = (('goto', 'goto_pl'), )
+            # overridden resolve_data function => edit_dl will only exist if editOn not none. see the code for that fn.
+            _datalang_attrs = (('editOn', 'edit_dl'), )
 
             def __init__(self, *args, **kwargs):
                 super(Form.FormInfo.FormInfoInfo, self).__init__(*args, **kwargs)
@@ -265,12 +272,22 @@ class Form(DictInited, Hooked):
                     assert self.signupRole is not None, "signup form must have signupRole"
                     assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
 
+                assert (self.action == 'edit') == (self.editOn is not None), "Editform takes editOn arg."
+
             def resolve_page(self):
                 if self.goto is None:
                     self.redirect = False
                 else:
                     self.redirect = True
                     super(Form.FormInfo.FormInfoInfo, self).resolve_page()
+
+            def resolve_data(self):
+                if self.action == "edit":
+                    super(Form.FormInfo.FormInfoInfo, self).resolve_data()
+                else:
+                    pass
+
+
 
             def get_actions_as_tuples(self):
                 return [(a.set_fk, a.to_object) for a in self.actions]
@@ -283,14 +300,17 @@ class Form(DictInited, Hooked):
 
             def get_needed_page_entities(self):
                 # collect all refs in actions
-                data_refs = ( item for tup in self.get_actions_as_tuples() for item in tup )
-                entities = []
+                data_refs = [ item for tup in self.get_actions_as_tuples() for item in tup ]
 
+                if self.action == 'edit':
+                    data_refs.append(self.editOn) # the string version... it's ghetto but it works
+
+                entities = []
                 for ref in data_refs:
                     toks = ref.split('.')
                     if toks[0] == 'Page':
                         name_of_type_of_inst_needed_from_page = toks[1]
-                        entity = self.app.find('entities/%s' % name_of_type_of_inst_needed_from_page, name_allowed=True)
+                        entity = self.app.find('tables/%s' % name_of_type_of_inst_needed_from_page, name_allowed=True)
                         entities.append(entity)
                 return entities
 
@@ -305,8 +325,7 @@ class Form(DictInited, Hooked):
     }
 
     def visit_strings(self, f):
-        "Translator: This is a form, nothing to do."
-        pass
+        self.post_url = f(self.post_url, template=False)
 
     def set_post_url(self, url):
         self.post_url = url
@@ -316,12 +335,13 @@ class Form(DictInited, Hooked):
         for f in self.container_info.form.fields:
             # put the django model name in.
             f.set_backend_name()
-            fields.extend(f.htmls())
+            edit_inst_code_fn = None
+            if self.container_info.form.action == 'edit':
+                edit_dl = self.container_info.form.edit_dl
+                edit_inst_code_fn = lambda: edit_dl.to_code(context=self.page._django_view.pc_namespace)
+            fields.extend(f.htmls(edit_inst_code_fn=edit_inst_code_fn))
         fields.append(Tag('div', {'class': 'form-error field-all'}))
-        try:
-            post_url = self.post_url
-        except AttributeError:
-            post_url = "ASDFJKWTF"
+        post_url = self.post_url
         attribs = {'method': 'POST',
                    'action': post_url,
                    'class': self.class_name}
@@ -422,7 +442,7 @@ class Search(DictInited, Hooked):
 
     
     def html(self):
-        list_of_field_ids = [str(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
+        list_of_field_ids = [unicode(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
         self.field_json = simplejson.dumps(list_of_field_ids)
         tpl_template = env.get_template('search_box.html')
         self.searchMethod = "search_%s" % self.searchQuery.searchOnResolved.name.lower()
@@ -430,6 +450,7 @@ class Search(DictInited, Hooked):
         return tpl
 
         def visit_strings(self, f):
+            # TODO butwhy is this here?
             self.searchPage = self.searchPage.lower()
 
     _schema = {"searchQuery" : {"_type" : SearchBox }}
@@ -516,7 +537,7 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
     def __init__(self, *args, **kwargs):
         super(Gallery, self).__init__(*args, **kwargs)
-        timeid = str(datetime.now().microsecond)
+        timeid = unicode(datetime.now().microsecond)
         self.galleryid = "imageslider" + timeid
 
     def kwargs(self):
@@ -560,12 +581,15 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
 class Iterator(DictInited, Hooked):
 
+    
     @property
     def hooks(self):
-        if self.container_info.query is None or self.container_info.query.where is not []:
-            return ['find or add the needed search to the view']
+        if self.container_info.search is not None:
+            hooks = ['find or add the needed search to the view']
         else:
-            return ['find or add the needed data to the view']
+            hooks = ['find or add the needed data to the view']
+        hooks += ['resolve links href']
+        return hooks
 
     class IteratorInfo(DictInited, Resolvable):
 
@@ -628,7 +652,6 @@ class Iterator(DictInited, Hooked):
     def visit_strings(self, f):
         for uie in self.container_info.row.uielements:
             uie.visit_strings(f)
-
 
     def html(self):
         inner_htmls = []

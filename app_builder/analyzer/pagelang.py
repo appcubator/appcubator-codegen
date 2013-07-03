@@ -35,9 +35,9 @@ class PageLang(object):
                 return self.page_str
             return repr(self.page_str)
 
-        datalang_variable_string = ''.join(['%s ' % self.entity_datalang_map[e].to_code(context=context, seed_id=seed_id) for e in self.page.get_tables_from_url()])
+        datalang_variable_string = ''.join(['%s.id ' % self.entity_datalang_map[e].to_code(context=context, seed_id=seed_id) for e in self.page.get_tables_from_url()])
         if not template:
-            args_tuple = tuple(['%s.id' % x for x in datalang_variable_string.split()])
+            args_tuple = tuple(datalang_variable_string.split())
             if len(list(args_tuple)) > 0:
                 args_str = ", args=%s" % repr(args_tuple).replace("'", '').replace('"', '') # dumb hack to remove quotation from string to turn it into an identifier. ('tweet.id',) => (tweet.id,)
             else:

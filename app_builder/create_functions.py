@@ -10,6 +10,9 @@ from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectCh
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 
+import logging
+logger = logging.getLogger("app_builder.create_functions")
+logger.addHandler(logging.StreamHandler())
 
 class AppComponentFactory(object):
 
@@ -157,8 +160,8 @@ class AppComponentFactory(object):
         view.add_search(ds)
 
         uie._django_search = ds
-        # TODO(nkhadke/ksikka): Is this needed?
-        # uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
+        # This is needed for the template to know what the identifier is of the query in the page_context
+        uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
 
 
     def find_or_create_query_for_view(self, uie):
@@ -180,17 +183,16 @@ class AppComponentFactory(object):
             value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
 
-        sort_by_id = None
         # TODO(nkhadke): HACK right now. Add sort validation + -ves??
-        sort_by_id = "date_created"
-        # sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
+        #sort_by_id = entity.created_field.identifier
+        sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
                                                           limit=query.numberOfRows)
 
         view.add_query(dq)
- 
+
         uie._django_query = dq
         uie._django_query_id = view.pc_namespace.get_by_ref(dq)
 
@@ -210,13 +212,16 @@ class AppComponentFactory(object):
             dl = datalang.parse_to_datalang(s, page.app)
             return dl.to_code(context=page._django_view.pc_namespace)
 
-        def translate(m):
+        def translate(m, template=True):
             try:
-                return "{{ %s }}" % oneshot_datalang(m.group(1).strip(), page._django_view)
+                djang_code = oneshot_datalang(m.group(1).strip(), page._django_view)
+                if not template:
+                    return djang_code
+                return "{{ %s }}" % djang_code
             except Exception:
                 logger.error("oneshot datalang blew up here...")
 
-        translate_all = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', translate, x)
+        translate_all = lambda x, template=True: re.sub(r'\{\{ ?([^\}]*) ?\}\}', lambda x: translate(x, template=template), x)
 
         for uie in page.uielements:
             uie.visit_strings(translate_all)
@@ -297,7 +302,9 @@ class AppComponentFactory(object):
         url_obj = uie.app._django_fr_urls
 
         url = self.urls_namespace.new_identifier(uie._django_form.identifier)
-        route = (repr('^%s/$' % url), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
+        num_args = len(uie.container_info.form.get_needed_page_entities())
+        arg_str = "(\d+)/" * num_args
+        route = (repr('^%s/%s$' % (url, arg_str)), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
         url_obj.routes.append(route)
 
         # this assumes the form receiver is the this module
@@ -325,9 +332,11 @@ class AppComponentFactory(object):
         field_ids = []
         for f in form_model.fields:
             try:
-                assert not f.is_relational()
+                assert not f.model_field.is_relational(), "Form can't handle relational fields right now"
                 field_ids.append(f.model_field._django_field_identifier)
-            except AttributeError:
+            except AttributeError, e:
+                # this is for buttons and non-model fields
+                logger.error(unicode(e))
                 pass
         form_obj = DjangoForm(form_id, model_id, field_ids)
         uie._django_form = form_obj
@@ -485,14 +494,16 @@ class AppComponentFactory(object):
         thing_id = form_model.entity_resolved.name
         fr = DjangoCustomFormReceiver(thing_id, fr_id, uie._django_form.identifier, redirect=form_model.redirect)
         args = []
-        for e in uie.container_info.form.get_needed_page_entities():
+        for e in form_model.get_needed_page_entities():
             model_id = e._django_model.identifier
-            inst_id = str(model_id) # Book inst should just be called book. lower casing happens in naming module
-            args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id})) 
-        fr.locals['obj'].ref = uie.container_info.form.entity_resolved
+            inst_id = str(model_id) # FIXME poor naming. this is just a proposed name, follow the add args code
+            args.append((e.name.lower()+'_id', {"model_id": model_id, "ref": e._django_model, "inst_id": inst_id}))
+        fr.locals['obj'].ref = form_model.entity_resolved
         if form_model.redirect:
-            fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
+            fr.locals['redirect_url_code'] = lambda: form_model.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
         fr.add_args(args)
+        if form_model.action == 'edit':
+            fr.bind_instance_from_url(fr.namespace.get_by_ref(form_model.edit_dl.final_type()[1]._django_model))
         uie._django_form_receiver = fr
         return fr
 

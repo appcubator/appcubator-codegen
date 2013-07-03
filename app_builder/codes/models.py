@@ -35,7 +35,6 @@ class DjangoQuery(object):
         if len(self.where_data) != 0:
             code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
         # Natural enumeration 
-        print self.sort_by_id
         if self.sort_by_id is not None:
             code_line += ".order_by('%s')" % self.sort_by_id
         if self.limit is not -1:
