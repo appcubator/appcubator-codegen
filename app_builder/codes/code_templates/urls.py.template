@@ -2,6 +2,10 @@
 {% set url = imports['django.url'] %}
 {% set urlpatterns = locals['urlpatterns'] %}
 
+{% if urls.has_admin %}
+admin.autodiscover()
+{% endif %}
+
 {{urlpatterns}} {% if not urls.first_time %}{{ '+' }}{% endif %}= {{patterns}}('{{ urls.module }}',
     {% for tup in urls.routes %}
     {% set url_string = tup[0] %}
