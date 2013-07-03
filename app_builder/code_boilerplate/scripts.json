@@ -1,4 +1,4 @@
 {
-    "on_deploy": ["syncdb.py"],
+    "on_deploy": ["syncdb.py", "create_superuser.py"],
     "on_redeploy": ["syncdb.py"]
 }
