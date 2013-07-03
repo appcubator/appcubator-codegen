@@ -1,3 +1,14 @@
+CANON_TYPE_MAP = {'text': 'TextField',
+                 'number': 'FloatField',
+                 'date': 'DateTimeField',
+                 '_CREATED': 'DateTimeField',
+                 '_MODIFIED': 'DateTimeField',
+                 'email': 'EmailField',
+                 'image': 'TextField',
+                 'file': 'TextField',
+                 }
+
+
 class RoleRedirectChunk(object):
     def __init__(self, role_codechunk_tuples, role_field_id):
         "role_codechunk_tuples maps the role to the code which will evaluate to the URL of the redirect"

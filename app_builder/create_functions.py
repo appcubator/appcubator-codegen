@@ -324,15 +324,20 @@ class AppComponentFactory(object):
         form_id = self.form_namespace.new_identifier(prim_name, cap_words=True)
         model_id = form_model.entity_resolved._django_model.identifier
         field_ids = []
+        required_field_id_types = []
         for f in form_model.fields:
             try:
-                assert not f.model_field.is_relational(), "Form can't handle relational fields right now"
-                field_ids.append(f.model_field._django_field_identifier)
+                entity_field = f.model_field
             except AttributeError, e:
                 # this is for buttons and non-model fields
-                logger.error(unicode(e))
                 pass
-        form_obj = DjangoForm(form_id, model_id, field_ids)
+            else:
+                assert not entity_field.is_relational(), "Form can't handle relational fields right now"
+                field_ids.append(entity_field._django_field_identifier)
+                if f.required:
+                    id_type = (entity_field._django_field_identifier, entity_field.type) #XXX
+                    required_field_id_types.append(id_type)
+        form_obj = DjangoForm(form_id, model_id, field_ids, required_field_id_types=required_field_id_types)
         uie._django_form = form_obj
         return form_obj
 

@@ -215,8 +215,7 @@
                                     {
                                         "type": "button",
                                         "displayType": "button",
-                                        "placeholder": "Submit",
-                                        "required": false
+                                        "placeholder": "Submit"
                                     }
                                 ],
                                 "action": "create",
@@ -375,8 +374,7 @@
                                     {
                                         "type": "button",
                                         "displayType": "button",
-                                        "placeholder": "Submit",
-                                        "required": false
+                                        "placeholder": "Submit"
                                     },
                                     {
                                         "field_name": "Content",

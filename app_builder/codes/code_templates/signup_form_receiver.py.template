@@ -1,4 +1,4 @@
-{% extends "form_receiver.py" %}
+{% extends "form_receiver.py.template" %}
 {% set login_function = imports['django.auth.login'] %}
 {% set authenticate_function = imports['django.auth.authenticate'] %}
 {% set request = locals['request'] %}

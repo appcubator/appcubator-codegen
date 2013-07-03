@@ -11,4 +11,4 @@ class DjangoStaticPagesTestCase(object):
         self.namespace = namespace
 
     def render(self):
-        return env.get_template('tests/static_pages.py').render(test=self, imports=self.namespace.imports(), locals={})
+        return env.get_template('tests/static_pages.py.template').render(test=self, imports=self.namespace.imports(), locals={})

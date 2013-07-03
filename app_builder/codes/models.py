@@ -2,6 +2,7 @@ from app_builder import naming
 from datetime import datetime
 
 from . import env
+import utils
 
 class SearchQuery(object):
 
@@ -44,15 +45,7 @@ class DjangoQuery(object):
 
 class DjangoField(object):
 
-    _type_map = {'text': 'TextField',
-                 'number': 'FloatField',
-                 'date': 'DateTimeField',
-                 '_CREATED': 'DateTimeField',
-                 '_MODIFIED': 'DateTimeField',
-                 'email': 'EmailField',
-                 'image': 'TextField',
-                 'file': 'TextField',
-                 }
+    _type_map = utils.CANON_TYPE_MAP
 
     def __init__(self, identifier, canonical_type, required=False, parent_model=None):
         """parent_model is a DjangoModel instance"""
@@ -148,7 +141,7 @@ class DjangoModel(object):
         return f
 
     def render(self):
-        return env.get_template('model.py').render(model=self, imports=self.namespace.imports(), locals={})
+        return env.get_template('model.py.template').render(model=self, imports=self.namespace.imports(), locals={})
 
 
 class DjangoUserModel(DjangoModel):
@@ -167,4 +160,4 @@ class DjangoUserModel(DjangoModel):
         self.is_user_model = True
 
     def render(self):
-        return env.get_template('usermodel.py').render(model=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('usermodel.py.template').render(model=self, imports=self.namespace.imports(), locals=self.locals)

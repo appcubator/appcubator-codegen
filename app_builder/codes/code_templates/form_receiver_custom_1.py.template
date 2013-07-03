@@ -1,4 +1,4 @@
-{% extends "form_receiver.py" %}
+{% extends "form_receiver.py.template" %}
 {% set JsonResponse = imports['django.JsonResponse'] %}
 {% set simplejson = imports['django.simplejson'] %}
 {% set get_object_or_404 = imports['django.get_object_or_404'] %}

@@ -46,7 +46,7 @@ class TestCreateSimpleList(SplinterTestCase):
         self.tweet('abcdefghijklmnopqrstuvwxyz')
         self.browser.visit(self.url('/Tweet_Feed/'))
         self.assertTrue(self.browser.is_text_present('abcdefghijklmnopqrstuvwxyz'))
-        time.sleep(500)
+        # TODO ADD MORE STUFF time.sleep(500)
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCreateSimpleList)

@@ -178,6 +178,7 @@ class Form(DictInited, Hooked):
             class FormModelField(FormField, DictInited, Resolvable):
                 _schema = {
                     "field_name": {"_type": ""},
+                    "required": {"_type": True, "_default": True},
                     "placeholder": {"_type": ""},
                     "label": {"_type": "", "_default": ""},
                     "displayType": {"_type": ""},
@@ -197,6 +198,7 @@ class Form(DictInited, Hooked):
             class FormNormalField(FormField, DictInited):
                 _schema = {
                     "name": {"_type": ""},
+                    "required": {"_type": True},
                     "placeholder": {"_type": ""},
                     "label": {"_type": ""},
                     "displayType": {"_type": ""},

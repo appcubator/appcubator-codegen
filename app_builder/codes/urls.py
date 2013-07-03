@@ -29,4 +29,4 @@ class DjangoURLs(object):
         return self.outer_namespace
 
     def render(self):
-        return env.get_template('urls.py').render(urls=self, imports=self.outer_namespace.imports(), locals={'urlpatterns': self.urlpatterns_id}, kwargs_repr=repr, len=len)
+        return env.get_template('urls.py.template').render(urls=self, imports=self.outer_namespace.imports(), locals={'urlpatterns': self.urlpatterns_id}, kwargs_repr=repr, len=len)

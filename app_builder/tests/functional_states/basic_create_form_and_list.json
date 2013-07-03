@@ -215,8 +215,7 @@
                                     {
                                         "type": "button",
                                         "displayType": "button",
-                                        "placeholder": "Submit",
-                                        "required": false
+                                        "placeholder": "Submit"
                                     }
                                 ],
                                 "action": "create",

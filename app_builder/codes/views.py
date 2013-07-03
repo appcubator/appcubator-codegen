@@ -36,7 +36,7 @@ class SocialAuthHandler(object):
 
     def render(self):
 
-        return env.get_template("socialauth_receiver.py").render(fr=self, locals=self.locals, imports=self.namespace.imports())
+        return env.get_template("socialauth_receiver.py.template").render(fr=self, locals=self.locals, imports=self.namespace.imports())
 
 
 class DjangoPageSearch(object):
@@ -66,7 +66,7 @@ class DjangoPageSearch(object):
         self.template_code_path = template_code_path
 
     def render(self):
-        return env.get_template('search.py').render(view=self, locals=self.locals, imports=self.namespace.imports())
+        return env.get_template('search.py.template').render(view=self, locals=self.locals, imports=self.namespace.imports())
 
 
 class DjangoPageView(object):
@@ -123,7 +123,7 @@ class DjangoPageView(object):
         self.queries.append((template_id, dq_obj.render()))
 
     def render(self):
-        return env.get_template('view.py').render(view=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('view.py.template').render(view=self, imports=self.namespace.imports(), locals=self.locals)
 
 
 class DjangoFormReceiver(object):
@@ -142,7 +142,7 @@ class DjangoFormReceiver(object):
         self.redirect = redirect
 
     def render(self):
-        return env.get_template('form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('form_receiver.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
 
 
 class DjangoCustomFormReceiver(DjangoFormReceiver):
@@ -169,7 +169,7 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
         self.edit_inst_id = inst_id
 
     def render(self):
-        return env.get_template('form_receiver_custom_1.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('form_receiver_custom_1.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
 
 
 class DjangoLoginFormReceiver(DjangoFormReceiver):
@@ -179,7 +179,7 @@ class DjangoLoginFormReceiver(DjangoFormReceiver):
         self.role_redirect = role_redirect
 
     def render(self):
-        return env.get_template('login_form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('login_form_receiver.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
 
 
 class DjangoSignupFormReceiver(DjangoFormReceiver):
@@ -195,4 +195,4 @@ class DjangoSignupFormReceiver(DjangoFormReceiver):
         self.signup_role = role_name
 
     def render(self):
-        return env.get_template('signup_form_receiver.py').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('signup_form_receiver.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)

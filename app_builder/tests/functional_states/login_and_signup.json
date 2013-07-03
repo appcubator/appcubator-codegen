@@ -127,8 +127,7 @@
                     "placeholder":"Login",
                     "label":"Login",
                     "displayType":"button",
-                    "type":"button",
-                    "required":false
+                    "type":"button"
                   }
                 ],
                 "actions":[
@@ -212,11 +211,9 @@
                     "required":false
                   },
                   {
-                    "field_name":"Sign Up",
                     "placeholder":"Sign Up",
                     "displayType":"button",
-                    "type":"button",
-                    "required":false
+                    "type":"button"
                   }
                 ],
                 "goto":"internal://Some Restricted Page/",

@@ -13,10 +13,10 @@ class Import(object):
         self.from_string = from_string
 
     def render(self):
-        return env.get_template('import.py').render(imp=self)
+        return env.get_template('import.py.template').render(imp=self)
 
     @classmethod
     def render_concatted_imports(self, imports):
         assert len(set([i.from_string for i in imports])) == 1, "These from strings ain't the same."
         from_string = imports[0].from_string
-        return env.get_template('imports_concatted.py').render(from_string=from_string, imports=imports)
+        return env.get_template('imports_concatted.py.template').render(from_string=from_string, imports=imports)

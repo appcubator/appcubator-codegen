@@ -9,6 +9,6 @@ class StaticPagesTestCase({{TestCase}}):
     {% for identifier, url in test.identifier_url_pairs %}
     def test_{{ identifier }}(self):
         r = self.c.get('{{ url }}')
-        self.assertEqual(r.status_code, 200)
+        self.assertIn(r.status_code, (200, 302))
 
     {% endfor %}

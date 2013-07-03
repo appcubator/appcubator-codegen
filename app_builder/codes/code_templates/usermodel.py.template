@@ -1,4 +1,4 @@
-{% extends "model.py" %}
+{% extends "model.py.template" %}
 
 {% set models = imports['django.models'] %}
 {% set User = imports['django.models.User'] %}
