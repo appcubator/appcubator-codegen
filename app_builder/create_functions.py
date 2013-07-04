@@ -313,11 +313,16 @@ class AppComponentFactory(object):
             data_string += ' ' # just for formatting.
         uie.set_post_url('{%% url webapp.form_receivers.%s %s%%}' % (uie._django_form_receiver.identifier, data_string))
 
-    def add_admin_url(self, app):
-        """ Adds the following: url(r'^admin/', include(admin.site.urls)) """
+    def add_admin_urls(self, app):
+        """ Adds the following:
+            url(r'^admin/', include(admin.site.urls)),
+            url(r'^grappelli/', include('grappelli.urls')
+        """
         url_obj = app._django_misc_urls
         admin_route = ("""r'^admin/'""", 'include(admin.site.urls)')
+        admin_css_urls = ("""r'^grappelli/'""", """include('grappelli.urls')""")
         url_obj.routes.append(admin_route)
+        url_obj.routes.append(admin_css_urls)
 
 
     # FORMS

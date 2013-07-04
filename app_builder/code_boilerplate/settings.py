@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'social_auth', # django-social-auth
     'webapp',
     'south',
+    'grappelli',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
