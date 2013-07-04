@@ -9,7 +9,7 @@ if __name__ == "__main__":
     APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     commands = []
-    commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com')
+    commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
     commands.append('python set_superuser_password.py')
 
     for c in commands:
