@@ -65,10 +65,10 @@ $(document).ready(function() {
   });
 
   // image upload buttons
-  $('.btn.upload').click(function(e) {
+  $('.btn.upload-img, .btn.upload-file').click(function(e) {
     openImagepicker(function(file){
-      var fieldId = String(e.target.id).replace('button-', '');
-      $('#'+fieldId).val(file.url);
+      var fieldId = String(e.target.getAttribute("data-name"));
+      $('input[type="hidden"][name="'+fieldId+'"]').val(file.url);
     });
 
     e.preventDefault();
