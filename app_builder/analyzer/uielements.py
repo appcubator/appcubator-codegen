@@ -147,6 +147,15 @@ class Form(DictInited, Hooked):
                         if edit_inst_code_fn is not None:
                             base_attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
 
+                    elif field.displayType.endswith('-uploader'):
+                        tagname = 'div'
+                        class_string = 'upload-img btn' if field.displayType == 'image-uploader' else 'upload-file btn'
+
+                        filepicker_button = Tag('div', {'class': class_string, 'data-name': field.backend_field_name}, content=field.placeholder)
+                        # this is needed for ajaxify to put in the filepicker value, and for the browser to submit the form
+                        real_input = Tag('input', {'type': 'hidden', 'name': field.backend_field_name })
+                        content = [filepicker_button, real_input]
+
                     elif field.displayType == 'button':
                         base_attribs['type'] = 'submit'
                         base_attribs['value'] = field.placeholder
@@ -493,7 +502,8 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         # Resolves either images or URLs
         self.content = f(self.content)
         try:
-            self.content_attribs['src'] = f(self.content_attribs['src'])
+            content = self.content_attribs['src']
+            self.content_attribs['src'] = f(content)
         except KeyError:
             pass
         try:
