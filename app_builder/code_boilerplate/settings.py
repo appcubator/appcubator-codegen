@@ -112,11 +112,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'grappelli', # Must be be above django.contrib.admin!
     'django.contrib.admin',
     'social_auth', # django-social-auth
     'webapp',
     'south',
-    'grappelli',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
