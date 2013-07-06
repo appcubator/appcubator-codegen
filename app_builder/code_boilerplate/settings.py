@@ -192,3 +192,4 @@ LINKEDIN_CONSUMER_SECRET     = '1R8SdQPxL9rzAlvD'
 
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 LINKEDIN_SCOPE = ['r_basicprofile', 'r_emailaddress']
+GRAPPELLI_ADMIN_TITLE = "Appcubator Admin"
