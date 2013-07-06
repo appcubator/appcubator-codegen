@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     commands = []
     commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
-    commands.append('python set_superuser_password.py')
+    commands.append('python scripts/set_superuser_password.py')
 
     for c in commands:
         print("Running `{}`".format(c))
