@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # ONLY RUN FROM THE ROOT DIRECTORY OF THE APP
 import os, os.path
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+import sys
 
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+sys_list = sys.path
 app_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
-os.environ['PATH'] = app_dir + ":" + os.environ['PATH']
+sys_list.insert(0, app_dir)
 
 from webapp.models import User
 
