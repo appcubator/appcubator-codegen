@@ -37,9 +37,9 @@ class PageLang(object):
 
         datalang_variable_string = ''.join(['%s.id ' % self.entity_datalang_map[e].to_code(context=context, seed_id=seed_id) for e in self.page.get_tables_from_url()])
         if not template:
-            args_tuple = tuple(datalang_variable_string.split())
-            if len(list(args_tuple)) > 0:
-                args_str = ", args=%s" % repr(args_tuple).replace("'", '').replace('"', '') # dumb hack to remove quotation from string to turn it into an identifier. ('tweet.id',) => (tweet.id,)
+            arg_ids = datalang_variable_string.split()
+            if len(list(arg_ids)) > 0:
+                args_str = ", args=(%s)" % ''.join([ s + ', ' for s in arg_ids])
             else:
                 args_str = ""
             code = "reverse('webapp.pages.%s'%s)" %(self.page._django_view.identifier, args_str)
