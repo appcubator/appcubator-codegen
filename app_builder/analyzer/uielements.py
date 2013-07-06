@@ -441,16 +441,18 @@ class Search(DictInited, Hooked):
             }
         }
 
-        _resolve_attrs = (("searchPage", "searchPageResolved"),
-                          ("searchFields", "searchFieldsResolved"),
+        _pagelang_attrs = (("searchPage", "searchPageResolved"),)
+
+        _resolve_attrs = (("searchFields", "searchFieldsResolved"),
                           ("searchOn", "searchOnResolved"))
 
         def __init__(self, *args, **kwargs):
             super(Search.SearchBox, self).__init__(*args, **kwargs)
             self.searchFields = [encode_braces('tables/%s/fields/%s' % (self.searchOn, fname)) for fname in self.searchFields]
             self.searchOn = encode_braces('tables/%s' % self.searchOn)
-            self.searchPage = encode_braces('pages/%s' % self.searchPage)
 
+        def validate(self):
+            assert not self.searchPageResolved.is_external
     
     def html(self):
         list_of_field_ids = [unicode(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
