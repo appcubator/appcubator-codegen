@@ -156,6 +156,15 @@ class Form(DictInited, Hooked):
                         real_input = Tag('input', {'type': 'hidden', 'name': field.backend_field_name })
                         content = [filepicker_button, real_input]
 
+                    elif field.displayType == 'dropdown':
+                        tagname = 'select'
+                        opt_fields = []
+                        for item in field.options:
+                            opt_field = Tag('option', {'value': item}, content=item)
+                            opt_fields.append(opt_field)
+                        content = opt_fields
+                        base_attribs['name'] = field.backend_field_name
+
                     elif field.displayType == 'button':
                         base_attribs['type'] = 'submit'
                         base_attribs['value'] = field.placeholder
@@ -191,7 +200,7 @@ class Form(DictInited, Hooked):
                     "placeholder": {"_type": ""},
                     "label": {"_type": "", "_default": ""},
                     "displayType": {"_type": ""},
-                    "options": {"_type": [], "_default": deepcopy([]), "_each": {"_type": ""}}  # XXX what is this, in more detail?
+                    "options": {"_type": ""} # this is only used for dropdown and radio. it's split by comma in init. end type = list.
                 }
 
                 _resolve_attrs = (('field_name', 'model_field'),)
@@ -199,6 +208,7 @@ class Form(DictInited, Hooked):
                 def __init__(self, *args, **kwargs):
                     super(Form.FormInfo.FormInfoInfo.FormModelField, self).__init__(*args, **kwargs)
                     self.name = self.field_name
+                    self.options = [ s.strip() for s in self.options.split(',') if s.strip() != "" ]
                     assert self.displayType != "button", "If this is a button, please remove the displayType, or the name, or options."
 
                 def set_backend_name(self):
@@ -211,11 +221,12 @@ class Form(DictInited, Hooked):
                     "placeholder": {"_type": ""},
                     "label": {"_type": ""},
                     "displayType": {"_type": ""},
-                    "options": {"_type": [], "_each": {"_type": ""}}  # XXX what is this, in more detail?
+                    "options": {"_type": ""} # this is only used for dropdown and radio. it's split by comma in init. end type = list.
                 }
 
                 def __init__(self, *args, **kwargs):
                     super(Form.FormInfo.FormInfoInfo.FormNormalField, self).__init__(*args, **kwargs)
+                    self.options = [ s.strip() for s in self.options.split(',') if s.strip() != "" ]
                     assert self.displayType != "button", "If this is a button, please remove the displayType, or the name, or options."
 
                 def set_backend_name(self):
