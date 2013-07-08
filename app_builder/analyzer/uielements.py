@@ -174,6 +174,7 @@ class Form(DictInited, Hooked):
                             opt_fields.append(Tag('label', {'for': opt_field_id}, content=item))
                         content = opt_fields
                         base_attribs['name'] = field.backend_field_name
+                        base_attribs['class'] = 'option-boxes'
 
                     elif field.displayType == 'date-picker':
                         tagname = 'div'
