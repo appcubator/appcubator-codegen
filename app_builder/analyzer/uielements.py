@@ -168,8 +168,8 @@ class Form(DictInited, Hooked):
                     elif field.displayType == 'date-picker':
                         tagname = 'div'
                         base_attribs['class'] = 'date-picker-wrapper'
-                        inp = Tag('input', {'class': "date-picker-input", 'name': field.backend_field_name}) # TODO find alternative to id-{name}
-                        img = Tag('img', { 'class': "date-picker-icon", 'src': "/static/img/calendar-icon.png" })
+                        inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name}) # TODO find alternative to id-{name}
+                        img = Tag('img', { 'class': "date-picker-icon"})
                         content = [inp, img]
 
 
