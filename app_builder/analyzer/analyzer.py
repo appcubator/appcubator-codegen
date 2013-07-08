@@ -209,8 +209,6 @@ class Page(DictInited):
                     self.entities.append(EntityLang(entity_name=
                                 encode_braces('tables/%s' % entity_name)))
 
-            self.id_namespace = naming.Namespace()
-
         def is_valid(self):
             for u in self.urlparts:
                 try:
@@ -230,6 +228,10 @@ class Page(DictInited):
         "uielements": {"_type": [], "_each": {"_type": UIElement}},
         "access_level": {"_type": ""}
     }
+
+    def __init__(self, *args, **kwargs):
+        super(Page, self).__init__(*args, **kwargs)
+        self.id_namespace = naming.Namespace()
 
     @property
     def url_regex(page):
