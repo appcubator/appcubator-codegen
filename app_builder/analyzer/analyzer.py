@@ -13,6 +13,7 @@ from . import UserInputError
 from . import assert_raise
 
 from app_builder.analyzer import logger
+from .. import naming
 
 """
   Consists of each type of front facing primitive. This can range from different type
@@ -208,6 +209,8 @@ class Page(DictInited):
                     self.entities.append(EntityLang(entity_name=
                                 encode_braces('tables/%s' % entity_name)))
 
+            self.id_namespace = naming.Namespace()
+
         def is_valid(self):
             for u in self.urlparts:
                 try:
@@ -362,6 +365,12 @@ class App(DictInited):
                 subclass = uie.subclass
                 uies.append(subclass)
                 subclass.page = p
+                for path, e in subclass.iternodes():
+                    try:
+                        e._page = p
+                    except AttributeError:
+                        pass
+
             p.uielements = uies
 
         for path, row in self.search(r'pages/\d+/uielements/\d+/container_info/row$'):
