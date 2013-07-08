@@ -165,6 +165,16 @@ class Form(DictInited, Hooked):
                         content = opt_fields
                         base_attribs['name'] = field.backend_field_name
 
+                    elif field.displayType == 'option-boxes':
+                        tagname = 'span'
+                        opt_fields = []
+                        for item in field.options
+                            opt_field = []
+                            opt_field.append(Tag('input', {'id': '0', 'class': 'field-type', 'type': 'radio', 'name':field.backend_field_name}))
+                            opt_field.append(Tag('label', {'for':'0'}, content=item) 
+                        content = opt_fields
+                        base_attribs['name'] = field.backend_field_name
+
                     elif field.displayType == 'date-picker':
                         tagname = 'div'
                         base_attribs['class'] = 'date-picker-wrapper'
