@@ -13,7 +13,7 @@
 <link href="http://appcubator.com/static/css/reset.css" id="css-reset" rel="stylesheet">
 <link href="http://appcubator.com/static/css/animate.css" id="css-animate" rel="stylesheet">
 
-<script type="text/javascript" src="//use.typekit.net/gyl1cyv.js"></script>
+<script type="text/javascript" src="http://use.typekit.net/gyl1cyv.js"></script>
 <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 
 </head>
@@ -26,11 +26,11 @@
       <script>
           function decrement() {
             var r_el = document.getElementById('countdown-refresh');
-            n = Integer(r_el.innerHTML);
+            n = parseInt(r_el.innerHTML);
             if(n > 0) {
               n = n - 1;
               r_el.innerHTML = n;
-              window.setTimeout(700, decrement);
+              window.setTimeout(decrement, 700);
             } else {
               location.reload(true);
             }
