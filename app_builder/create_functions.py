@@ -6,7 +6,8 @@ from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, 
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, SearchQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
-from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk
+from app_builder.codes import Emailer
+from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 
@@ -23,6 +24,7 @@ class AppComponentFactory(object):
         self.view_namespace = create_import_namespace('webapp/pages.py')
         self.fr_namespace = create_import_namespace('webapp/form_receivers.py')
         self.urls_namespace = create_import_namespace('webapp/urls.py')
+        self.emailer_namespace = create_import_namespace('webapp/emailer.py')
         self.tests_namespace = create_import_namespace('webapp/tests.py')
 
         self.userrole_namespace = naming.Namespace()
@@ -118,6 +120,13 @@ class AppComponentFactory(object):
         import_symbol = ('webapp.models', m.identifier)
         ns.find_or_create_import(import_symbol, m.identifier)
 
+    # EMAILS
+
+    def create_emailer(self, app):
+        identifier = self.emailer_namespace.new_identifier('emailer')
+        emailer = Emailer(identifier, app.api_key)
+        app._emailer = emailer
+        return emailer
 
     # VIEWS
 
@@ -532,7 +541,7 @@ class AppComponentFactory(object):
         new_var_map = {}
         after_save_saves = []
         commit = True
-        for l, r in form_model.get_actions_as_tuples():
+        for l, r in form_model.get_relational_actions_as_tuples():
             # translate and evalute the left side for some analysis
             translated_l = translate(l)
             toks = translated_l.split('.')
@@ -559,8 +568,16 @@ class AppComponentFactory(object):
 
         fr.after_save_saves = after_save_saves
 
+    def add_email_actions_to_form_receiver(self, uie):
+        form_model = uie.container_info.form # bind to this name to save me some typing
+        fr = uie._django_form_receiver
 
+        if form_model.action not in ['create', 'edit']:
+            return None
 
+        for email_tuple in form_model.get_email_actions():
+            email_statement = EmailStatement(email_tuple)
+            fr.email_actions.append(email_statement)
 
     # TESTS
 

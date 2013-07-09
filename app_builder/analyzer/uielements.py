@@ -91,6 +91,7 @@ class Form(DictInited, Hooked):
               'create form receiver',
               'create url for form receiver',
               'add the relation things to the form recevier',
+              'add email actions to the form receiver',
               # add the url to the action attribute, this happens in the "create url" phase
              )
 
@@ -265,6 +266,15 @@ class Form(DictInited, Hooked):
                     """Just for consistency w other fields"""
                     pass
 
+            class EmailAction(DictInited):
+                _schema = {
+                    "from_email": {"_type": ""},
+                    "to_email": {"_type": ""},
+                    "subject": {"_type": ""},
+                    "text": {"_type": ""},
+                    "html": {"_type": ""}
+                }
+
             class RelationalAction(DictInited):
                 _schema = {
                     "set_fk": {"_type": ""},
@@ -278,7 +288,11 @@ class Form(DictInited, Hooked):
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
-                "actions": {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
+                "actions": {"_one_of": [
+                                        {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
+                                        {"_type": [], "_default": [], "_each": {"_type": EmailAction}}
+                                        ]
+                            },
 
                 "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
                     # or (checked in validate, which is called in app's create from dict)
@@ -328,10 +342,20 @@ class Form(DictInited, Hooked):
                 else:
                     pass
 
+            def get_email_actions(self):
+                ans = []
+                for a in self.actions:
+                    if isinstance(a, EmailAction):
+                        email_tuple = (a.from_email, a.to_email, a.subject, a.text, a.html, a.api_key)
+                        ans.append(email_tuple)
+                return ans
 
-
-            def get_actions_as_tuples(self):
-                return [(a.set_fk, a.to_object) for a in self.actions]
+            def get_relational_actions_as_tuples(self):
+                ans = []
+                for a in self.actions:
+                    if isinstance(a, RelationalAction):
+                        ans.append((a.set_fk, a.to_object))
+                return ans
 
             def string_ref_to_inst_only(self, s):
                 if s.startswith('Page') or s.startswith('Loop'):
