@@ -107,7 +107,7 @@ class DictInited(object):
         return thing
 
     @classmethod
-    def create_from_dict(cls, data, dict_only_mode=False, api_key=None):
+    def create_from_dict(cls, data, dict_only_mode=False):
         """
         Validates the data,
           then inits the object recursively.
@@ -127,7 +127,6 @@ class DictInited(object):
                 obj._path = path
             except AttributeError:
                 pass
-        o.api_key = api_key
         return o
 
     @classmethod
