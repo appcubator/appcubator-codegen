@@ -74,9 +74,9 @@ class AppComponentFactory(object):
                 f._django_field = df
 
         # add audit fields.
-        cf = m.add_date_created_field(self.model_namespace.new_identifier('date_created'))
+        cf = m.add_date_created_field(m.namespace.new_identifier('date_created'))
         entity.created_field = cf
-        mf = m.add_date_modified_field(self.model_namespace.new_identifier('date_modified'))
+        mf = m.add_date_modified_field(m.namespace.new_identifier('date_modified'))
         entity.modified_field = mf
 
         # set references
