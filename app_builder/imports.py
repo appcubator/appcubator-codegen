@@ -71,7 +71,7 @@ FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 
                                             'django.render',
                                             'django.render_to_response',
                                             'django.url.reverse',
-                                            'django.get_object_or_404'
+                                            'django.get_object_or_404',
                                             'webapp.emailer'),
                  'webapp/forms.py': ('django.forms',),
                  'webapp/urls.py': ('django.patterns', 'django.admin',
