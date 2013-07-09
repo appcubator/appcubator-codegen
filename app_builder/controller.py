@@ -43,6 +43,9 @@ def create_codes(app):
                   # PAGE AND DATALANG
                   'resolve links href' : factory.resolve_page_and_its_datalang,
 
+                  # Emails
+                  'make emailer' : factory.create_emailer,
+
                   # Search
                   'search code generation' : factory.add_search_functionality,
 
@@ -115,6 +118,9 @@ def create_codes(app):
                     logger.error("Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__))
                     traceback.print_exc()
                     raise
+
+    # Emailer
+    create('make emailer', app)
 
     # translation of {{ page.book.name }} to proper django template code
     for p in app.pages:

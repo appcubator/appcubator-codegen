@@ -346,7 +346,7 @@ class Form(DictInited, Hooked):
                 ans = []
                 for a in self.actions:
                     if isinstance(a, EmailAction):
-                        email_tuple = (a.from_email, a.to_email, a.subject, a.text, a.html, a.api_key)
+                        email_tuple = (a.from_email, a.to_email, a.subject, a.text, a.html)
                         ans.append(email_tuple)
                 return ans
 
