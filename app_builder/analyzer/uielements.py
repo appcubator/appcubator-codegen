@@ -365,7 +365,7 @@ class Form(DictInited, Hooked):
 
             def get_needed_page_entities(self):
                 # collect all refs in actions
-                data_refs = [ item for tup in self.get_actions_as_tuples() for item in tup ]
+                data_refs = [ item for tup in self.get_relational_actions_as_tuples() for item in tup ]
 
                 if self.action == 'edit':
                     data_refs.append(self.editOn) # the string version... it's ghetto but it works

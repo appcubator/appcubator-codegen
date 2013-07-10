@@ -40,10 +40,10 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.signals.post_save': 'from django.db.models.signals import post_save',
             'django.cbv.redirect_view':   'from django.views.generic import RedirectView',
 
-            'requests':                 'import requests',
+            'utils.requests':           'from requests import post',
 
             # Generated application imports
-            'webapp.emailer':           'from webapp.emailer import send_email'
+            'utils.webapp.emailer':           'from webapp.emailer import send_email'
 
 }
 
@@ -72,13 +72,13 @@ FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 
                                             'django.render_to_response',
                                             'django.url.reverse',
                                             'django.get_object_or_404',
-                                            'webapp.emailer'),
+                                            'utils.webapp.emailer'),
                  'webapp/forms.py': ('django.forms',),
                  'webapp/urls.py': ('django.patterns', 'django.admin',
                                     'django.include', 'django.url',
                                     'django.url.statics', 'django.auth.logout_view',
                                     'django.cbv.redirect_view', 'django.url.reverse'),
-                 'webapp/emailer.py': ('requests',),
+                 'webapp/emailer.py': ('utils.requests',),
                  'webapp/tests.py': ('django.test.TestCase', 'django.test.Client')
 }
 

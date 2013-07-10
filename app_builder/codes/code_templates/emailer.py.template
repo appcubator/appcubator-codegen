@@ -1,4 +1,4 @@
-{% set requests = imports['requests'] %}
+{% set requests = imports['utils.requests'] %}
 
 {% set api_key = locals['api_key'] %}
 
@@ -12,4 +12,4 @@ def send_email(from_email, to_email, subject, text, html):
     'api_key' : '{{ api_key }}'
   }
 
-  {{requests}}.post("http://appcubator.com/sendhostedemail/", data=email_info)
+  post("http://appcubator.com/sendhostedemail/", data=email_info)

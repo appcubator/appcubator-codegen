@@ -14,6 +14,7 @@ class Emailer(object):
         self.locals = {}
         self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
         self.locals['api_key'] = api_key
+        self.locals['requests'] = self.namespace.new_identifier('requests')
 
     def render(self):
         return env.get_template('emailer.py.template').render(view=self, imports=self.namespace.imports(), locals=self.locals)
