@@ -518,11 +518,29 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
 
     def validate(self):
         v = lambda s: pagelang.parse_to_pagelang(s, self.app)
-        # converts to pagelang just for validation
+        v2 = lambda s: pagelang.parse_to_datalang(s, self.app)
+
+        val_strings = []
         try:
-            v(self.content_attribs['href'])
+            link_href = self.content_attribs['href']
+            val_strings.append(link_href)
         except KeyError:
             pass
+        try:
+            img_src = self.content_attribs['src']
+            val_strings.append(img_src)
+        except KeyError:
+            pass
+
+        for s in val_strings:
+            if s.startswith('http://') or s.startswith('https://'):
+                pass
+            elif s.startswith('internal'):
+                v(s)
+            elif s.startswith('{{'):
+                v2(s)
+            else:
+                assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % % s
 
     def kwargs(self):
         kw = {}
