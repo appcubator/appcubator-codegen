@@ -55,19 +55,18 @@ class EmailStatement(object):
     """ A wrapper class for an email method """
 
     def __init__(self, email_tuple):
-        self.from_email = email_tuple.from_email 
-        self.to_email = email_tuple.to_email
-        self.subject = email_tuple.subject 
-        self.text = email_tuple.text 
-        self.html = email_tuple.html
+        self.from_email, self.to_email, self.subject, self.text, self.html = email_tuple
         self.to_str = str(email_tuple)
 
-    def __str__(s):
-        return s.to_str
+    def __str__(self):
+        return self.render()
+
+    def tuple_str(self):
+        return self.to_str
 
     def render(self):
         #TODO: Get rid of harcoded requests!
-        return "requests.send_email(%s, %s, %s, %s, %s)" % (self.from_email, self.to_email, self.subject, self.text, self.to_str)
+        return "send_email(%s, %s, %s, %s, %s)" % (self.from_email, self.to_email, self.subject, self.text, self.to_str)
 
 class AssignStatement(object):
     # a simple helper for x = y statements

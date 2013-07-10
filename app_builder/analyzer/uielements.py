@@ -345,7 +345,7 @@ class Form(DictInited, Hooked):
             def get_email_actions(self):
                 ans = []
                 for a in self.actions:
-                    if isinstance(a, EmailAction):
+                    if isinstance(a, Form.FormInfo.FormInfoInfo.EmailAction):
                         email_tuple = (a.from_email, a.to_email, a.subject, a.text, a.html)
                         ans.append(email_tuple)
                 return ans
@@ -353,7 +353,7 @@ class Form(DictInited, Hooked):
             def get_relational_actions_as_tuples(self):
                 ans = []
                 for a in self.actions:
-                    if isinstance(a, RelationalAction):
+                    if isinstance(a, Form.FormInfo.FormInfoInfo.RelationalAction):
                         ans.append((a.set_fk, a.to_object))
                 return ans
 
