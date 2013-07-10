@@ -1,0 +1,52 @@
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oops!</title>
+
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<link href="http://appcubator.com/static/css/reset.css" id="css-reset" rel="stylesheet">
+<link href="http://appcubator.com/static/css/animate.css" id="css-animate" rel="stylesheet">
+<style type="text/css">
+body {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-size: 14px;
+  line-height: 20px;
+  color: #0f2d40;
+  background-color: #e3e3e3;
+}
+</style>
+
+</head>
+<body>
+  <div class="page">
+    <div class="container" style="text-align:center;">
+      <img src="http://appcubator.com/static/img/loading.gif" class="hoff8"  style="margin-bottom:40px;">
+      <br  />
+      <p class="hoff6">Transporting you to the future in <span id="countdown-refresh">4</span>...</p>
+      <script>
+          function decrement() {
+            var r_el = document.getElementById('countdown-refresh');
+            n = parseInt(r_el.innerHTML);
+            if(n > 0) {
+              n = n - 1;
+              r_el.innerHTML = n;
+              window.setTimeout(decrement, 700);
+            } else {
+              location.reload(true);
+            }
+          }
+          decrement();
+      </script>
+    </div>
+
+    <div class="footer"><hr></div>
+    </div>
+</body>
+</html>
+

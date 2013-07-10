@@ -47,7 +47,7 @@ def make_safe(s):
              4: 'four', 5: 'five', 6: 'six',
              7: 'seven', 8: 'eight', 9: 'nine',
              0: 'zero'}[s[0]] + s[1:]
-    if s in built_in_functions or keyword.iskeyword(s):
+    if (s in built_in_functions) or keyword.iskeyword(s):
         s += '_val'
     return s
 
@@ -140,10 +140,10 @@ class Namespace(object):
 
     def make_name_safe_and_unique(self, name, ignore_case=False):
         name = str(name) # in case it's identifier type
-        candidate = make_safe(name)
-
         if not ignore_case:
-            candidate = candidate.lower()
+            name = name.lower()
+
+        candidate = make_safe(name)
 
         while candidate in (i.identifier for i in self.used_ids()):
             # exit condition: candidate is not a used identifier

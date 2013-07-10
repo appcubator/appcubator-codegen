@@ -139,7 +139,7 @@ def run_tests_for_json_file(json_file, port=8000):
         logger.warn("No splinter file found for %s" % json_file_name)
 
 
-def run_tests_in_dir(app_state_dir, specific_state_names=None, parallel=True):
+def run_tests_in_dir(app_state_dir, specific_state_names=None, parallel=False):
     if specific_state_names is None:
         fnames_to_test = [ fname for fname in os.listdir(app_state_dir)  if fname.endswith('.json') ]
     else:
@@ -157,13 +157,13 @@ def run_tests_in_dir(app_state_dir, specific_state_names=None, parallel=True):
             logger.info("Json file at %s" % json_file)
             run_tests_for_json_file(json_file, port=port)
 
-        p = Process(target=test_f, args=(port,))
         if parallel:
+            p = Process(target=test_f, args=(port,))
             port += 1
-        p.start()
-        processes.append(p)
-        if not parallel:
-            p.join()
+            p.start()
+            processes.append(p)
+        else:
+            test_f(port)
 
     if parallel:
         for p in processes:

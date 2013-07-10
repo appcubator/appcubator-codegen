@@ -4,6 +4,7 @@ from utils import encode_braces, decode_braces
 from copy import deepcopy
 from datetime import datetime
 import simplejson
+import re
 
 from app_builder.htmlgen import Tag
 
@@ -507,7 +508,7 @@ class Search(DictInited, Hooked):
 
         def validate(self):
             assert not self.searchPageResolved.is_external
-    
+
     def html(self):
         list_of_field_ids = [unicode(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
         self.field_json = simplejson.dumps(list_of_field_ids)
@@ -542,11 +543,33 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
 
     def validate(self):
         v = lambda s: pagelang.parse_to_pagelang(s, self.app)
-        # converts to pagelang just for validation
+        v2 = lambda s: pagelang.parse_to_datalang(s, self.app)
+
+        val_strings = []
         try:
-            v(self.content_attribs['href'])
+            link_href = self.content_attribs['href']
+            val_strings.append(link_href)
         except KeyError:
             pass
+        try:
+            img_src = self.content_attribs['src']
+            val_strings.append(img_src)
+        except KeyError:
+            pass
+
+        for s in val_strings:
+            if s.startswith('http://') or s.startswith('https://'):
+                pass
+            elif s.startswith('internal'):
+                v(s)
+            elif s.startswith('{{'):
+                def test_v2(m):
+                    v2(m.group(1))
+                    return "" # makes re.sub happy
+                v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
+                v2_wrap(s)
+            else:
+                assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % s
 
     def kwargs(self):
         kw = {}
@@ -558,12 +581,14 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         # Resolves either images or URLs
         self.content = f(self.content)
         try:
-            content = self.content_attribs['src']
-            self.content_attribs['src'] = f(content)
+            if isinstance(self.content_attribs['src'], basestring):
+                content = self.content_attribs['src']
+                self.content_attribs['src'] = f(content)
         except KeyError:
             pass
         try:
-           self.content_attribs['href'] = f(self.content_attribs['href'])
+            if isinstance(self.content_attribs['href'], basestring):
+                self.content_attribs['href'] = f(self.content_attribs['href'])
         except KeyError:
             pass
 
