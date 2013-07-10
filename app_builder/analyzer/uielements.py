@@ -4,6 +4,7 @@ from utils import encode_braces, decode_braces
 from copy import deepcopy
 from datetime import datetime
 import simplejson
+import re
 
 from app_builder.htmlgen import Tag
 
@@ -483,7 +484,7 @@ class Search(DictInited, Hooked):
 
         def validate(self):
             assert not self.searchPageResolved.is_external
-    
+
     def html(self):
         list_of_field_ids = [unicode(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
         self.field_json = simplejson.dumps(list_of_field_ids)
@@ -538,9 +539,13 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             elif s.startswith('internal'):
                 v(s)
             elif s.startswith('{{'):
-                v2(s)
+                def test_v2(m):
+                    v2(m.group(1))
+                    return "" # makes re.sub happy
+                v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
+                v2_wrap(s)
             else:
-                assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % % s
+                assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % s
 
     def kwargs(self):
         kw = {}
@@ -552,12 +557,14 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         # Resolves either images or URLs
         self.content = f(self.content)
         try:
-            content = self.content_attribs['src']
-            self.content_attribs['src'] = f(content)
+            if isinstance(self.content_attribs['src'], basestring):
+                content = self.content_attribs['src']
+                self.content_attribs['src'] = f(content)
         except KeyError:
             pass
         try:
-           self.content_attribs['href'] = f(self.content_attribs['href'])
+            if isinstance(self.content_attribs['href'], basestring):
+                self.content_attribs['href'] = f(self.content_attribs['href'])
         except KeyError:
             pass
 
