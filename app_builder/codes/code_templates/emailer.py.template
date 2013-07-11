@@ -12,7 +12,7 @@ def send_email(from_email, to_email, subject, text, html):
     'api_key' : '{{ api_key }}'
   }
 
-  post("http://appcubator.com/sendhostedemail/", data=email_info)
+  post("https://appcubator.com/sendhostedemail/", data=email_info)
 
 def send_template_email(from_email, to_email, subject, text, template_file, request):
   user = request.user
@@ -27,4 +27,4 @@ def send_template_email(from_email, to_email, subject, text, template_file, requ
     'api_key' : '{{ api_key }}'
   }
 
-  post("http://appcubator.com/sendhostedemail/", data=email_info)
+  post("https://appcubator.com/sendhostedemail/", data=email_info)
