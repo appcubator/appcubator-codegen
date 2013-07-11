@@ -378,7 +378,7 @@ class AppComponentFactory(object):
             form_obj = self._django_signup_form
         else:
             prim_name = 'SignupForm'
-            form_id = self.form_namespace.find_or_create_import('django.forms.UserCreationForm', prim_name)
+            form_id = self.form_namespace.new_identifier(prim_name, ignore_case=True, cap_words=True)
             form_obj = DjangoLoginForm(form_id)
         uie._django_form = form_obj
         return form_obj

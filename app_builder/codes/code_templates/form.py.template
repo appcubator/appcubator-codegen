@@ -1,6 +1,5 @@
 {% set forms = imports['django.forms'] %}
-
-class {% block class_name %}{{ form.identifier }}{% endblock %}({{forms}}.ModelForm):
+class {% block class_name %}{{ form.identifier }}{% endblock %}({% if form.is_signup %}UserCreationForm{% else %}{{forms}}.ModelForm{% endif %}):
     {% for field_id, t in form.required_field_id_types %}
     {{ field_id }} = {{forms}}.{{t}}(required=True)
     {% endfor %}
