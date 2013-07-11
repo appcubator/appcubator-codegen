@@ -38,6 +38,7 @@ class DataLang(object):
             if self.context_type == 'Loop':
                 seed_id = 'obj'
             else:
+                # this must be page i think. so pass in the pc namespace if you want to get the page context variables
                 seed_id = context.get_by_ref(self.seed_entity._django_model)
 
         def get_accessor(field):

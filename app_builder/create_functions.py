@@ -128,6 +128,21 @@ class AppComponentFactory(object):
         app._emailer = emailer
         return emailer
 
+    def register_model_with_admin(self, entity):
+        if entity.is_user:
+            return
+        class AdminRegisterLine(object):
+            def __init__(self, parent_namespace, model_identifier):
+                self.code_path = 'webapp/models.py'
+                self.parent_namespace = parent_namespace
+                self.model_identifier = model_identifier
+            def render(self):
+                return "%s.site.register(%s)\n" % (self.parent_namespace.imports()['django.admin'], self.model_identifier)
+
+        return AdminRegisterLine(self.model_namespace, entity._django_model.identifier)
+
+
+
     # VIEWS
 
     def create_view_for_page(self, page):
@@ -187,7 +202,7 @@ class AppComponentFactory(object):
             def gen_code_for_value():
                 x = where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
                 if where_clause.equal_to_dl.result_type == 'object':
-                    return "%s.id" % x
+                    return "%s['%s'].id" % (view.locals['page_context'], x)
                 return x
             value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
@@ -532,7 +547,7 @@ class AppComponentFactory(object):
 
         def translate(s):
             dl = datalang.parse_to_datalang(s, uie.app)
-            return dl.to_code(seed_id=fr.locals['obj'])
+            return dl.to_code(context=fr.namespace, seed_id=fr.locals['obj'])
 
         if form_model.action not in ['create', 'edit']:
             return None
