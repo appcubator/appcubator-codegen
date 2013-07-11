@@ -328,7 +328,8 @@ class Form(DictInited, Hooked):
                     assert self.signupRole is not None, "signup form must have signupRole"
                     assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
 
-                assert (self.action == 'edit') == (self.editOn is not None), "Editform takes editOn arg."
+                if self.action == 'edit':
+                    assert  self.editOn is not None, "Editform takes editOn arg."
 
             def resolve_page(self):
                 if self.goto is None:
@@ -568,6 +569,8 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
                     return "" # makes re.sub happy
                 v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
                 v2_wrap(s)
+            elif s == '/static/img/placeholder.png':
+                pass
             else:
                 assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % s
 

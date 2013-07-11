@@ -522,7 +522,7 @@ class AppComponentFactory(object):
         import_symbol = ('webapp.forms', f.identifier)
         self.fr_namespace.find_or_create_import(import_symbol, f.identifier)
 
-    def create_form_receiver_for_form_object(self, uie):
+    def create_fmrm_receiver_for_form_object(self, uie):
         fr_id = self.fr_namespace.new_identifier(uie._django_form.identifier)
         form_model = uie.container_info.form
         thing_id = form_model.entity_resolved.name
@@ -537,7 +537,7 @@ class AppComponentFactory(object):
             fr.locals['redirect_url_code'] = lambda: form_model.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
         fr.add_args(args)
         if form_model.action == 'edit':
-            fr.bind_instance_from_url(fr.namespace.get_by_ref(form_model.edit_dl.final_type()[1]._django_model))
+            fr.bind_instance_from_url(FnCodeChunk(lambda: form_model.edit_dl.to_code(context=fr.namespace)))
         uie._django_form_receiver = fr
         return fr
 

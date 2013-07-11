@@ -60,7 +60,7 @@ def datalang_to_fields(starting_ent, tokens):
         try:
             f = field_candidates[0]
             if f.is_relational():
-                current_ent = f._django_field.rel_model_id.ref._entity
+                current_ent = f.entity
                 field_entity_pairs.append((f, current_ent))
                 if last_item_in_loop:
                     obj_type = 'object'
@@ -75,6 +75,8 @@ def datalang_to_fields(starting_ent, tokens):
             assert len(field_candidates) <= 1, "Found more than one field with the related name: %r and the entity: %r" % (tok, current_ent.name)
             try:
                 f = field_candidates[0]
+                p = f._path
+                f.
                 current_ent = f._django_field.model._entity
                 field_entity_pairs.append((f, current_ent))
                 if f.type == 'fk':
