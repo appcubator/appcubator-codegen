@@ -82,6 +82,10 @@ def create_codes(app):
             raise
         else:
             if c is not None:
+              if isinstance(c, list):
+                for cc in c:
+                  codes.append(cc)
+              else:
                 codes.append(c)
 
     # setup models

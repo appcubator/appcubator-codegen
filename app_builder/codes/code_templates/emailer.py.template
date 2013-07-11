@@ -13,3 +13,18 @@ def send_email(from_email, to_email, subject, text, html):
   }
 
   post("http://appcubator.com/sendhostedemail/", data=email_info)
+
+def send_template_email(from_email, to_email, subject, text, template_file, request):
+  user = request.user
+  template_context = ({"CurrentUser" : user})
+  html = render_to_string(template_file, template_context)
+  email_info = {
+    'from_email' : from_email,
+    'to_email' : to_email,
+    'subject' : subject,
+    'text' : text,
+    'html' : html,
+    'api_key' : '{{ api_key }}'
+  }
+
+  post("http://appcubator.com/sendhostedemail/", data=email_info)

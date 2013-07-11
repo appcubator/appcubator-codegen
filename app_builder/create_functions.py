@@ -569,15 +569,19 @@ class AppComponentFactory(object):
         fr.after_save_saves = after_save_saves
 
     def add_email_actions_to_form_receiver(self, uie):
-        form_model = uie.container_info.form # bind to this name to save me some typing
+        form_model = uie.container_info.form
         fr = uie._django_form_receiver
 
         if form_model.action not in ['create', 'edit']:
             return None
 
+        email_templates = []
         for email_tuple in form_model.get_email_actions():
             email_statement = EmailStatement(email_tuple)
             fr.email_actions.append(email_statement)
+            email_templates.append(email_statement.email_template)
+        return email_templates
+
 
     # TESTS
 

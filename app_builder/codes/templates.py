@@ -254,3 +254,14 @@ class DjangoTemplate(object):
 
     def render(self):
         return env.get_template('htmlgen/djangotemplate.html').render(template=self)
+
+class DjangoEmailTemplate(object):
+
+    def __init__(self, identifier, template_content):
+        self.identifier = identifier
+        self.filename = 'email_%s.html' % identifier.replace(' ', '_').lower()
+        self.code_path = "webapp/templates/" + self.filename
+        self.template_content = template_content
+
+    def render(self):
+        return self.template_content
