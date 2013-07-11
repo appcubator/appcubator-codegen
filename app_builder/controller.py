@@ -22,6 +22,7 @@ def create_codes(app):
                   'import model into forms': lambda entity: factory.import_model_into_namespace(entity, 'forms'),
                   'import model into form receivers': lambda entity: factory.import_model_into_namespace(entity, 'form receivers'),
                   'import model into tests': lambda entity: factory.import_model_into_namespace(entity, 'tests'),
+                  'register model with admin site': factory.register_model_with_admin,
 
                   # INITING FOR URLS
                   'create urls object for app': factory.create_urls,
@@ -85,7 +86,7 @@ def create_codes(app):
         create('create model for entity', ent) # only creates primitive fields
     for ent in app.tables: # doing relational fields after because all models need to be created for relations to work
         create('create relational fields for entity', ent)
-
+        create('register model with admin site', ent)
         create('import model into views', ent)
         create('import model into forms', ent)
         create('import model into form receivers', ent)

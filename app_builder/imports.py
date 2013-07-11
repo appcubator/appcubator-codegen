@@ -43,7 +43,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 }
 
 
-FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 'django.signals.post_save'),
+FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 'django.signals.post_save', 'django.admin'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',
                                     'django.require_GET',
