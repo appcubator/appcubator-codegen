@@ -153,6 +153,7 @@ class DjangoCustomFormReceiver(DjangoFormReceiver):
         self.locals['obj'] = self.namespace.new_identifier(saved_thing_id)
         self.pre_relation_assignments = []
         self.relation_assignments = []
+        self.email_actions = []
         self.commit = True
         self.after_save_saves = []
         self.edit = False

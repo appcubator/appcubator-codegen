@@ -21,3 +21,4 @@ from urls import *
 from tests import *
 from imports import *
 from templates import *
+from emails import *

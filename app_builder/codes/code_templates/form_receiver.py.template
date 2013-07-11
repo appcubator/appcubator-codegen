@@ -19,6 +19,8 @@ def {{ fr.identifier }}({{request}}{% block args %}{% endblock %}):
         {% block do_stuff_with_valid_form %}
         obj = form.save()
         {% endblock %}
+        {% block send_emails_if_needed %}
+        {% endblock %}
         {% block redirect %}
         {% if fr.redirect %}
         {{redirect_url}} = {{redirect_url_code}}

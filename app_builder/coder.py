@@ -54,8 +54,14 @@ class Coder(object):
                             m = re.match(r'from (.*) import (.*)$', import_string)
                             from_string, real_import_name = (m.group(1), m.group(2))
                         elif import_symbol[0].startswith('webapp.'):
-                            from_string, real_import_name = import_symbol[0], import_symbol[1] 
+                            from_string, real_import_name = import_symbol[0], import_symbol[1]
+                        elif import_symbol.startswith('utils.'):
+                            # The case where you want to import third party applications/non webapp or django modules
+                            import_string = IMPORTS[import_symbol]
+                            m = re.match(r'from (.*) import (.*)$', import_string)
+                            from_string, real_import_name = (m.group(1), m.group(2))
                         else:
+                            print import_symbol
                             raise KeyError
                         i = Import(real_import_name, identifier, from_string=from_string)
                         import_codes.append(i)

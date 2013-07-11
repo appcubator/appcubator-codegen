@@ -281,9 +281,10 @@ class App(DictInited):
         super(App, self).__init__(*args, **kwargs)
 
     @classmethod
-    def create_from_dict(cls, data, *args, **kwargs):
+    def create_from_dict(cls, data, api_key=None,*args, **kwargs):
         # preprocess data
         self = super(App, cls).create_from_dict(data, *args, **kwargs)
+        self.api_key = api_key
 
         for p in self.pages:
             assert_raise(p.url.is_valid(),

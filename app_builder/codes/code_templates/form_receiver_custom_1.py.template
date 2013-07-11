@@ -48,4 +48,11 @@
         {{ l() }}.save()
         {% endfor %}
         {% endblock %}
+        
+        {% block send_emails_if_needed %}
+        {% for e in fr.email_actions %}
+        {{ e }}
+        {% endfor %}
+        {% endblock %}
+
 
