@@ -42,7 +42,7 @@ class SocialAuthHandler(object):
 class DjangoPageSearch(object):
     def __init__(self, identifier, pc_namespace, model_id_searching_on, template_code_path="search.html", access='all', search=True):
         """
-        Takes the last page and adds search to all pages by referencing the views/pages.py file.
+        Adds search to all pages by referencing the views/pages.py file.
         """
         self.identifier = "search_%s" % identifier.__str__().lower()
         self.has_search = search
