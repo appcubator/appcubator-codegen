@@ -330,10 +330,11 @@ class Form(DictInited, Hooked):
 
                 if self.action == 'signup':
                     assert self.signupRole is not None, "signup form must have signupRole"
-                    assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
+                    assert_raise(self.signupRole in [u.name for u in self.app.users],
+                            UserInputError("You deleted a user role, so you need to update your signup form.", self._path + "/loginRoutes"))
 
                 if self.action == 'edit':
-                    assert  self.editOn is not None, "Editform takes editOn arg."
+                    assert self.editOn is not None, "Editform takes editOn arg."
 
             def resolve_page(self):
                 if self.goto is None:
@@ -462,9 +463,9 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
                 assert self.signupRole in [u.name for u in self.app.users]
                 assert self.goto is not None
         elif self.action != 'signup':
-            assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+            assert_raise(len(self.loginRoutes) == len(self.app.users), UserInputError("Please update the role-based redirect actions on the signup form.", self._path))
         else:
-            assert False, "Can't have signup social button if there's only 1 user role."
+            assert_raise(False, UserInputError("Please remove the social signup button and drag the generic login/signup button instead.", self._path))
 
     def resolve_page(self):
         if self.action == 'login':
