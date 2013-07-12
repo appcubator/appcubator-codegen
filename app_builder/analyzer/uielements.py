@@ -7,6 +7,8 @@ import simplejson
 import re
 
 from app_builder.htmlgen import Tag
+from app_builder.analyzer.datalang import parse_to_datalang
+from app_builder.codes import DjangoEmailTemplate
 
 from . import env
 from . import logger
@@ -107,6 +109,7 @@ class Form(DictInited, Hooked):
                     'import form into form receivers',
                     'create login form receiver if not exists',
                     'create url for form receiver',
+                    'add emails for non general form receivers'
                    )
 
         elif action == 'signup':
@@ -114,8 +117,8 @@ class Form(DictInited, Hooked):
                     'import form into form receivers',
                     'create signup form receiver if not exists',
                     'create url for form receiver',
+                    'add emails for non general form receivers'
                    )
-
         else:
             assert False, "Form action not recognized: %s" % action
 
@@ -273,11 +276,9 @@ class Form(DictInited, Hooked):
 
             class EmailAction(DictInited):
                 _schema = {
-                    "from_email": {"_type": ""},
-                    "to_email": {"_type": ""},
-                    "subject": {"_type": ""},
-                    "text": {"_type": ""},
-                    "html": {"_type": ""}
+                    "email_to": {"_type": ""},
+                    "nl_description": {"_type": ""},
+                    "email": {"_type": ""}
                 }
 
             class RelationalAction(DictInited):
@@ -350,12 +351,18 @@ class Form(DictInited, Hooked):
                     pass
 
             def get_email_actions(self):
-                ans = []
+                email_tuples = []
                 for a in self.actions:
                     if isinstance(a, Form.FormInfo.FormInfoInfo.EmailAction):
-                        email_tuple = (a.from_email, a.to_email, a.subject, a.text, a.html)
-                        ans.append(email_tuple)
-                return ans
+                        email = self.app.find('emails/%s' % a.email, name_allowed=True)
+                        from_email = "info@%s.appcubator.com" % self.app.name.lower()
+                        # Each email is always internally represted as 5-tuple that consists of:
+                        # (from_email : str, to_email : code, subject : string, plain text : str, email_template_file: DjangoEmailTemplate)
+                        to_email = parse_to_datalang(a.email_to, self.app).to_code() + ".email"
+                        email_template = DjangoEmailTemplate(a.email, email.content)
+                        email_tuple = (from_email, to_email, a.nl_description, "", email_template)
+                        email_tuples.append(email_tuple)
+                return email_tuples
 
             def get_relational_actions_as_tuples(self):
                 ans = []
@@ -770,8 +777,10 @@ class Iterator(DictInited, Hooked):
 
         loop_contents = []
         loop_wrapper = Tag('div', {'style': 'position:relative;'}, content=loop_contents)
+        loop_contents.append("{%% if %s %%}" % self._django_query_id)
         loop_contents.append("{%% for obj in %s %%}" % self._django_query_id)
         loop_contents.append(row_wrapper)
         loop_contents.append("{% endfor %}")
+        loop_contents.append("{%% endif %%}")
         return loop_wrapper
 

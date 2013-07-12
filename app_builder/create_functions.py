@@ -7,10 +7,13 @@ from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, 
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, SearchQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
+from app_builder.codes import DjangoEmailTemplate
 from app_builder.codes import Emailer
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
 from app_builder.imports import create_import_namespace
 from app_builder import naming
+from app_builder.analyzer.datalang import parse_to_datalang
+from app_builder.analyzer.uielements import Form
 
 import logging
 logger = logging.getLogger("app_builder.create_functions")
@@ -401,7 +404,7 @@ class AppComponentFactory(object):
             form_obj = self._django_signup_form
         else:
             prim_name = 'SignupForm'
-            form_id = self.form_namespace.find_or_create_import('django.forms.UserCreationForm', prim_name)
+            form_id = self.form_namespace.new_identifier(prim_name, ignore_case=True, cap_words=True)
             form_obj = DjangoLoginForm(form_id)
         uie._django_form = form_obj
         return form_obj
@@ -592,15 +595,47 @@ class AppComponentFactory(object):
         fr.after_save_saves = after_save_saves
 
     def add_email_actions_to_form_receiver(self, uie):
-        form_model = uie.container_info.form # bind to this name to save me some typing
+        form_model = uie.container_info.form
         fr = uie._django_form_receiver
 
-        if form_model.action not in ['create', 'edit']:
+        if form_model.action not in ['create', 'edit', 'signup', 'login']:
             return None
 
+        email_templates = []
         for email_tuple in form_model.get_email_actions():
             email_statement = EmailStatement(email_tuple)
             fr.email_actions.append(email_statement)
+            email_templates.append(email_statement.email_template)
+        return email_templates
+
+    def add_email_actions_to_non_general_form_receiver(self, uie):
+        """ Adds emails to login and signup form receivers. """
+        def get_email_actions(form_model):
+            email_tuples = []
+            for a in form_model.actions:
+                if isinstance(a, Form.FormInfo.FormInfoInfo.EmailAction):
+                    email = form_model.app.find('emails/%s' % a.email, name_allowed=True)
+                    from_email = "info@%s.appcubator.com" % form_model.app.name.lower()
+                    to_email = parse_to_datalang(a.email_to, form_model.app).to_code() + ".email"
+                    email_template = DjangoEmailTemplate(a.email, email.content)
+                    email_tuple = (from_email, to_email, a.nl_description, "", email_template)
+                    email_tuples.append(email_tuple)
+            return email_tuples
+
+        form_model = uie.container_info.form
+        fr = uie._django_form_receiver
+
+        if form_model.action not in ['signup', 'login']:
+            return None
+
+        email_templates = []
+        email_actions = []
+        for email_tuple in get_email_actions(form_model):
+            email_statement = EmailStatement(email_tuple)
+            email_actions.append(email_statement)
+            email_templates.append(email_statement.email_template)
+        fr.add_email_actions(email_actions)
+        return email_templates
 
     # TESTS
 

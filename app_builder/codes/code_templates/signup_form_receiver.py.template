@@ -23,4 +23,8 @@ def {{ fr.identifier }}({{request}}):
         new_user = {{authenticate_function}}(username={{request}}.POST['username'],
                                                         password={{request}}.POST['password1'])
         {{login_function}}({{request}}, new_user)
+        {% for e in fr.email_actions %}
+        {{ e }}
+        {% endfor %}
+
         {% endblock %}

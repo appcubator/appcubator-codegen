@@ -42,7 +42,7 @@ class SocialAuthHandler(object):
 class DjangoPageSearch(object):
     def __init__(self, identifier, pc_namespace, model_id_searching_on, template_code_path="search.html", access='all', search=True):
         """
-        Takes the last page and adds search to all pages by referencing the views/pages.py file.
+        Adds search to all pages by referencing the views/pages.py file.
         """
         self.identifier = "search_%s" % identifier.__str__().lower()
         self.has_search = search
@@ -179,6 +179,9 @@ class DjangoLoginFormReceiver(DjangoFormReceiver):
         assert not hasattr(self, 'role_redirect'), "There were multiple login with facebook buttons in the app. Butwai."
         self.role_redirect = role_redirect
 
+    def add_email_actions(self, email_actions):
+        self.email_actions = email_actions
+
     def render(self):
         return env.get_template('login_form_receiver.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
 
@@ -194,6 +197,9 @@ class DjangoSignupFormReceiver(DjangoFormReceiver):
     def add_signup_role(self, role_name, role_field_id):
         self.locals['role_field_id'] = role_field_id
         self.signup_role = role_name
+
+    def add_email_actions(self, email_actions):
+        self.email_actions = email_actions
 
     def render(self):
         return env.get_template('signup_form_receiver.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)

@@ -11,6 +11,7 @@ class DjangoForm(object):
         For now it'll only work with model fields
         """
         self.identifier = identifier
+        self.is_signup = False
         self.namespace = naming.Namespace(parent_namespace=identifier.ns)
         self.model_id = model_id
         self.code_path = 'webapp/forms.py'
@@ -33,9 +34,12 @@ class DjangoLoginForm(DjangoForm):
 
     def __init__(self, identifier):
         self.identifier = identifier
+        self.is_signup = True
         self.namespace = naming.Namespace(parent_namespace=identifier.ns) # this is necessary so the coder can get imports from the namespace
+        self.model_id = "User"
         self.code_path = 'webapp/forms.py'
+        self.required_field_id_types = [("email", "EmailField")]
 
     def render(self):
-        return ""
-
+        self.included_field_string = "'username', 'email'"
+        return env.get_template('form.py.template').render(form=self, imports=self.namespace.imports(), locals={})
