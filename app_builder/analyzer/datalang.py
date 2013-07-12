@@ -29,7 +29,7 @@ class DataLang(object):
         # now we know it's a relational field, so the last field_entity pair should have an entity in it.
         return (self.result_type, self.field_entity_accesstype_pairs[-1][1])
 
-    def to_code(self, context=None, seed_id=None):
+    def to_code(self, context=None, seed_id=None, user_profile=None, template=False):
         if self.context_type == 'Form':
             seed_id = seed_id
         elif self.context_type == 'user':
@@ -41,17 +41,29 @@ class DataLang(object):
                 # this must be page i think. so pass in the pc namespace if you want to get the page context variables
                 seed_id = context.get_by_ref(self.seed_entity._django_model)
 
-        def get_accessor(field, access_type):
+        if len(self.fields) == 0 and user_profile:
+            # this is for edit form, instance = request.user.getprofile()
+            return seed_id + '.get_profile()'
+
+        def get_accessor(field, entity, access_type):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
-            # this fucking doesn't work for related shit...
             if access_type == 'direct':
-                return field._django_field_identifier
+                acc = field._django_field_identifier
             elif access_type == 'related':
-                import pdb; pdb.set_trace()
-                return field._django_field.rel_name_id
+                acc = field._django_field.rel_name_id
             else:
                 assert False
-        return ''.join([unicode(seed_id)] + ['.%s' % get_accessor(f, a) for f, e, a in self.field_entity_accesstype_pairs])
+
+            if entity.is_user:
+                if field.name not in ['username', 'First Name', 'Last Name', 'email', 'password']:
+                    if template:
+                        acc = 'get_profile.%s' % acc
+                    else:
+                        acc = 'get_profile().%s' % acc
+
+            return acc
+        # i needed the entity of the value being accessed from previously, so i made a list and zipped it with the fields. all in one line cuz i'm lazy
+        return ''.join([unicode(seed_id)] + ['.%s' % get_accessor(f, eold, a) for (f, e, a), eold in zip(self.field_entity_accesstype_pairs, [self.seed_entity] + [e for f, e, a in self.field_entity_accesstype_pairs])])
 
 
 def datalang_to_fields(starting_ent, tokens):
