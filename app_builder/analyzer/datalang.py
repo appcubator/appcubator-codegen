@@ -1,7 +1,7 @@
 "DataLang parsing and intermediate representation"
 
 class DataLang(object):
-    def __init__(self, context_type, seed_entity, field_entity_pairs, result_type):
+    def __init__(self, context_type, seed_entity, field_entity_accesstype_pairs, result_type):
         """
         context_type is Page, Loop, or _____
         field_list is a list of the fields which will be tacked on after seed
@@ -9,8 +9,8 @@ class DataLang(object):
         assert context_type in ['Page', 'Loop', 'Form', 'user']
         self.context_type = context_type
         self.seed_entity = seed_entity
-        self.field_entity_pairs = field_entity_pairs
-        self.fields = [f for f, e in field_entity_pairs]
+        self.field_entity_accesstype_pairs = field_entity_accesstype_pairs
+        self.fields = [f for f, e, a in field_entity_accesstype_pairs]
         self.result_type = result_type
 
     def final_type(self):
@@ -27,7 +27,7 @@ class DataLang(object):
             assert self.result_type == 'primval'
             return (self.result_type, last_field.type)
         # now we know it's a relational field, so the last field_entity pair should have an entity in it.
-        return (self.result_type, self.field_entity_pairs[-1][1])
+        return (self.result_type, self.field_entity_accesstype_pairs[-1][1])
 
     def to_code(self, context=None, seed_id=None):
         if self.context_type == 'Form':
@@ -41,14 +41,21 @@ class DataLang(object):
                 # this must be page i think. so pass in the pc namespace if you want to get the page context variables
                 seed_id = context.get_by_ref(self.seed_entity._django_model)
 
-        def get_accessor(field):
+        def get_accessor(field, access_type):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
-            return field._django_field_identifier
-        return ''.join([unicode(seed_id)] + ['.%s' % get_accessor(f) for f in self.fields])
+            # this fucking doesn't work for related shit...
+            if access_type == 'direct':
+                return field._django_field_identifier
+            elif access_type == 'related':
+                import pdb; pdb.set_trace()
+                return field._django_field.rel_name_id
+            else:
+                assert False
+        return ''.join([unicode(seed_id)] + ['.%s' % get_accessor(f, a) for f, e, a in self.field_entity_accesstype_pairs])
 
 
 def datalang_to_fields(starting_ent, tokens):
-    field_entity_pairs = []
+    field_entity_accesstype_tuples = []
     current_ent = starting_ent
     obj_type = 'object'
     for idx, tok in enumerate(tokens):
@@ -58,15 +65,16 @@ def datalang_to_fields(starting_ent, tokens):
         assert len(field_candidates) <= 1, "Found more than one field with the name: %r" % tok
         # try to get the field with this name on this entity
         try:
+            access_type = 'direct'
             f = field_candidates[0]
             if f.is_relational():
                 current_ent = f.entity
-                field_entity_pairs.append((f, current_ent))
+                field_entity_accesstype_tuples.append((f, current_ent, access_type))
                 if last_item_in_loop:
                     obj_type = 'object'
             else:
                 assert last_item_in_loop, "You can't chain things on after a primval"
-                field_entity_pairs.append((f, None))
+                field_entity_accesstype_tuples.append((f, None, access_type))
                 obj_type = 'primval'
         # try to get the field with this related_name on this entity
         except IndexError:
@@ -74,11 +82,10 @@ def datalang_to_fields(starting_ent, tokens):
             field_candidates = [ f for path, f in current_ent.app.search(r'^tables/\d+/fields/\d+$') if f.is_relational() and f.related_name == tok and f.entity == current_ent]
             assert len(field_candidates) <= 1, "Found more than one field with the related name: %r and the entity: %r" % (tok, current_ent.name)
             try:
+                access_type = 'related'
                 f = field_candidates[0]
-                p = f._path
-                f.
-                current_ent = f._django_field.model._entity
-                field_entity_pairs.append((f, current_ent))
+                current_ent = f._parent(levels_up=2)
+                field_entity_accesstype_tuples.append((f, current_ent, access_type))
                 if f.type == 'fk':
                     assert last_item_in_loop, "You can't chain things on after collection"
                     obj_type = 'collection'
@@ -89,7 +96,7 @@ def datalang_to_fields(starting_ent, tokens):
             except IndexError:
                 raise Exception("Couldn't find field with the name or related name: %r" % tok)
 
-    return (field_entity_pairs, obj_type)
+    return (field_entity_accesstype_tuples, obj_type)
 
 def parse_to_datalang(datalang_string, app):
     tokens = datalang_string.split('.')
@@ -112,9 +119,9 @@ def parse_to_datalang(datalang_string, app):
         raise Exception("Not Yet Implemented: %r" % tokens[0])
 
     # 2. get the list of fields by performing entity-field-entity chaining
-    field_entity_pairs, result_type = datalang_to_fields(ent, tokens)
+    field_entity_accesstype_pairs, result_type = datalang_to_fields(ent, tokens)
     # 3. create a datalang instance and bind it to dest_attr
-    dl = DataLang(context_type, ent, field_entity_pairs, result_type)
+    dl = DataLang(context_type, ent, field_entity_accesstype_pairs, result_type)
     return dl
 
 

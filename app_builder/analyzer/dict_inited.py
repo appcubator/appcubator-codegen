@@ -235,10 +235,10 @@ class DictInited(object):
 
         return errors
 
-    def _parent(self):
+    def _parent(self, levels_up=1):
         path_string = self._path
-        parent_path_string = '/'.join(path_string.split('/')[:-1])
-        return self.find(parent_path_string)
+        parent_path_string = '/'.join(path_string.split('/')[:(0-levels_up)])
+        return self.app.find(parent_path_string)
 
     def find(self, path_string, name_allowed=False):
         """If name_allowed is true, then it will try to search an array by name first,

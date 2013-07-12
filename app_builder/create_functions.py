@@ -23,9 +23,9 @@ class AppComponentFactory(object):
         self.form_namespace = create_import_namespace('webapp/forms.py')
         self.view_namespace = create_import_namespace('webapp/pages.py')
         self.fr_namespace = create_import_namespace('webapp/form_receivers.py')
-        self.urls_namespace = create_import_namespace('webapp/urls.py')
         self.emailer_namespace = create_import_namespace('webapp/emailer.py')
         self.tests_namespace = create_import_namespace('webapp/tests.py')
+        self.urls_namespace = create_import_namespace('webapp/urls.py')
 
         self.userrole_namespace = naming.Namespace()
 
@@ -43,7 +43,7 @@ class AppComponentFactory(object):
         """
         if entity.is_user:
             user_identifier = self.model_namespace.get_by_import('django.models.User')
-            user_profile_identifier = self.model_namespace.new_identifier('UserProfile', cap_words=True)
+            user_profile_identifier = self.model_namespace.new_identifier('UserProfile', cap_words=True, ignore_case=True)
             m = DjangoUserModel(user_identifier, user_profile_identifier)
             # fields are split into user fields and user profile fields
             # add userprofile fields to the model
@@ -328,7 +328,7 @@ class AppComponentFactory(object):
         url = self.urls_namespace.new_identifier(uie._django_form.identifier)
         num_args = len(uie.container_info.form.get_needed_page_entities())
         arg_str = "(\d+)/" * num_args
-        route = (repr('^%s/%s$' % (url, arg_str)), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
+        route = (repr('^__form_receiver/%s/%s$' % (url, arg_str)), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
         url_obj.routes.append(route)
 
         # this assumes the form receiver is the this module
@@ -522,7 +522,7 @@ class AppComponentFactory(object):
         import_symbol = ('webapp.forms', f.identifier)
         self.fr_namespace.find_or_create_import(import_symbol, f.identifier)
 
-    def create_fmrm_receiver_for_form_object(self, uie):
+    def create_form_receiver_for_form_object(self, uie):
         fr_id = self.fr_namespace.new_identifier(uie._django_form.identifier)
         form_model = uie.container_info.form
         thing_id = form_model.entity_resolved.name
