@@ -792,6 +792,6 @@ class Iterator(DictInited, Hooked):
         loop_contents.append("{%% for obj in %s %%}" % self._django_query_id)
         loop_contents.append(row_wrapper)
         loop_contents.append("{% endfor %}")
-        loop_contents.append("{%% endif %%}")
+        loop_contents.append("{% endif %}")
         return loop_wrapper
 
