@@ -358,7 +358,10 @@ class Form(DictInited, Hooked):
                         from_email = "info@%s.appcubator.com" % self.app.name.lower()
                         # Each email is always internally represted as 5-tuple that consists of:
                         # (from_email : str, to_email : code, subject : string, plain text : str, email_template_file: DjangoEmailTemplate)
-                        to_email = parse_to_datalang(a.email_to, self.app).to_code() + ".email"
+                        try:
+                            to_email = parse_to_datalang(a.email_to, self.app).to_code() + ".email"
+                        except DictInited.FindFailed:
+                            raise UserInputError("Stale reference in datalang in email", self._path)
                         email_template = DjangoEmailTemplate(a.email, email.content)
                         email_tuple = (from_email, to_email, a.nl_description, "", email_template)
                         email_tuples.append(email_tuple)
@@ -574,10 +577,16 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             if s.startswith('http://') or s.startswith('https://'):
                 pass
             elif s.startswith('internal'):
-                v(s)
+                try:
+                    v(s)
+                except DictInited.FindFailed:
+                    raise UserInputError("Link has stale reference.", self._path)
             elif s.startswith('{{'):
                 def test_v2(m):
-                    v2(m.group(1))
+                    try:
+                        v2(m.group(1))
+                    except DictInited.FindFailed:
+                        raise UserInputError("Stale reference in datalang", self._path)
                     return "" # makes re.sub happy
                 v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
                 v2_wrap(s)
