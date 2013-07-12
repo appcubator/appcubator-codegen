@@ -1,5 +1,10 @@
 from datalang import parse_to_datalang
 import re
+from . import assert_raise
+from dict_inited import DictInited
+
+class UrlDataMismatch(Exception):
+    pass
 
 """
     Pagelang parsing and intermediate representation.
@@ -24,9 +29,9 @@ class PageLang(object):
 
             # check that the data on the page matches the data in this pagelang.
             entities_on_page = self.page.get_tables_from_url()
-            assert len(entities_on_page) == len(self.entity_datalang_map), "Number of datalangs to page don't even match in page lang: %r" % self.page_str
+            assert_raise(len(entities_on_page) == len(self.entity_datalang_map), UrlDataMismatch("Number of url arguments passed doesn't match."))
             for e in entities_on_page:
-                assert e in self.entity_datalang_map, "Entity %r in page context but not found in pagelang's datalangs." % e.name
+                assert_raise(e in self.entity_datalang_map, UrlDataMismatch("Entity %r in page URL but not given in this pagelang" % e.name))
 
     def to_code(self, context=None, template=True, seed_id=None):
         """ If template is false reverse is used otherwise we return the URL template tag """

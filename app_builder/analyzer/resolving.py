@@ -1,6 +1,7 @@
 from dict_inited import DictInited
 from utils import encode_braces, decode_braces
 from datalang import parse_to_datalang
+import pagelang
 from pagelang import parse_to_pagelang
 from . import UserInputError
 
@@ -54,6 +55,8 @@ class Resolvable(object):
                 pl = parse_to_pagelang(pagelang_string, self.app)
             except DictInited.FindFailed:
                 raise UserInputError("Stale reference", self._path)
+            except pagelang.UrlDataMismatch:
+                raise UserInputError("Url data mismatch in pagelang", self._path)
             setattr(self, dest_attr, pl)
 
 

@@ -109,7 +109,7 @@ class Form(DictInited, Hooked):
                     'import form into form receivers',
                     'create login form receiver if not exists',
                     'create url for form receiver',
-                    'add emails for non general form receivers'
+                    #'add emails for non general form receivers'
                    )
 
         elif action == 'signup':
@@ -331,10 +331,11 @@ class Form(DictInited, Hooked):
 
                 if self.action == 'signup':
                     assert self.signupRole is not None, "signup form must have signupRole"
-                    assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
+                    assert_raise(self.signupRole in [u.name for u in self.app.users],
+                            UserInputError("You deleted a user role, so you need to update your signup form.", self._path + "/loginRoutes"))
 
                 if self.action == 'edit':
-                    assert  self.editOn is not None, "Editform takes editOn arg."
+                    assert self.editOn is not None, "Editform takes editOn arg."
 
             def resolve_page(self):
                 if self.goto is None:
@@ -357,7 +358,10 @@ class Form(DictInited, Hooked):
                         from_email = "info@%s.appcubator.com" % self.app.name.lower()
                         # Each email is always internally represted as 5-tuple that consists of:
                         # (from_email : str, to_email : code, subject : string, plain text : str, email_template_file: DjangoEmailTemplate)
-                        to_email = parse_to_datalang(a.email_to, self.app).to_code() + ".email"
+                        try:
+                            to_email = parse_to_datalang(a.email_to, self.app).to_code() + ".email"
+                        except DictInited.FindFailed:
+                            raise UserInputError("Stale reference in datalang in email", self._path)
                         email_template = DjangoEmailTemplate(a.email, email.content)
                         email_tuple = (from_email, to_email, a.nl_description, "", email_template)
                         email_tuples.append(email_tuple)
@@ -469,9 +473,9 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
                 assert self.signupRole in [u.name for u in self.app.users]
                 assert self.goto is not None
         elif self.action != 'signup':
-            assert len(self.loginRoutes) == len(self.app.users), "Not enough login routes."
+            assert_raise(len(self.loginRoutes) == len(self.app.users), UserInputError("Please update the role-based redirect actions on the signup form.", self._path))
         else:
-            assert False, "Can't have signup social button if there's only 1 user role."
+            assert_raise(False, UserInputError("Please remove the social signup button and drag the generic login/signup button instead.", self._path))
 
     def resolve_page(self):
         if self.action == 'login':
@@ -573,10 +577,18 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             if s.startswith('http://') or s.startswith('https://'):
                 pass
             elif s.startswith('internal'):
-                v(s)
+                try:
+                    v(s)
+                except DictInited.FindFailed:
+                    raise UserInputError("Link has stale reference.", self._path)
+                except pagelang.UrlDataMismatch:
+                    raise UserInputError("Link doesn't give the right url data for the referenced page.", self._path)
             elif s.startswith('{{'):
                 def test_v2(m):
-                    v2(m.group(1))
+                    try:
+                        v2(m.group(1))
+                    except DictInited.FindFailed:
+                        raise UserInputError("Stale reference in datalang", self._path)
                     return "" # makes re.sub happy
                 v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
                 v2_wrap(s)
