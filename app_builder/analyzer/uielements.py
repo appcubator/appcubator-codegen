@@ -581,6 +581,8 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
                     v(s)
                 except DictInited.FindFailed:
                     raise UserInputError("Link has stale reference.", self._path)
+                except pagelang.UrlDataMismatch:
+                    raise UserInputError("Link doesn't give the right url data for the referenced page.", self._path)
             elif s.startswith('{{'):
                 def test_v2(m):
                     try:
