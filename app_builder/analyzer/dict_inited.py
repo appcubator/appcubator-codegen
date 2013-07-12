@@ -240,6 +240,8 @@ class DictInited(object):
         parent_path_string = '/'.join(path_string.split('/')[:(0-levels_up)])
         return self.app.find(parent_path_string)
 
+    class FindFailed(Exception):
+        pass
     def find(self, path_string, name_allowed=False):
         """If name_allowed is true, then it will try to search an array by name first,
            then resorting to search by index if name doesn't work"""
@@ -275,7 +277,7 @@ class DictInited(object):
                         raise Exception(
                             "Couldn't convert %r to an int. Maybe you meant to use name_allowed=True" % attr)
                     else:
-                        raise Exception(
+                        raise self.__class__.FindFailed(
                                 "Couldn't find thing with name=%r. Path: %r" % (attr, path))
 
                 this_obj = this_obj[attr]
