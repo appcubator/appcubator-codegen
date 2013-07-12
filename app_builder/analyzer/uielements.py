@@ -158,7 +158,7 @@ class Form(DictInited, Hooked):
                         filepicker_button = Tag('div', {'class': class_string, 'data-name': field.backend_field_name}, content=field.placeholder)
                         # this is needed for ajaxify to put in the filepicker value, and for the browser to submit the form
                         real_input = Tag('input', {'type': 'hidden', 'name': field.backend_field_name })
-                        if edit_inst is not None:
+                        if edit_inst_code_fn is not None:
                             real_input.attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
                         content = [filepicker_button, real_input]
 
