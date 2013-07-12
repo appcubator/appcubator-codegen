@@ -148,6 +148,8 @@ class Form(DictInited, Hooked):
 
                         if edit_inst_code_fn is not None:
                             base_attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
+                            # don't use place holder if some edit value is going to be filled in anyway.
+                            del base_attribs['placeholder']
 
                     elif field.displayType.endswith('-uploader'):
                         tagname = 'div'
