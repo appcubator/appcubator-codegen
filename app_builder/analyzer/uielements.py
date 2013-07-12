@@ -151,6 +151,8 @@ class Form(DictInited, Hooked):
 
                         if edit_inst_code_fn is not None:
                             base_attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
+                            # don't use place holder if some edit value is going to be filled in anyway.
+                            del base_attribs['placeholder']
 
                     elif field.displayType.endswith('-uploader'):
                         tagname = 'div'
@@ -159,6 +161,8 @@ class Form(DictInited, Hooked):
                         filepicker_button = Tag('div', {'class': class_string, 'data-name': field.backend_field_name}, content=field.placeholder)
                         # this is needed for ajaxify to put in the filepicker value, and for the browser to submit the form
                         real_input = Tag('input', {'type': 'hidden', 'name': field.backend_field_name })
+                        if edit_inst_code_fn is not None:
+                            real_input.attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
                         content = [filepicker_button, real_input]
 
                     elif field.displayType == 'dropdown':
@@ -329,7 +333,8 @@ class Form(DictInited, Hooked):
                     assert self.signupRole is not None, "signup form must have signupRole"
                     assert self.signupRole in [u.name for u in self.app.users], "Signup role not recognized"
 
-                assert (self.action == 'edit') == (self.editOn is not None), "Editform takes editOn arg."
+                if self.action == 'edit':
+                    assert  self.editOn is not None, "Editform takes editOn arg."
 
             def resolve_page(self):
                 if self.goto is None:
@@ -575,6 +580,8 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
                     return "" # makes re.sub happy
                 v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
                 v2_wrap(s)
+            elif s == '/static/img/placeholder.png':
+                pass
             else:
                 assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % s
 

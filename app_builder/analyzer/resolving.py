@@ -2,6 +2,7 @@ from dict_inited import DictInited
 from utils import encode_braces, decode_braces
 from datalang import parse_to_datalang
 from pagelang import parse_to_pagelang
+from . import UserInputError
 
 
 class Resolvable(object):
@@ -18,11 +19,18 @@ class Resolvable(object):
                 dest_list = []
                 for src_thing in getattr(self, src_attr):
                     path_string = decode_braces(src_thing)
-                    dest_list.append(self.app.find(path_string, name_allowed=True))
+                    try:
+                        dest_list.append(self.app.find(path_string, name_allowed=True))
+                    except DictInited.FindFailed:
+                        raise UserInputError("Stale reference", self._path)
+
                 setattr(self, dest_attr, dest_list)
             else:
-                path_string = decode_braces(getattr(self, src_attr))
-                setattr(self, dest_attr,  self.app.find(path_string, name_allowed=True))
+                try:
+                    path_string = decode_braces(getattr(self, src_attr))
+                    setattr(self, dest_attr,  self.app.find(path_string, name_allowed=True))
+                except DictInited.FindFailed:
+                    raise UserInputError("Stale reference", self._path)
 
     def resolve_data(self):
         if not hasattr(self.__class__, '_datalang_attrs'):
@@ -30,7 +38,10 @@ class Resolvable(object):
         assert hasattr(self, 'app'), "You must have something at attribute \"app\""
         for src_attr, dest_attr in self.__class__._datalang_attrs:
             datalang_string = getattr(self, src_attr)
-            dl = parse_to_datalang(datalang_string, self.app)
+            try:
+                dl = parse_to_datalang(datalang_string, self.app)
+            except DictInited.FindFailed:
+                raise UserInputError("Stale reference", self._path)
             setattr(self, dest_attr, dl)
 
     def resolve_page(self):
@@ -39,7 +50,10 @@ class Resolvable(object):
         assert hasattr(self, 'app'), "You must have something at attribute \"app\""
         for src_attr, dest_attr in self.__class__._pagelang_attrs:
             pagelang_string = getattr(self, src_attr)
-            pl = parse_to_pagelang(pagelang_string, self.app)
+            try:
+                pl = parse_to_pagelang(pagelang_string, self.app)
+            except DictInited.FindFailed:
+                raise UserInputError("Stale reference", self._path)
             setattr(self, dest_attr, pl)
 
 

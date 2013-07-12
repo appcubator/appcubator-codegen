@@ -1,4 +1,5 @@
 import re
+import traceback
 
 from app_builder.analyzer import datalang, pagelang
 from app_builder.codes import DjangoModel, DjangoUserModel
@@ -26,9 +27,9 @@ class AppComponentFactory(object):
         self.form_namespace = create_import_namespace('webapp/forms.py')
         self.view_namespace = create_import_namespace('webapp/pages.py')
         self.fr_namespace = create_import_namespace('webapp/form_receivers.py')
-        self.urls_namespace = create_import_namespace('webapp/urls.py')
         self.emailer_namespace = create_import_namespace('webapp/emailer.py')
         self.tests_namespace = create_import_namespace('webapp/tests.py')
+        self.urls_namespace = create_import_namespace('webapp/urls.py')
 
         self.userrole_namespace = naming.Namespace()
 
@@ -46,7 +47,7 @@ class AppComponentFactory(object):
         """
         if entity.is_user:
             user_identifier = self.model_namespace.get_by_import('django.models.User')
-            user_profile_identifier = self.model_namespace.new_identifier('UserProfile', cap_words=True)
+            user_profile_identifier = self.model_namespace.new_identifier('UserProfile', cap_words=True, ignore_case=True)
             m = DjangoUserModel(user_identifier, user_profile_identifier)
             # fields are split into user fields and user profile fields
             # add userprofile fields to the model
@@ -122,6 +123,10 @@ class AppComponentFactory(object):
         m = entity._django_model
         import_symbol = ('webapp.models', m.identifier)
         ns.find_or_create_import(import_symbol, m.identifier)
+        if entity.is_user:
+            import_symbol = ('webapp.models', m.user_profile_identifier)
+            ns.find_or_create_import(import_symbol, m.user_profile_identifier)
+
 
     # EMAILS
 
@@ -237,7 +242,7 @@ class AppComponentFactory(object):
                 3. return the result of to_code of the datalang
             """
             dl = datalang.parse_to_datalang(s, page.app)
-            return dl.to_code(context=page._django_view.pc_namespace)
+            return dl.to_code(context=page._django_view.pc_namespace, template=True)
 
         def translate(m, template=True):
             try:
@@ -245,8 +250,8 @@ class AppComponentFactory(object):
                 if not template:
                     return djang_code
                 return "{{ %s }}" % djang_code
-            except Exception:
-                logger.error("oneshot datalang blew up here...")
+            except Exception, e:
+                logger.error("oneshot datalang %r blew up here... %s" % (m.group(1), traceback.format_exc()))
 
         translate_all = lambda x, template=True: re.sub(r'\{\{ ?([^\}]*) ?\}\}', lambda x: translate(x, template=template), x)
 
@@ -331,7 +336,7 @@ class AppComponentFactory(object):
         url = self.urls_namespace.new_identifier(uie._django_form.identifier)
         num_args = len(uie.container_info.form.get_needed_page_entities())
         arg_str = "(\d+)/" * num_args
-        route = (repr('^%s/%s$' % (url, arg_str)), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
+        route = (repr('^__form_receiver/%s/%s$' % (url, arg_str)), FnCodeChunk(lambda: "'%s'" % uie._django_form_receiver.identifier))
         url_obj.routes.append(route)
 
         # this assumes the form receiver is the this module
@@ -360,7 +365,10 @@ class AppComponentFactory(object):
             return None
         prim_name = form_model.action + '_' + form_model.entity_resolved.name
         form_id = self.form_namespace.new_identifier(prim_name, cap_words=True)
-        model_id = form_model.entity_resolved._django_model.identifier
+        if not form_model.entity_resolved.is_user:
+            model_id = form_model.entity_resolved._django_model.identifier
+        else:
+            model_id = form_model.entity_resolved._django_model.user_profile_identifier
         field_ids = []
         required_field_id_types = []
         for f in form_model.fields:
@@ -540,7 +548,7 @@ class AppComponentFactory(object):
             fr.locals['redirect_url_code'] = lambda: form_model.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
         fr.add_args(args)
         if form_model.action == 'edit':
-            fr.bind_instance_from_url(fr.namespace.get_by_ref(form_model.edit_dl.final_type()[1]._django_model))
+            fr.bind_instance_from_url(FnCodeChunk(lambda: form_model.edit_dl.to_code(context=fr.namespace, user_profile=True)))
         uie._django_form_receiver = fr
         return fr
 
