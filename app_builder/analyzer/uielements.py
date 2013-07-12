@@ -109,7 +109,7 @@ class Form(DictInited, Hooked):
                     'import form into form receivers',
                     'create login form receiver if not exists',
                     'create url for form receiver',
-                    'add emails for non general form receivers'
+                    #'add emails for non general form receivers'
                    )
 
         elif action == 'signup':
