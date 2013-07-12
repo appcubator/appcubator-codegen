@@ -44,7 +44,7 @@ class DjangoPageSearch(object):
         """
         Adds search to all pages by referencing the views/pages.py file.
         """
-        self.identifier = "search_%s" % identifier.__str__().lower()
+        self.identifier = identifier.__str__().lower()
         self.has_search = search
         self.code_path = "webapp/pages.py"
 

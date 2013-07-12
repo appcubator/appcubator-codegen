@@ -164,11 +164,12 @@ class AppComponentFactory(object):
 
         v = DjangoPageView(identifier, args=args, access=page.access_level)
         page._django_view = v
+        page._search_model_id = identifier
         return v
 
 
     def add_search_functionality(self, search):
-        search_identifier = self.view_namespace.new_identifier(search.searchQuery.searchOnResolved.name)
+        search_identifier = self.view_namespace.new_identifier("search_" + search.searchQuery.searchOnResolved.name)
         pc_namespace = search.searchQuery.searchPageResolved.page._django_view.pc_namespace
         model_id = search.searchQuery.searchOnResolved._django_model.identifier
         ps = DjangoPageSearch(search_identifier, pc_namespace, model_id)
