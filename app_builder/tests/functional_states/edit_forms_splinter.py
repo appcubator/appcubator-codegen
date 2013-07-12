@@ -34,14 +34,14 @@ class TestCreateSimpleList(SplinterTestCase):
         submit_field.click()
 
     def x_test_create(self):
-        self.browser.find_by_css('.facebook-btn')[0].click()
+        self.browser.find_by_css('.facebook-login-btn')[0].click()
         self.login_to_facebook()
         self.tweet('abcdefghijklmnopqrstuvwxyz')
         self.browser.visit(self.url('/Tweet_Feed/'))
         self.assertTrue(self.browser.is_text_present('abcdefghijklmnopqrstuvwxyz'))
 
     def test_edit(self):
-        self.browser.find_by_css('.facebook-btn')[0].click()
+        self.browser.find_by_css('.facebook-login-btn')[0].click()
         self.login_to_facebook()
         self.tweet('abcdefghijklmnopqrstuvwxyz')
         self.browser.visit(self.url('/Tweet_Feed/'))

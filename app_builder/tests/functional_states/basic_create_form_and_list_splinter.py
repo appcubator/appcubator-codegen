@@ -34,7 +34,7 @@ class TestCreateSimpleList(SplinterTestCase):
         submit_field.click()
 
     def test_create(self):
-        self.browser.find_by_css('.facebook-btn')[0].click()
+        self.browser.find_by_css('.facebook-login-btn')[0].click()
         self.login_to_facebook()
         self.tweet('abcdefghijklmnopqrstuvwxyz')
         self.browser.visit(self.url('/Tweet_Feed/'))

@@ -6,7 +6,7 @@ from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, SocialAuthHandler
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, SearchQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
-from app_builder.codes import DjangoLoginForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
+from app_builder.codes import DjangoLoginForm, DjangoSignupForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
 from app_builder.codes import DjangoEmailTemplate
 from app_builder.codes import Emailer
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
@@ -406,7 +406,7 @@ class AppComponentFactory(object):
         else:
             prim_name = 'SignupForm'
             form_id = self.form_namespace.new_identifier(prim_name, ignore_case=True, cap_words=True)
-            form_obj = DjangoLoginForm(form_id)
+            form_obj = DjangoSignupForm(form_id)
         uie._django_form = form_obj
         return form_obj
 

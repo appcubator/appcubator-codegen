@@ -20,22 +20,22 @@ class TestSup(SplinterTestCase):
 
     @property
     def signup_role_one(self):
-        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        fb_buttons = self.browser.find_by_css('.facebook-login-btn')
         return fb_buttons[0]
 
     @property
     def signup_role_two(self):
-        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        fb_buttons = self.browser.find_by_css('.facebook-login-btn')
         return fb_buttons[1]
 
     @property
     def signup_role_three(self):
-        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        fb_buttons = self.browser.find_by_css('.facebook-login-btn')
         return fb_buttons[2]
 
     @property
     def login(self):
-        fb_buttons = self.browser.find_by_css('.facebook-btn')
+        fb_buttons = self.browser.find_by_css('.facebook-login-btn')
         return fb_buttons[3]
 
     def login_to_facebook(self):

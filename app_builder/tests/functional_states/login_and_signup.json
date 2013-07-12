@@ -107,9 +107,7 @@
                     "label":"Username",
                     "displayType":"single-line-text",
                     "type":"text",
-                    "options":[
-
-                    ],
+                    "options":"",
                     "required":false
                   },
                   {
@@ -118,9 +116,7 @@
                     "label":"Password",
                     "displayType":"password-text",
                     "type":"password",
-                    "options":[
-
-                    ],
+                    "options":"",
                     "required":false
                   },
                   {
@@ -172,9 +168,7 @@
                     "label":"Username",
                     "displayType":"single-line-text",
                     "type":"text",
-                    "options":[
-
-                    ],
+                    "options":"",
                     "required":false
                   },
                   {
@@ -183,9 +177,7 @@
                     "label":"Password",
                     "displayType":"password-text",
                     "type":"password",
-                    "options":[
-
-                    ],
+                    "options":"",
                     "required":false
                   },
                   {
@@ -194,9 +186,7 @@
                     "label":"Confirm Password",
                     "displayType":"password-text",
                     "type":"password",
-                    "options":[
-
-                    ],
+                    "options":"",
                     "required":false
                   },
                   {
@@ -205,9 +195,7 @@
                     "label":"Email Address",
                     "displayType":"email-text",
                     "type":"email",
-                    "options":[
-
-                    ],
+                    "options":"",
                     "required":false
                   },
                   {

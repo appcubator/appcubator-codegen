@@ -179,9 +179,6 @@ class DjangoLoginFormReceiver(DjangoFormReceiver):
         assert not hasattr(self, 'role_redirect'), "There were multiple login with facebook buttons in the app. Butwai."
         self.role_redirect = role_redirect
 
-    def add_email_actions(self, email_actions):
-        self.email_actions = email_actions
-
     def render(self):
         return env.get_template('login_form_receiver.py.template').render(fr=self, imports=self.namespace.imports(), locals=self.locals)
 

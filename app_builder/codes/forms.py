@@ -29,8 +29,18 @@ class DjangoForm(object):
         return env.get_template('form.py.template').render(form=self, imports=self.namespace.imports(), locals={})
 
 
-# HACK TO BE REFACTORED LATER
 class DjangoLoginForm(DjangoForm):
+
+    def __init__(self, identifier):
+        self.identifier = identifier
+        self.is_signup = False
+        self.namespace = naming.Namespace(parent_namespace=identifier.ns) # this is necessary so the coder can get imports from the namespace
+        self.code_path = 'webapp/forms.py'
+
+    def render(self):
+        return ""
+
+class DjangoSignupForm(DjangoForm):
 
     def __init__(self, identifier):
         self.identifier = identifier

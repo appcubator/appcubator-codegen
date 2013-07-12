@@ -43,7 +43,7 @@ class DataLang(object):
 
         if len(self.fields) == 0 and user_profile:
             # this is for edit form, instance = request.user.getprofile()
-            return seed_id + '.get_profile()'
+            return '%s.get_profile()' % seed_id
 
         def get_accessor(field, entity, access_type):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"

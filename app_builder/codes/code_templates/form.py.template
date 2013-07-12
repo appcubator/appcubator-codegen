@@ -4,6 +4,8 @@ class {% block class_name %}{{ form.identifier }}{% endblock %}({% if form.is_si
     {{ field_id }} = {{forms}}.{{t}}(required=True)
     {% endfor %}
 
+    {% if not form.is_signup %}
     class Meta:
         model = {{ form.model_id }}
         fields = ({{ form.included_field_string }})
+    {% endif %}
