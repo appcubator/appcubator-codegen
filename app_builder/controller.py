@@ -70,6 +70,7 @@ def create_codes(app):
                   'create login form receiver if not exists': factory.create_login_form_receiver_if_not_created,
                   'create signup form receiver if not exists': factory.create_signup_form_receiver_if_not_created,
                   'create url for form receiver if not created': factory.create_url_for_form_receiver_if_not_created,
+                  'add emails for non general form receivers': factory.add_email_actions_to_non_general_form_receiver
     }
 
 

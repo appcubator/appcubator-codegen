@@ -17,6 +17,9 @@ def {{ fr.identifier }}({{request}}):
 
         {% block do_stuff_with_valid_form %}
         {{login_function}}({{request}}, form.get_user())
+        {% for e in fr.email_actions %}
+        {{ e }}
+        {% endfor %}
         {% endblock %}
 
         {% block redirect %}

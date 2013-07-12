@@ -109,6 +109,7 @@ class Form(DictInited, Hooked):
                     'import form into form receivers',
                     'create login form receiver if not exists',
                     'create url for form receiver',
+                    'add emails for non general form receivers'
                    )
 
         elif action == 'signup':
@@ -116,8 +117,8 @@ class Form(DictInited, Hooked):
                     'import form into form receivers',
                     'create signup form receiver if not exists',
                     'create url for form receiver',
+                    'add emails for non general form receivers'
                    )
-
         else:
             assert False, "Form action not recognized: %s" % action
 
@@ -270,13 +271,6 @@ class Form(DictInited, Hooked):
                     pass
 
             class EmailAction(DictInited):
-                # _schema = {
-                #     "from_email": {"_type": ""},
-                #     "to_email": {"_type": ""},
-                #     "subject": {"_type": ""},
-                #     "text": {"_type": ""},
-                #     "html": {"_type": ""}
-                # }
                 _schema = {
                     "email_to": {"_type": ""},
                     "nl_description": {"_type": ""},
