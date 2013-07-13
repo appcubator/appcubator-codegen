@@ -194,11 +194,8 @@ class AppComponentFactory(object):
 
         uie._django_search = ds
         # This is needed for the template to know what the identifier is of the query in the page_context
-        try:
-            uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
-        except AssertionError:
-            pass
-        
+        uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
+    
     def find_or_create_query_for_view(self, uie):
 
         entity = uie.container_info.entity_resolved
@@ -213,7 +210,10 @@ class AppComponentFactory(object):
             def gen_code_for_value():
                 x = where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
                 if where_clause.equal_to_dl.result_type == 'object':
-                    return "%s['%s'].id" % (view.locals['page_context'], x)
+                    if x is 'request.user':
+                        return "%s".id % x
+                    else:
+                        return "%s['%s'].id" % (view.locals['page_context'], x)
                 return x
             value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
