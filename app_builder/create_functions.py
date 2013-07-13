@@ -210,7 +210,7 @@ class AppComponentFactory(object):
             def gen_code_for_value():
                 x = where_clause.equal_to_dl.to_code(context=view.pc_namespace) # pass the page context
                 if where_clause.equal_to_dl.result_type == 'object':
-                    if x is 'request.user':
+                    if 'request.user' in x:
                         return "%s.id" % x
                     else:
                         return "%s['%s'].id" % (view.locals['page_context'], x)
