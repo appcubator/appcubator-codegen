@@ -145,6 +145,12 @@ class Navbar(DictInited):
         _pagelang_attrs = (('url', 'url_pl'),)
         _resolve_attrs = ()
 
+        def validate(self):
+            """ Prevent /admin/ conflicts """
+            if "internal://" in self.url:
+                admin_check = self.url[len("internal://"):].lower()
+                return admin_check is not "admin" and admin_check is not "admin/"
+
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},
         "isHidden": {"_type": True},
@@ -215,6 +221,10 @@ class Page(DictInited):
                     if not re.match(r'^[a-zA-Z0-9-_]+$', u):
                         logger.error("Page URL %s is not valid." % u)
                         return False
+                    # Prevent /admin/ conflicts
+                    if u == "admin" or u == "admin/":
+                        return False
+
                 except TypeError:
                     logger.info("Page URL %s encountered TypeError" % u)
             return True
