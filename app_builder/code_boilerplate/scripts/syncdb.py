@@ -5,7 +5,7 @@ import subprocess
 import shlex
 
 if __name__ == "__main__":
-    os.environ["DJANGO_SETTINGS_MODULE"] = 'settings'
+    os.environ["DJANGO_SETTINGS_MODULE"] = 'settings.prod'
     APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     commands = []

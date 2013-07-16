@@ -595,7 +595,7 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             elif s == '/static/img/placeholder.png':
                 pass
             else:
-                assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % s
+                raise UserInputError("Broken link: %s" % s, self._path)
 
     def kwargs(self):
         kw = {}
@@ -785,13 +785,14 @@ class Iterator(DictInited, Hooked):
             inner_htmls.append(uie_html)
         row_wrapper_style_string = 'display:block; position:relative; height:%dpx;' % (self.container_info.row.layout.height * 15)
         row_wrapper = Tag('div', {'style': row_wrapper_style_string}, content=inner_htmls)
+        empty_row_wrapper = Tag('div', {'style': row_wrapper_style_string}, content="List is empty.")
 
         loop_contents = []
         loop_wrapper = Tag('div', {'style': 'position:relative;'}, content=loop_contents)
-        loop_contents.append("{%% if %s %%}" % self._django_query_id)
         loop_contents.append("{%% for obj in %s %%}" % self._django_query_id)
         loop_contents.append(row_wrapper)
+        loop_contents.append("{% empty %}")
+        loop_contents.append(empty_row_wrapper)
         loop_contents.append("{% endfor %}")
-        loop_contents.append("{% endif %}")
         return loop_wrapper
 
