@@ -102,4 +102,4 @@ class Visitor(models.Model):
 
     class Meta:
         ordering = ('-last_update',)
-        unique_together = ('session_key', 'ip_address',)
+        unique_together = ('session_key', 'ip_address', 'url')
