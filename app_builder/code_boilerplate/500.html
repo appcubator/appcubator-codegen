@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Updating site - Reloading</title>
+<title>Website Error</title>
 
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
@@ -25,27 +25,11 @@ body {
 <body>
   <div class="page">
     <div class="container" style="text-align:center;">
-      <img src="http://appcubator.com/static/img/loading.gif" class="hoff8"  style="margin-bottom:40px;">
+      <img src="http://appcubator.com/static/img/mascot-sad.png" class="hoff8"  style="margin-bottom:40px;">
       <br  />
-      <p class="hoff6">Transporting you to the future in <span id="countdown-refresh">4</span>...</p>
-      <script>
-          function decrement() {
-            var r_el = document.getElementById('countdown-refresh');
-            n = parseInt(r_el.innerHTML);
-            if(n > 0) {
-              n = n - 1;
-              r_el.innerHTML = n;
-              window.setTimeout(decrement, 700);
-            } else {
-              location.reload(true);
-            }
-          }
-          decrement();
-      </script>
+      <p class="hoff6">We've been notified about this and are working to fix it as soon as we can.</p>
     </div>
-
     <div class="footer"><hr></div>
     </div>
 </body>
 </html>
-
