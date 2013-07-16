@@ -106,7 +106,7 @@ INSTALLED_APPS = (
     'social_auth', # django-social-auth
     'webapp',
     'south',
-    'tracking',
+    'analytics',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
