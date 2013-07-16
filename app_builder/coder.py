@@ -100,8 +100,12 @@ class Coder(object):
 
     __init__.py
     manage.py
-    settings.py
     wsgi.py
+
+    settings/
+        common.py
+        dev.py
+        prod.py
 
     webapp/
         __init__.py
