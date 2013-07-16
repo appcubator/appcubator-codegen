@@ -165,11 +165,12 @@ def write_to_fs(coder, css="", dest=None):
 
     # copy boilerplate
     logger.debug("Copying boilerplate files.")
-    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'settings.py', 'wsgi.py', 'scripts.json', '502.html']:
+    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'scripts.json', '502.html']:
         copy_file(fname, fname)
 
     copy_file('gitignore.gitignore', '.gitignore')
     f_transporter('scripts', 'scripts', shutil.copytree)
+    f_transporter('settings', 'settings', shutil.copytree)
     copy_file('base.html', 'webapp/templates/base.html')
 
     # main webapp files
