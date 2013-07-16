@@ -6,4 +6,5 @@ oauth2==1.5.211
 django-social-auth==0.7.22
 django-grappelli==2.4.5
 south==0.8.1
+django-tracking
 
