@@ -172,6 +172,8 @@ def write_to_fs(coder, css="", dest=None):
     f_transporter('scripts', 'scripts', shutil.copytree)
     f_transporter('settings', 'settings', shutil.copytree)
     copy_file('base.html', 'webapp/templates/base.html')
+    copy_file('500.html', 'webapp/templates/500.html')
+    copy_file('404.html', 'webapp/templates/404.html')
 
     # main webapp files
     logger.debug("Rendering and writing webapp files.")
