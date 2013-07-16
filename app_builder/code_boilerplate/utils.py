@@ -30,6 +30,8 @@ def get_query(query_string, search_fields):
 def get_results(query_string, model_name, fields):
     query_obj = get_query(query_string, fields)
     model = get_model('webapp', model_name)
+    if model is None:
+        return []
     return [] if query_obj is None else model.objects.filter(query_obj)
 
 def json_response(data={}, errors={}, success=True):
