@@ -82,11 +82,11 @@ class VisitorAnalyticsMiddleware(object):
             'url' : url
         }
 
-        # Check if we have a a new user on url instance within the last 2 minutes
+        # Check if we have a a new user on url instance within the last 2 seconds.
         try:
             visitor = Visitor.objects.get(**attrs)
         except Visitor.DoesNotExist:
-            cutoff = now - timedelta(minutes=2)
+            cutoff = now - timedelta(seconds=2)
             visitors = Visitor.objects.filter(
                 ip_address=ip_address,
                 user_agent=user_agent,
