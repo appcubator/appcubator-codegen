@@ -95,6 +95,7 @@ def create_codes(app):
         create('create model for entity', ent) # only creates primitive fields
     for ent in app.tables: # doing relational fields after because all models need to be created for relations to work
         create('create relational fields for entity', ent)
+        #create('create import export resource', ent)
         create('register model with admin site', ent)
         create('import model into views', ent)
         create('import model into forms', ent)

@@ -114,7 +114,7 @@ def run_django_tests(dest):
 
 def get_rid_of_wsgi(dest):
     # don't get rid of the print statement. it's magical
-    for line in fileinput.FileInput(dest + "/settings.py", inplace=True):
+    for line in fileinput.FileInput(dest + "/settings/common.py", inplace=True):
         if "WSGI_APPLICATION" in line:
             line = "# " + line.rstrip()
         print line.rstrip()
