@@ -595,7 +595,7 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             elif s == '/static/img/placeholder.png':
                 pass
             else:
-                assert False, "This is not a valid src or href value: %r. It should be external link, pagelang, or datalang." % s
+                raise UserInputError("Broken link: %s" % s, self._path)
 
     def kwargs(self):
         kw = {}
