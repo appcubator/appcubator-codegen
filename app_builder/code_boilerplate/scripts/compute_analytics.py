@@ -9,7 +9,7 @@ if __name__ == "__main__":
     APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     commands = []
-    commands.append('python scripts/analytics_compute.py')
+    commands.append('python scripts/analytics_cruncher.py')
 
     for c in commands:
         print("Running `{}`".format(c))
