@@ -43,7 +43,7 @@ def get_tracking_analytics():
 def post_analytics():
   url = "https://appcubator.com/recv_analytics/"
   analytics_data = get_tracking_analytics()
-  deployment_path = os.path.join(__file__, '..', '..')
+  deployment_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
   d_id = int(deployment_path.split('-')[1])
   json = {
     'd_id' : d_id,
