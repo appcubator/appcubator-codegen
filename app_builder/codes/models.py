@@ -161,3 +161,38 @@ class DjangoUserModel(DjangoModel):
 
     def render(self):
         return env.get_template('usermodel.py.template').render(model=self, imports=self.namespace.imports(), locals=self.locals)
+
+
+class DjangoImportExportResource(object):
+    def __init__(self, identifier, model_id):
+        self.identifier = identifier
+        self.code_path = 'webapp/models.py'
+        self.model_identifier = model_id
+        self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
+
+    def render(self):
+        return """class {this_id}({resources_id}.ModelResource):
+
+    class Meta:
+        model = {model_id}""".format(this_id=self.identifier, model_id=self.model_identifier, resources_id=self.namespace.imports()['utils.import_export.resources'])
+
+class DjangoImportExportAdminModel(object):
+    def __init__(self, identifier):
+        self.code_path = 'webapp/admin.py'
+        self.identifier = identifier
+        self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
+
+    def render(self):
+        return """class {this_id}({iem_admin_id}):
+    pass
+        """.format(this_id=self.identifier, iem_admin_id=self.namespace.imports()['utils.import_export.admin.model_admin'])
+
+class AdminRegisterLine(object):
+    def __init__(self, parent_namespace, model_identifier, admin_id):
+        self.code_path = 'webapp/admin.py'
+        self.parent_namespace = parent_namespace
+        self.model_identifier = model_identifier
+        self.admin_id = admin_id
+    def render(self):
+        return "%s.site.register(%s, %s)\n" % (self.parent_namespace.imports()['django.admin'], self.model_identifier, self.admin_id)
+

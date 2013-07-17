@@ -18,11 +18,19 @@ def create_codes(app):
                   'setup user roles namespace': factory.setup_userrole_namespace,
                   'create model for entity': factory.create_model,
                   'create relational fields for entity': factory.create_relational_fields_for_model,
+
+                  'import model into admin': lambda entity: factory.import_model_into_namespace(entity, 'admin'),
+                  #'import model ie resource into admin': factory.import_model_ie_resource_into_admin,
+
                   'import model into views': lambda entity: factory.import_model_into_namespace(entity, 'views'),
                   'import model into forms': lambda entity: factory.import_model_into_namespace(entity, 'forms'),
                   'import model into form receivers': lambda entity: factory.import_model_into_namespace(entity, 'form receivers'),
                   'import model into tests': lambda entity: factory.import_model_into_namespace(entity, 'tests'),
-                  'register model with admin site': factory.register_model_with_admin,
+
+                  'create import export resource': factory.create_import_export_resource,
+                  'import model ie resource into admin': factory.import_model_ie_resource_into_admin,
+                  'create import export admin model': factory.create_import_export_admin_model,
+                  'register admin model with admin site': factory.register_model_with_admin,
 
                   # INITING FOR URLS
                   'create urls object for app': factory.create_urls,
@@ -95,12 +103,18 @@ def create_codes(app):
         create('create model for entity', ent) # only creates primitive fields
     for ent in app.tables: # doing relational fields after because all models need to be created for relations to work
         create('create relational fields for entity', ent)
-        #create('create import export resource', ent)
-        create('register model with admin site', ent)
+
         create('import model into views', ent)
         create('import model into forms', ent)
         create('import model into form receivers', ent)
         create('import model into tests', ent)
+        create('import model into admin', ent)
+
+        # import/export for the models
+        create('create import export resource', ent)
+        create('import model ie resource into admin', ent)
+        create('create import export admin model', ent)
+        create('register admin model with admin site', ent)
 
     create('setup user roles namespace', app)
 

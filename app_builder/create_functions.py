@@ -8,6 +8,7 @@ from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoSignupForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
 from app_builder.codes import DjangoEmailTemplate
+from app_builder.codes import DjangoImportExportResource, DjangoImportExportAdminModel, AdminRegisterLine
 from app_builder.codes import Emailer
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
 from app_builder.imports import create_import_namespace
@@ -30,6 +31,7 @@ class AppComponentFactory(object):
         self.emailer_namespace = create_import_namespace('webapp/emailer.py')
         self.tests_namespace = create_import_namespace('webapp/tests.py')
         self.urls_namespace = create_import_namespace('webapp/urls.py')
+        self.admin_namespace = create_import_namespace('webapp/admin.py')
 
         self.userrole_namespace = naming.Namespace()
 
@@ -117,6 +119,8 @@ class AppComponentFactory(object):
             ns = self.fr_namespace
         elif namespace == 'tests':
             ns = self.tests_namespace
+        elif namespace == 'admin':
+            ns = self.admin_namespace
         else:
             raise KeyError
 
@@ -136,19 +140,29 @@ class AppComponentFactory(object):
         app._emailer = emailer
         return emailer
 
+    # MODEL ADMIN
+
+    def create_import_export_resource(self, entity):
+        identifier = self.model_namespace.new_identifier('%sDataResource' % entity.name)
+        ier = DjangoImportExportResource(identifier, entity._django_model.identifier)
+        entity._django_import_export_resource = ier
+        return ier
+
+    def create_import_export_admin_model(self, entity):
+        identifier = self.admin_namespace.new_identifier('%sModelAdmin' % entity.name)
+        iem = DjangoImportExportAdminModel(identifier)
+        entity._django_model_admin = iem
+        return iem
+
+    def import_model_ie_resource_into_admin(self, entity):
+        m = entity._django_import_export_resource
+        import_symbol = ('webapp.models', m.identifier)
+        self.admin_namespace.find_or_create_import(import_symbol, m.identifier)
+
     def register_model_with_admin(self, entity):
         if entity.is_user:
             return
-        class AdminRegisterLine(object):
-            def __init__(self, parent_namespace, model_identifier):
-                self.code_path = 'webapp/models.py'
-                self.parent_namespace = parent_namespace
-                self.model_identifier = model_identifier
-            def render(self):
-                return "%s.site.register(%s)\n" % (self.parent_namespace.imports()['django.admin'], self.model_identifier)
-
-        return AdminRegisterLine(self.model_namespace, entity._django_model.identifier)
-
+        return AdminRegisterLine(self.admin_namespace, entity._django_model.identifier, entity._django_model_admin.identifier)
 
 
     # VIEWS
