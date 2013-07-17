@@ -30,7 +30,7 @@ def get_total_page_views_dict():
   page_counter = Counter()
   for visitor in Visitor.objects.all():
     page_counter[visitor.url] += visitor.page_views
-  return page_counter
+  return dict(page_counter)
 
 def get_tracking_analytics():
   json_data = {}
@@ -50,6 +50,6 @@ def post_analytics():
     'analytics' : analytics_data
   }
   headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-  requests.post(url, data=simplejson.dumps(json), headers=headers)
+  return requests.post(url, data={'data' : json}, headers=headers)
 
 post_analytics()
