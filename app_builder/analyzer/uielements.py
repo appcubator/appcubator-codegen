@@ -700,7 +700,7 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
 class Iterator(DictInited, Hooked):
 
-    
+
     @property
     def hooks(self):
         if self.container_info.search is not None:
