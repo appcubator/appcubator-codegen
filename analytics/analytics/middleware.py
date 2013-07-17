@@ -12,6 +12,7 @@ from analytics import utils
 from analytics.models import Visitor
 
 title_re = re.compile('<title>(.*?)</title>')
+logging.basicConfig(filename='analytics.log',level=logging.DEBUG)
 log = logging.getLogger('analytics.middleware')
 
 class VisitorAnalyticsMiddleware(object):
@@ -82,7 +83,7 @@ class VisitorAnalyticsMiddleware(object):
             'url' : url
         }
 
-        # Check if we have a a new user on url instance within the last 2 seconds.
+        # Check if we have a new user on url instance within the last 2 seconds.
         try:
             visitor = Visitor.objects.get(**attrs)
         except Visitor.DoesNotExist:
