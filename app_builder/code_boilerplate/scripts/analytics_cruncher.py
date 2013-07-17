@@ -40,15 +40,8 @@ def get_tracking_analytics():
   json_data['total_page_views_dict'] = get_total_page_views_dict()
   return json_data
 
-def post_analytics():
-  url = "http://staging.appcubator.com/recv_analytics/"
+def crunch_analytics():
   analytics_data = get_tracking_analytics()
-  deployment_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-  d_id = long(deployment_path.split('-')[1])
-  data = {
-    'd_id' : d_id,
-    'analytics' : simplejson.dumps(analytics_data)
-  }
-  return requests.post(url, data=data) 
+  return simplejson.dumps(data)
 
-post_analytics()
+print crunch_analytics()
