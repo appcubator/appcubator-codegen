@@ -111,6 +111,7 @@ class Coder(object):
         __init__.py
         urls.py
         models.py
+        admin.py
         pages.py
         emailer.py
 

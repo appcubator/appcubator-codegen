@@ -107,6 +107,7 @@ INSTALLED_APPS = (
     'webapp',
     'south',
     'analytics',
+    'import_export',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

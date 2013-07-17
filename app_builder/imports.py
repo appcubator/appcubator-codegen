@@ -41,6 +41,8 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.cbv.redirect_view':   'from django.views.generic import RedirectView',
             'django.template.render_to_string': 'from django.template.loader import render_to_string',
 
+            'utils.import_export.resources':  'from import_export import resources',
+            'utils.import_export.admin.model_admin': 'from import_export.admin import ImportExportModelAdmin',
             'utils.requests':           'from requests import post',
 
             # Generated application imports
@@ -51,7 +53,8 @@ IMPORTS = { 'django.models':            'from django.db import models',
 }
 
 
-FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 'django.signals.post_save', 'django.admin'),
+FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 'django.signals.post_save', 'utils.import_export.resources'),
+                 'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',
                                     'django.require_GET',
