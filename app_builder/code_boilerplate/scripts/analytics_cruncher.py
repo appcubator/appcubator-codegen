@@ -41,15 +41,14 @@ def get_tracking_analytics():
   return json_data
 
 def post_analytics():
-  url = "https://appcubator.com/recv_analytics/"
+  url = "http://staging.appcubator.com/recv_analytics/"
   analytics_data = get_tracking_analytics()
   deployment_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-  d_id = int(deployment_path.split('-')[1])
-  json = {
+  d_id = long(deployment_path.split('-')[1])
+  data = {
     'd_id' : d_id,
-    'analytics' : analytics_data
+    'analytics' : simplejson.dumps(analytics_data)
   }
-  headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-  return requests.post(url, data={'data' : json}, headers=headers)
+  return requests.post(url, data=data) 
 
 post_analytics()
