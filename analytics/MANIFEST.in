@@ -1,0 +1,2 @@
+recursive-include analytics *.*
+recursive-exclude analytics .*.swp *.pyc .*.~
