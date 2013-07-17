@@ -42,6 +42,6 @@ def get_tracking_analytics():
 
 def crunch_analytics():
   analytics_data = get_tracking_analytics()
-  return simplejson.dumps(data)
+  return simplejson.dumps(analytics_data)
 
 print crunch_analytics()
