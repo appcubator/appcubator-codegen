@@ -758,6 +758,7 @@ class Iterator(DictInited, Hooked):
             if self.query is not None:
                 for w in self.query.where:
                     w.field_name = encode_braces('tables/%s/fields/%s' % (self.entity, w.field_name))
+                assert self.query.sortAccordingTo in ['Date', '-Date'], "Sort according to should be Date or -Date, not %s. In path %s" % (self.query.sortAccordingTo, self._path)
 
         def validate(self):
             assert (self.query is None) != (self.search is None), "Can't tell whether search or query??? q: %r, s: %r" % (self.query, self.search)

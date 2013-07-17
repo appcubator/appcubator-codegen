@@ -82,9 +82,13 @@ class AppComponentFactory(object):
                 f._django_field = df
 
         # add audit fields.
-        cf = m.add_date_created_field(m.namespace.new_identifier('date_created'))
+        if entity.is_user:
+            cf = m.add_date_created_field(m.namespace.new_identifier('date_joined'))
+            mf = m.add_date_modified_field(m.namespace.new_identifier('last_login'))
+        else:
+            cf = m.add_date_created_field(m.namespace.new_identifier('date_created'))
+            mf = m.add_date_modified_field(m.namespace.new_identifier('date_modified'))
         entity.created_field = cf
-        mf = m.add_date_modified_field(m.namespace.new_identifier('date_modified'))
         entity.modified_field = mf
 
         # set references
@@ -232,9 +236,11 @@ class AppComponentFactory(object):
             value = gen_code_for_value
             filter_key_values.append((key, FnCodeChunk(value)))
 
-        # TODO(nkhadke): HACK right now. Add sort validation + -ves??
-        #sort_by_id = entity.created_field.identifier
-        sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
+        if query.sortAccordingTo[0] == '-':
+            sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
+        else:
+            sort_by_id = entity.created_field.identifier
+
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
