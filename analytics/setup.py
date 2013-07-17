@@ -14,5 +14,5 @@ setup(
     package_dir={'analytics': 'analytics'},
     include_package_data=True,
     url='https://github.com/appcubator/appcubator-codegen',
-    packages=find_packages(),
+    packages=['analytics'],
 )
