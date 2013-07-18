@@ -49,6 +49,8 @@ def make_safe(s):
              0: 'zero'}[s[0]] + s[1:]
     if (s in built_in_functions) or keyword.iskeyword(s):
         s += '_val'
+    if s.endswith('_'):
+        s = s + "val"
     return s
 
 
@@ -133,16 +135,16 @@ class Namespace(object):
         candidate = name
         if cap_words:
             candidate = us2cw(candidate)
-        candidate = self.make_name_safe_and_unique(candidate, ignore_case=ignore_case)
+        else:
+            if not ignore_case:
+                candidate = str(candidate).lower()
+        candidate = self.make_name_safe_and_unique(candidate)
         new_ident = Identifier(candidate, self, ref=ref, import_symbol=import_symbol)
         self.identifiers.append(new_ident)
         return new_ident
 
-    def make_name_safe_and_unique(self, name, ignore_case=False):
+    def make_name_safe_and_unique(self, name):
         name = str(name) # in case it's identifier type
-        if not ignore_case:
-            name = name.lower()
-
         candidate = make_safe(name)
 
         while candidate in (i.identifier for i in self.used_ids()):

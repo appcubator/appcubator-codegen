@@ -101,6 +101,7 @@ class Coder(object):
     __init__.py
     manage.py
     wsgi.py
+    urls.py
 
     settings/
         common.py
@@ -113,6 +114,8 @@ class Coder(object):
         models.py
         admin.py
         pages.py
+        forms.py
+        form_receivers.py
         emailer.py
 
         templates/
@@ -130,7 +133,7 @@ class Coder(object):
                 bootstrap.min.js
 """
 
-def write_to_fs(coder, css="", dest=None):
+def write_to_fs(coder, css="", dest=None, for_user=False):
     logger.info("Writing app to temporary directory.")
 
     if dest is None:
@@ -170,8 +173,12 @@ def write_to_fs(coder, css="", dest=None):
 
     # copy boilerplate
     logger.debug("Copying boilerplate files.")
-    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'scripts.json', '502.html']:
-        copy_file(fname, fname)
+    if for_user:
+        for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
+            copy_file(fname, fname)
+    else:
+        for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'scripts.json', '502.html']:
+            copy_file(fname, fname)
 
     copy_file('gitignore.gitignore', '.gitignore')
     f_transporter('scripts', 'scripts', shutil.copytree)
