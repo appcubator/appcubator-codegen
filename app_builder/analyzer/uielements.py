@@ -726,12 +726,16 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
     def html(self):
         attrs = {}
         attrs["class"] = "fb-like"
-        attrs["data-href"] = "/"
+        attrs["id"] = "fb-like"
+        attrs["data-href"] = ""
         attrs["data-send"] = "true"
         attrs["data-width"] = "450"
         attrs["data-show-faces"] = "true"
         attrs["data-font"] = "arial"
-        return Tag('div', attrs, content="")
+        attrs["onload"] = "this.dataset.href=window.location.href;"
+        widget = Tag('div', attrs, content="")
+        script = Tag('script', {type: 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
+        return Tag('div', {}, content=[widget, script])
 
 
 class Iterator(DictInited, Hooked):
