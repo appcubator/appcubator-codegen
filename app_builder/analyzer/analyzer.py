@@ -305,7 +305,7 @@ class App(DictInited):
         for translation, normalize to CurrentUser.
         for redirects, replace redirect portion of the code with some logic
         """
-        assert_raise(len(self.users) > 0, UserInputError("You should have at least one type of User.", "app/users"))
+        assert_raise(len(self.users) > 0, UserInputError("You should have at least one type of User.", "users"))
         # create the user entity based on userconfig
         userdict = {
             "name": "User",

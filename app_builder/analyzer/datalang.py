@@ -55,7 +55,7 @@ class DataLang(object):
                 assert False
 
             if entity.is_user:
-                if field.name not in ['username', 'First Name', 'Last Name', 'email', 'password']:
+                if field.name not in ['username', 'First Name', 'Last Name', 'email', 'password', 'date_joined', 'last_login']:
                     if template:
                         acc = 'get_profile.%s' % acc
                     else:
