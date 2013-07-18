@@ -632,6 +632,9 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             else:
                 wrapper = Tag('div', {}, content=tag)
             tag = wrapper
+        if self.tagName == 'div':
+            wrapper = Tag('div', {}, content=tag)
+            tag = wrapper
         return tag
 
 class Gallery(DictInited, Hooked):  # a uielement with no container_info
