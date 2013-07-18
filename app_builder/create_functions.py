@@ -204,6 +204,13 @@ class AppComponentFactory(object):
         page = uie.page
         view = page._django_view
 
+        # Case where there is no search list. Silently exit.
+        try:
+            ref = view.pc_namespace.get_by_ref('RESULTS_ID')
+        except AssertionError:
+            uie._django_query_id = None
+            return
+
         # ds = SearchQuery(entity._django_model.identifier, limit=searchList.numberOfRows)
         # TODO(nkhadke): Add number of rows in next push 
         ds = SearchQuery(entity._django_model.identifier)
@@ -213,7 +220,7 @@ class AppComponentFactory(object):
         uie._django_search = ds
         # This is needed for the template to know what the identifier is of the query in the page_context
         uie._django_query_id = FnCodeChunk(lambda: str(view.pc_namespace.get_by_ref('RESULTS_ID')))
-    
+
     def find_or_create_query_for_view(self, uie):
 
         entity = uie.container_info.entity_resolved
