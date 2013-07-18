@@ -1,6 +1,5 @@
 <div class="navbar navbar-fixed-top" id="navbar">
   <div class="navbar-inner">
-    <div class="container">
     <a class="brand" href="/" id="brand-name">{{ navbar.brandName }}</a>
     <ul class="nav" id="items">
       {% for l in navbar.links %}
@@ -12,6 +11,5 @@
       <li><a id="logout" href="{{ "{% url django.contrib.auth.views.logout %}" }}">Logout</a></li>
       {{ '{% endif %}' }}
     </ul>
-    </div>
   </div>
 </div>

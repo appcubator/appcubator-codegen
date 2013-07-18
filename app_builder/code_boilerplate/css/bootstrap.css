@@ -1,5 +1,5 @@
 /*!
- * Bootstrap v2.2.2
+ * Bootstrap v2.2.2 - 
  *
  * Copyright 2012 Twitter, Inc
  * Licensed under the Apache License v2.0
@@ -4336,15 +4336,6 @@ input[type="submit"].btn.btn-mini {
 .nav-collapse.collapse {
   height: auto;
   overflow: visible;
-}
-
-.navbar .brand {
-  display: block;
-  float: left;
-  padding: 10px 20px 10px;
-  margin-left: -20px;
-  font-size: 20px;
-  font-weight: 200;
 }
 
 .navbar .brand:hover {
