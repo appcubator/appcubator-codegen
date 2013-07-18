@@ -22,7 +22,8 @@ def get_uielement_by_type(type_string):
                           'node': Node,
                           'thirdpartylogin' : ThirdPartyLogin,
                           'search' : Search,
-                          'imageslider': ImageSlider
+                          'imageslider': ImageSlider,
+                          'facebookshare': FacebookShare
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -699,6 +700,38 @@ class ImageSlider(DictInited, Hooked):  # image slider
         content = [indicators, slides, navPrev, navNext]
         tag = Tag('div', self.kwargs(), content=content)
         return tag
+
+class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
+    _hooks = ['resolve links href']
+
+    class FBInfo(DictInited):
+        _schema = {
+            "action": {"_type": ""},
+        }
+
+    _schema = {
+        "container_info": {"_type": SliderInfo},
+        "content_attribs": {"_type": {}}
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(FacebookShare, self).__init__(*args, **kwargs)
+
+    def kwargs(self):
+        pass
+
+    def visit_strings(self, f):
+        pass
+
+    def html(self):
+        attrs = {}
+        attrs["class"] = "fb-like"
+        attrs["data-href"] = "http://appcubator.com"
+        attrs["data-send"] = "true"
+        attrs["data-width"] = "450"
+        attrs["data-show-faces"] = "true"
+        attrs["data-font"] = "arial"
+        return Tag('div', attrs, content="")
 
 
 class Iterator(DictInited, Hooked):
