@@ -710,7 +710,7 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
         }
 
     _schema = {
-        "container_info": {"_type": SliderInfo},
+        "container_info": {"_type": FBInfo},
         "content_attribs": {"_type": {}}
     }
 
@@ -726,7 +726,7 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
     def html(self):
         attrs = {}
         attrs["class"] = "fb-like"
-        attrs["data-href"] = "http://appcubator.com"
+        attrs["data-href"] = "/"
         attrs["data-send"] = "true"
         attrs["data-width"] = "450"
         attrs["data-show-faces"] = "true"
