@@ -83,13 +83,17 @@ class AppComponentFactory(object):
 
         # add audit fields.
         if entity.is_user:
-            cf = m.add_date_created_field(m.namespace.new_identifier('date_joined'))
-            mf = m.add_date_modified_field(m.namespace.new_identifier('last_login'))
+            cf_id = m.namespace.new_identifier('date_joined')
+            mf_id = m.namespace.new_identifier('last_login')
+
+            entity.created_field_identifier = cf_id
+            entity.modified_field_identifier = mf_id
         else:
             cf = m.add_date_created_field(m.namespace.new_identifier('date_created'))
             mf = m.add_date_modified_field(m.namespace.new_identifier('date_modified'))
-        entity.created_field = cf
-        entity.modified_field = mf
+
+            entity.created_field_identifier = cf.identifier
+            entity.modified_field_identifier = mf.identifier
 
         # set references
         entity._django_model = m
@@ -237,9 +241,9 @@ class AppComponentFactory(object):
             filter_key_values.append((key, FnCodeChunk(value)))
 
         if query.sortAccordingTo[0] == '-':
-            sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field.identifier)
+            sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field_identifier)
         else:
-            sort_by_id = entity.created_field.identifier
+            sort_by_id = entity.created_field_identifier
 
 
         dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
