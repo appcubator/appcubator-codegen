@@ -22,7 +22,7 @@ def get_uielement_by_type(type_string):
                           'node': Node,
                           'thirdpartylogin' : ThirdPartyLogin,
                           'search' : Search,
-                          'gallery': Gallery
+                          'imageslider': ImageSlider
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -637,10 +637,10 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
             tag = wrapper
         return tag
 
-class Gallery(DictInited, Hooked):  # a uielement with no container_info
+class ImageSlider(DictInited, Hooked):  # image slider
     _hooks = ['resolve links href']
 
-    class GalleryInfo(DictInited):
+    class SliderInfo(DictInited):
         class Image(DictInited):
             _schema = {
                 "image": {"_type": ""},
@@ -653,19 +653,19 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
         }
 
     _schema = {
-        "container_info": {"_type": GalleryInfo},
+        "container_info": {"_type": SliderInfo},
         "content_attribs": {"_type": {}}
     }
 
     def __init__(self, *args, **kwargs):
-        super(Gallery, self).__init__(*args, **kwargs)
+        super(ImageSlider, self).__init__(*args, **kwargs)
         timeid = unicode(datetime.now().microsecond)
-        self.galleryid = "imageslider" + timeid
+        self.sliderid = "imageslider" + timeid
 
     def kwargs(self):
         kw = {}
         kw = deepcopy(self.content_attribs)
-        kw["id"] = self.galleryid
+        kw["id"] = self.sliderid
         kw["class"] = "carousel slide"
         return kw
 
@@ -678,7 +678,7 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
             active = ""
             if i==0 :
                 active = "active"
-            indicators_content.append(Tag('li', {'data-target': "#"+self.galleryid, "data-slide-to": i, "class": active}, content=""))
+            indicators_content.append(Tag('li', {'data-target': "#"+self.sliderid, "data-slide-to": i, "class": active}, content=""))
         indicators = Tag('ol', {'class': 'carousel-indicators'}, content=indicators_content)
 
         items = []
@@ -693,8 +693,8 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
             items.append(Tag('div', {'class': active + "item"}, content=imgcontent))
         slides = Tag('div', {'class': 'carousel-inner'}, content=items)
 
-        navPrev = Tag('a', {"class": "carousel-control left", "href": "#"+self.galleryid, "data-slide": "prev"}, content="&lsaquo;")
-        navNext = Tag('a', {"class": "carousel-control right", "href": "#"+self.galleryid, "data-slide": "next"}, content="&rsaquo;")
+        navPrev = Tag('a', {"class": "carousel-control left", "href": "#"+self.sliderid, "data-slide": "prev"}, content="&lsaquo;")
+        navNext = Tag('a', {"class": "carousel-control right", "href": "#"+self.sliderid, "data-slide": "next"}, content="&rsaquo;")
 
         content = [indicators, slides, navPrev, navNext]
         tag = Tag('div', self.kwargs(), content=content)
@@ -702,8 +702,6 @@ class Gallery(DictInited, Hooked):  # a uielement with no container_info
 
 
 class Iterator(DictInited, Hooked):
-
-
     @property
     def hooks(self):
         if self.container_info.search is not None:
