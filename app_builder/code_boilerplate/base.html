@@ -42,7 +42,21 @@
 
     <script type="text/javascript">
       $(document).ready(function() {
-        $('.carousel').carousel();
+        $('.carousel').carousel().find('.carousel-indicators li').click(function(e) {
+          var target = e.currentTarget.dataset.target;
+          var index = parseInt(e.currentTarget.dataset.slideTo, 10);
+          $(target).data('carousel').pause().to(index).cycle();
+        }).end().on('slid', function(e) {
+          var $carousel = $(e.currentTarget);
+          // reset active indicator on slide change
+          // WTF bootstrap carousel is supposed to do this but oh well
+          var active = $carousel.find('.item.active');
+          var index = active.parent().children().index(active);
+          index = parseInt(index, 10);
+          $carousel.find('.carousel-indicators li')
+                   .removeClass('active')
+                   .eq(index).addClass('active');
+        });
       });
     </script>
     <script type="text/javascript">
