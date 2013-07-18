@@ -5,10 +5,8 @@
       {% for l in navbar.links %}
       <li><a href="{{ l.url_pl.to_code() }}">{{ l.title }}</a></li>
       {% endfor %}
-    </ul>
-    <ul class="nav pull-right">
       {{ '{% if user.is_authenticated %}' }}
-      <li><a id="logout" href="{{ "{% url django.contrib.auth.views.logout %}" }}">Logout</a></li>
+      <li class="logout-item pull-right"><a id="logout" href="{{ "{% url django.contrib.auth.views.logout %}" }}">Logout</a></li>
       {{ '{% endif %}' }}
     </ul>
   </div>
