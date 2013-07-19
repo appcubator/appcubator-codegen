@@ -805,6 +805,7 @@ class Iterator(DictInited, Hooked):
 
     _schema = {
         "container_info": {"_type": IteratorInfo},
+        "class_name": {"_type": ""}
     }
 
     def visit_strings(self, f):
@@ -823,14 +824,14 @@ class Iterator(DictInited, Hooked):
             uie_html = style_inner_uie(uie, uie_html)
             inner_htmls.append(uie_html)
         row_wrapper_style_string = 'display:block; position:relative; height:%dpx;' % (self.container_info.row.layout.height * 15)
-        row_wrapper = Tag('div', {'style': row_wrapper_style_string}, content=inner_htmls)
+        row_wrapper = Tag('div', {'style': row_wrapper_style_string, 'class': 'row'}, content=inner_htmls)
         if self._django_query_id is None:
             empty_row_wrapper = Tag('div', {'style': row_wrapper_style_string}, content="No search results.")
         else:
             empty_row_wrapper = Tag('div', {'style': row_wrapper_style_string}, content="List is empty.")
 
         loop_contents = []
-        loop_wrapper = Tag('div', {'style': 'position:relative;'}, content=loop_contents)
+        loop_wrapper = Tag('div', {'style': 'position:relative;', 'class': self.class_name}, content=loop_contents)
         # Because we allow searchLists and search boxes to be incorrectly configured, we simply
         # display no results.
         if self._django_query_id is None:
