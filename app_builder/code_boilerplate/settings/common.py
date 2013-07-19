@@ -131,7 +131,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "social_auth.context_processors.social_auth_backends",
 )
 
-AUTH_PROFILE_MODULE = "webapp.UserProfile"
+AUTH_USER_MODEL = "webapp.User"
 # IMPORTANT: Allows for the case the user cancels. Enable during debugging.
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 

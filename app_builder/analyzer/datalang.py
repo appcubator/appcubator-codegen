@@ -29,7 +29,7 @@ class DataLang(object):
         # now we know it's a relational field, so the last field_entity pair should have an entity in it.
         return (self.result_type, self.field_entity_accesstype_pairs[-1][1])
 
-    def to_code(self, context=None, seed_id=None, user_profile=None, template=False):
+    def to_code(self, context=None, seed_id=None, template=False):
         if self.context_type == 'Form':
             seed_id = seed_id
         elif self.context_type == 'user':
@@ -41,10 +41,6 @@ class DataLang(object):
                 # this must be page i think. so pass in the pc namespace if you want to get the page context variables
                 seed_id = context.get_by_ref(self.seed_entity._django_model)
 
-        if self.seed_entity.is_user and len(self.fields) == 0 and user_profile:
-            # this is for edit form, instance = request.user.getprofile()
-            return '%s.get_profile()' % seed_id
-
         def get_accessor(field, entity, access_type):
             "This is separate function so we can have custom logic to handle users (get profile stuff)"
             if access_type == 'direct':
@@ -53,13 +49,6 @@ class DataLang(object):
                 acc = field._django_field.rel_name_id
             else:
                 assert False
-
-            if entity.is_user:
-                if field.name not in ['username', 'First Name', 'Last Name', 'email', 'password', 'date_joined', 'last_login']:
-                    if template:
-                        acc = 'get_profile.%s' % acc
-                    else:
-                        acc = 'get_profile().%s' % acc
 
             return acc
         # i needed the entity of the value being accessed from previously, so i made a list and zipped it with the fields. all in one line cuz i'm lazy

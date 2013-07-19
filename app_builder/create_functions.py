@@ -48,9 +48,8 @@ class AppComponentFactory(object):
         Additionally, deals with User model separately.
         """
         if entity.is_user:
-            user_identifier = self.model_namespace.get_by_import('django.models.User')
-            user_profile_identifier = self.model_namespace.new_identifier('UserProfile', cap_words=True)
-            m = DjangoUserModel(user_identifier, user_profile_identifier)
+            user_identifier = self.model_namespace.new_identifier('User', cap_words=True, ignore_case=True)
+            m = DjangoUserModel(user_identifier)
             # fields are split into user fields and user profile fields
             # add userprofile fields to the model
             for f in filter(lambda x: not x.is_relational(), entity.user_profile_fields):
@@ -111,8 +110,7 @@ class AppComponentFactory(object):
             # TODO FIXME potential bugs with related name and field name since they are really injected into the model.Model instance namespace
             rel_name_id = rel_model.namespace.new_identifier(f.related_name, ref=rel_model)
 
-            quote = not f.entity.is_user
-            df = m.create_relational_field(f.name, f.type, rel_model_id, rel_name_id, False, quote=quote)
+            df = m.create_relational_field(f.name, f.type, FnCodeChunk(lambda: "webapp.%s" % rel_model_id), rel_name_id, False)
                         # the django model will create an identifier based on
                         # the name
             f._django_field_identifier = df.identifier
@@ -135,9 +133,6 @@ class AppComponentFactory(object):
         m = entity._django_model
         import_symbol = ('webapp.models', m.identifier)
         ns.find_or_create_import(import_symbol, m.identifier)
-        if entity.is_user:
-            import_symbol = ('webapp.models', m.user_profile_identifier)
-            ns.find_or_create_import(import_symbol, m.user_profile_identifier)
 
 
     # EMAILS
@@ -399,10 +394,7 @@ class AppComponentFactory(object):
             return None
         prim_name = form_model.action + '_' + form_model.entity_resolved.name
         form_id = self.form_namespace.new_identifier(prim_name, cap_words=True)
-        if not form_model.entity_resolved.is_user:
-            model_id = form_model.entity_resolved._django_model.identifier
-        else:
-            model_id = form_model.entity_resolved._django_model.user_profile_identifier
+        model_id = form_model.entity_resolved._django_model.identifier
         field_ids = []
         required_field_id_types = []
         for f in form_model.fields:
@@ -582,7 +574,7 @@ class AppComponentFactory(object):
             fr.locals['redirect_url_code'] = lambda: form_model.goto_pl.to_code(context=fr.namespace, template=False, seed_id=fr.locals['obj'])
         fr.add_args(args)
         if form_model.action == 'edit':
-            fr.bind_instance_from_url(FnCodeChunk(lambda: form_model.edit_dl.to_code(context=fr.namespace, user_profile=True)))
+            fr.bind_instance_from_url(FnCodeChunk(lambda: form_model.edit_dl.to_code(context=fr.namespace)))
         uie._django_form_receiver = fr
         return fr
 

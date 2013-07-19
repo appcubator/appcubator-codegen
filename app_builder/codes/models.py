@@ -93,7 +93,7 @@ class DjangoRelatedField(object):
         self.rel_model_id = rel_model_id
         self.rel_name_id = rel_name_id
         if quote:
-            self.args = [repr(str(rel_model_id))]
+            self.args = ["'%s'" % str(rel_model_id)]
         else:
             self.args = [str(rel_model_id)]
 
@@ -146,21 +146,16 @@ class DjangoModel(object):
 
 class DjangoUserModel(DjangoModel):
 
-    def __init__(self, user_identifier, user_prof_identifier):
+    def __init__(self, user_identifier):
         """Provide:
         1. the identifier for the user (imported from django.contrib.models...),
-        1. the identifier for the userprofile class (imported from django.contrib.models...),
 
         """
         super(DjangoUserModel, self).__init__(user_identifier)
-        self.user_profile_identifier = user_prof_identifier
-        self.namespace = user_prof_identifier.ns
-        self.locals = {}
-        self.locals['user o2o'] = self.namespace.new_identifier('user')
         self.is_user_model = True
 
     def render(self):
-        return env.get_template('usermodel.py.template').render(model=self, imports=self.namespace.imports(), locals=self.locals)
+        return env.get_template('usermodel.py.template').render(model=self, imports=self.namespace.imports(), locals={})
 
 
 class DjangoImportExportResource(object):

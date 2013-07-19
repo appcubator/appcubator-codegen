@@ -3,6 +3,7 @@ from app_builder import naming
 
 # map from internal identifier to what it actually is
 IMPORTS = { 'django.models':            'from django.db import models',
+            'django.models.AbstractUser':       'from django.contrib.auth.models import AbstractUser',
             'django.models.User':       'from django.contrib.auth.models import User',
 
             'django.HttpResponse':      'from django.http import HttpResponse',
@@ -53,7 +54,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 }
 
 
-FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.User', 'django.signals.post_save', 'utils.import_export.resources'),
+FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.AbstractUser', 'django.signals.post_save', 'utils.import_export.resources'),
                  'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',

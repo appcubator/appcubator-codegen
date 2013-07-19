@@ -29,10 +29,10 @@ class RoleRedirectChunk(object):
 
         # if x redirect to y, [elif x redirect to y]*, else assert false structure
         accum = ""
-        accum += "\nif request.user.get_profile().%s == '%s':\n    return %s" % (self.role_field_id, self.role_codechunk_tuples[0][0], code_for_redirect(self.role_codechunk_tuples[0][1]))
+        accum += "\nif request.user.%s == '%s':\n    return %s" % (self.role_field_id, self.role_codechunk_tuples[0][0], code_for_redirect(self.role_codechunk_tuples[0][1]))
         for tup in self.role_codechunk_tuples[1:]:
-            accum += "\nelif request.user.get_profile().%s == '%s':\n    return %s" % (self.role_field_id, tup[0], code_for_redirect(tup[1]))
-        accum += "\nelse:\n    assert False, 'Role can\\'t have value %r' % request.user.get_profile()." + str(self.role_field_id,) # inconvenient to use a format string here
+            accum += "\nelif request.user.%s == '%s':\n    return %s" % (self.role_field_id, tup[0], code_for_redirect(tup[1]))
+        accum += "\nelse:\n    assert False, 'Role can\\'t have value %r' % request.user." + str(self.role_field_id,) # inconvenient to use a format string here
         return accum
 
 
