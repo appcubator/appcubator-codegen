@@ -377,7 +377,7 @@ class AppComponentFactory(object):
         data_string = ' '.join(['{{ Page.%s }}.id' % e.name for e in uie.container_info.form.get_needed_page_entities()]) # result should be something like "{{ Page.Book }}.id {{ Page.Class }}.id"
         if data_string != '':
             data_string += ' ' # just for formatting.
-        uie.set_post_url('{%% url webapp.form_receivers.%s %s%%}' % (uie._django_form_receiver.identifier, data_string))
+        uie.set_post_url('{%% url "webapp.form_receivers.%s" %s%%}' % (uie._django_form_receiver.identifier, data_string))
 
     def add_admin_urls(self, app):
         """ Adds the following:
