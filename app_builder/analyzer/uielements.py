@@ -805,7 +805,7 @@ class Iterator(DictInited, Hooked):
 
     _schema = {
         "container_info": {"_type": IteratorInfo},
-        "class_name": {"_type": ""}
+        "class_name": {"_type": "", "_default": ""}
     }
 
     def visit_strings(self, f):
