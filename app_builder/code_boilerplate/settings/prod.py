@@ -40,6 +40,9 @@ LOGGING = {
         },
     }
 }
+
+ALLOWED_HOSTS = ['*']
+
 # Simple SMTP
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
