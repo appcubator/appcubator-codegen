@@ -46,7 +46,7 @@ class SplinterTestCase(unittest.TestCase):
         url = "http://%s:%d/" % (hostname, port)
 
         # start the server
-        am = AppManager(self.__class__.APP_DIR, venv_dir=os.environ['APP_VENV'], settings_module='settings.dev')
+        am = AppManager(self.__class__.APP_DIR, venv_dir=self.__class__.VENV_DIR, settings_module='settings.dev')
 
         ret, out, err = am.run_command("python scripts/syncdb.py")
         self.p = am.Popen("python manage.py runserver %d" % port)

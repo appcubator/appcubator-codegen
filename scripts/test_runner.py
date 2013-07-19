@@ -6,10 +6,8 @@ from app_builder.coder import Coder, write_to_fs
 from app_builder.tests.app_state_interface import AppStateTestInterface
 from app_builder.app_manager import AppManager
 
-VENV_DIR = '/Users/kssworld93/Projects/appcubator-deploy/child_venv'
 
-
-import os
+import os, os.path
 import signal
 import sys
 import shlex
@@ -33,11 +31,12 @@ coder_logger.setLevel('ERROR')
 controller_logger.setLevel('ERROR')
 
 logger = logging.getLogger('scripts.test_runner')
-logger.setLevel('DEBUG')
+logger.setLevel('INFO')
 logger.addHandler(logging.StreamHandler())
 
 
 DEFAULT_STATE_PATH = os.path.join(os.path.dirname(__file__), '..', 'app_builder', 'tests', 'functional_states')
+VENV_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'appcubator-deploy', 'child_venv')
 
 
 def check_exn(msg):
@@ -130,7 +129,7 @@ def run_tests_for_json_file(json_file, port=8000):
     run_django_tests(dest)
     splinter_file = os.path.join('%s_splinter.py' % json_file.replace('.json',''))
     if os.path.isfile(splinter_file):
-        execfile(splinter_file, {"__name__": "__main__", "APP_DIR": dest, "PORT": port}) # this runs the main test file, which is unittest driven
+        execfile(splinter_file, {"__name__": "__main__", "APP_DIR": dest, "VENV_DIR": VENV_DIR, "PORT": port}) # this runs the main test file, which is unittest driven
     else:
         logger.warn("No splinter file found for %s" % json_file_name)
 
@@ -160,6 +159,7 @@ def run_tests_in_dir(app_state_dir, specific_state_names=None, parallel=False):
             processes.append(p)
         else:
             test_f(port)
+            port += 1
 
     if parallel:
         for p in processes:
