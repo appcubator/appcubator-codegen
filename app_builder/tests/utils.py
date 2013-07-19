@@ -64,7 +64,7 @@ class SplinterTestCase(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
-        self._app_manager.run_command("python manage.py flush")
+        self._app_manager.run_command("python manage.py flush --noinput")
 
         # send sigterm to all processes in the group
         os.killpg(self.p.pid, signal.SIGTERM)

@@ -31,7 +31,7 @@ coder_logger.setLevel('ERROR')
 controller_logger.setLevel('ERROR')
 
 logger = logging.getLogger('scripts.test_runner')
-logger.setLevel('INFO')
+logger.setLevel('DEBUG')
 logger.addHandler(logging.StreamHandler())
 
 
