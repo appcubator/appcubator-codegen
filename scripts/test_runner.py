@@ -33,7 +33,7 @@ coder_logger.setLevel('ERROR')
 controller_logger.setLevel('ERROR')
 
 logger = logging.getLogger('scripts.test_runner')
-logger.setLevel('INFO')
+logger.setLevel('DEBUG')
 logger.addHandler(logging.StreamHandler())
 
 
@@ -95,7 +95,7 @@ def basic_deploy(json_file):
 
 def syncdb(dest):
     am = AppManager(dest, venv_dir=VENV_DIR, settings_module='settings.dev')
-    ret, out, err = am.run_command("python manage.py syncdb --noinput")
+    ret, out, err = am.run_command("python scripts/syncdb.py")
     logger.debug("Syncdb output: %s\n%s" % (out, err))
 
 def run_django_tests(dest):

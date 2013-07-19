@@ -47,6 +47,8 @@ class SplinterTestCase(unittest.TestCase):
 
         # start the server
         am = AppManager(self.__class__.APP_DIR, venv_dir=os.environ['APP_VENV'], settings_module='settings.dev')
+
+        ret, out, err = am.run_command("python scripts/syncdb.py")
         self.p = am.Popen("python manage.py runserver %d" % port)
         self._app_manager = am
 
@@ -62,8 +64,9 @@ class SplinterTestCase(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+        self._app_manager.run_command("python manage.py flush")
+
         # send sigterm to all processes in the group
         os.killpg(self.p.pid, signal.SIGTERM)
         self.p.wait()
-        self._app_manager.run_command("python manage.py flush")
 
