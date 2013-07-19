@@ -4,13 +4,15 @@ from app_builder.analyzer import App, InvalidDict
 from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
 from app_builder.tests.app_state_interface import AppStateTestInterface
+from app_builder.app_manager import AppManager
+
+VENV_DIR = '/Users/kssworld93/Projects/appcubator-deploy/child_venv'
 
 
 import os
 import signal
 import sys
 import shlex
-import subprocess
 import simplejson
 import fileinput
 import traceback
@@ -92,20 +94,14 @@ def basic_deploy(json_file):
     return fs_loc
 
 def syncdb(dest):
-    cmd = "python scripts/syncdb.py"
-    child_env = os.environ.copy()
-    child_env['PYTHONPATH'] = dest
-    p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=child_env)
-    out, err = p.communicate()
+    am = AppManager(dest, venv_dir=VENV_DIR, settings_module='settings.dev')
+    ret, out, err = am.run_command("python manage.py syncdb --noinput")
     logger.debug("Syncdb output: %s\n%s" % (out, err))
 
 def run_django_tests(dest):
-    cmd = "python scripts/test.py"
-    child_env = os.environ.copy()
-    child_env['PYTHONPATH'] = dest
-    p = subprocess.Popen(shlex.split(cmd), cwd=dest, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=child_env)
-    out, err = p.communicate()
-    if p.returncode != 0:
+    am = AppManager(dest, venv_dir=VENV_DIR, settings_module='settings.dev')
+    ret, out, err = am.run_command("python manage.py test webapp")
+    if ret != 0:
         logger.error("Testing failed! Output: %s\n%s" % (out, err))
     else:
         logger.info("These tests passed!!! Much swag.")

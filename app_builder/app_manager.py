@@ -42,6 +42,7 @@ class AppManager(object):
         p = subprocess.Popen(shlex.split(cmd), cwd=self.app_dir,
                                                env=self.env,
                                                stdout=subprocess.PIPE,
+                                               preexec_fn=os.setpgrp,
                                                stderr=subprocess.PIPE)
         return p
 
