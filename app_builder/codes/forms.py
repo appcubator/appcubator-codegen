@@ -42,14 +42,13 @@ class DjangoLoginForm(DjangoForm):
 
 class DjangoSignupForm(DjangoForm):
 
-    def __init__(self, identifier):
+    def __init__(self, identifier, model_id):
         self.identifier = identifier
         self.is_signup = True
         self.namespace = naming.Namespace(parent_namespace=identifier.ns) # this is necessary so the coder can get imports from the namespace
-        self.model_id = "User"
+        self.model_id = model_id
         self.code_path = 'webapp/forms.py'
-        self.required_field_id_types = [("email", "EmailField")]
 
     def render(self):
-        self.included_field_string = "'username', 'email'"
-        return env.get_template('form.py.template').render(form=self, imports=self.namespace.imports(), locals={})
+        self.included_field_string = "'email',"
+        return env.get_template('form_signup.py.template').render(form=self, imports=self.namespace.imports(), locals={})

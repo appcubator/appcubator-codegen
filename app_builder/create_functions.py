@@ -252,7 +252,8 @@ class AppComponentFactory(object):
             sort_by_id = entity.created_field_identifier
 
 
-        dq = DjangoQuery(entity._django_model.identifier, where_data=filter_key_values,
+        dq = DjangoQuery(self.view_namespace.get_by_ref(('webapp.models', entity._django_model.identifier)),
+                                                          where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
                                                           limit=query.numberOfRows)
 
@@ -421,23 +422,32 @@ class AppComponentFactory(object):
     def create_login_form_if_not_exists(self, uie):
         if hasattr(self, '_django_login_form'):
             form_obj = self._django_login_form
+            uie._django_form = form_obj
+
         else:
             prim_name = 'LoginForm'
             form_id = self.form_namespace.find_or_create_import('django.forms.AuthForm', prim_name)
             form_obj = DjangoLoginForm(form_id)
 
-        uie._django_form = form_obj
-        return form_obj
+            uie._django_form = form_obj
+            self._django_login_form = form_obj
+
+            return form_obj
 
     def create_signup_form_if_not_exists(self, uie):
         if hasattr(self, '_django_signup_form'):
             form_obj = self._django_signup_form
+            uie._django_form = form_obj
         else:
-            prim_name = 'SignupForm'
+            prim_name = 'ShortSignupForm'
             form_id = self.form_namespace.new_identifier(prim_name, cap_words=True)
-            form_obj = DjangoSignupForm(form_id)
-        uie._django_form = form_obj
-        return form_obj
+            user_model_id = self.form_namespace.get_by_ref(('webapp.models', uie.app.userentity._django_model.identifier))
+            form_obj = DjangoSignupForm(form_id, user_model_id)
+
+            uie._django_form = form_obj
+            self._django_signup_form = form_obj
+
+            return form_obj
 
 
     ## FORM RECEIVERS

@@ -68,13 +68,13 @@ class Identifier(object):
         else:
             return NotImplemented
 
-    def __init__(self, identifier, ns, ref=None, import_symbol=None):
+    def __init__(self, identifier, ns, ref=None, is_import=False):
         """Identifier represents the identifier string, the namespace it's in,
             , and optionally: a reference to "the truth" and the import symbol."""
         self.identifier = identifier
         self.ref = ref
         self.ns = ns  # this is a namespace
-        self.import_symbol = import_symbol
+        self.is_import = is_import
 
     def fix_identifier(self):
         self.identifier = self.ns.make_name_safe_and_unique(self.identifier)
@@ -131,7 +131,7 @@ class Namespace(object):
             for i in c_n.child_identifiers():
                 yield i
 
-    def new_identifier(self, name, ref=None, cap_words=False, ignore_case=False, import_symbol=None):
+    def new_identifier(self, name, ref=None, cap_words=False, ignore_case=False, is_import=False):
         candidate = name
         if cap_words:
             candidate = us2cw(candidate)
@@ -139,7 +139,7 @@ class Namespace(object):
             if not ignore_case:
                 candidate = str(candidate).lower()
         candidate = self.make_name_safe_and_unique(candidate)
-        new_ident = Identifier(candidate, self, ref=ref, import_symbol=import_symbol)
+        new_ident = Identifier(candidate, self, ref=ref, is_import=is_import)
         self.identifiers.append(new_ident)
         return new_ident
 
@@ -165,7 +165,7 @@ class Namespace(object):
     def get_by_import(self, import_symbol):
         assert import_symbol is not None
         for i in self.used_ids():
-            if i.import_symbol == import_symbol:
+            if i.ref == import_symbol:
                 return i
         assert False, "Thing with this import not found: %r" % (import_symbol,)
 
@@ -177,12 +177,12 @@ class Namespace(object):
 
     def find_or_create_import(self, import_symbol, proposed_id, **kwargs):
         try:
-            return self.get_by_import(import_symbol)
+            return self.get_by_ref(import_symbol)
         except AssertionError:
-            return self.new_identifier(proposed_id, import_symbol=import_symbol, ignore_case=True, **kwargs)
+            return self.new_identifier(proposed_id, ref=import_symbol, is_import=True, ignore_case=True, **kwargs)
 
     # the dictionary produced is a symbol -> identifier map.
     # symbol meaning the unique internal name used to refer to the import
     def imports(self):
-        imports = { i.import_symbol: i for i in self.used_ids() if i.import_symbol is not None }
+        imports = { i.ref: i for i in self.used_ids() if i.is_import }
         return imports

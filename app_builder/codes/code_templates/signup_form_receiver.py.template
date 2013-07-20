@@ -19,9 +19,9 @@ def {{ fr.identifier }}({{request}}):
         user.{{fr.locals['role_field_id']}} = '{{fr.signup_role}}'
         user.save()
         {% endif %}
-        new_user = {{authenticate_function}}(username={{request}}.POST['username'],
-                                                        password={{request}}.POST['password1'])
-        {{login_function}}({{request}}, new_user)
+        user = {{authenticate_function}}(username={{request}}.POST['email'],
+                                                        password={{request}}.POST['password'])
+        {{login_function}}({{request}}, user)
         {% for e in fr.email_actions %}
         {{ e }}
         {% endfor %}

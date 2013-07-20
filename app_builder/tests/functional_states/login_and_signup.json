@@ -163,38 +163,29 @@
                 "entity":"User",
                 "fields":[
                   {
-                    "field_name":"username",
-                    "placeholder":"Username",
-                    "label":"Username",
+                    "field_name":"Email",
+                    "placeholder":"Email",
+                    "label":"Email",
                     "displayType":"single-line-text",
                     "type":"text",
                     "options":"",
                     "required":false
                   },
                   {
-                    "name":"password1",
+                    "name":"name",
+                    "placeholder":"Name",
+                    "label":"Name",
+                    "displayType":"single-line-text",
+                    "type":"text",
+                    "options":"",
+                    "required":false
+                  },
+                  {
+                    "name":"password",
                     "placeholder":"Password",
                     "label":"Password",
                     "displayType":"password-text",
                     "type":"password",
-                    "options":"",
-                    "required":false
-                  },
-                  {
-                    "name":"password2",
-                    "placeholder":"Confirm Password",
-                    "label":"Confirm Password",
-                    "displayType":"password-text",
-                    "type":"password",
-                    "options":"",
-                    "required":false
-                  },
-                  {
-                    "field_name":"Email",
-                    "placeholder":"Email Address",
-                    "label":"Email Address",
-                    "displayType":"email-text",
-                    "type":"email",
                     "options":"",
                     "required":false
                   },

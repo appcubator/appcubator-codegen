@@ -33,18 +33,16 @@ class TestLoginSignup(SplinterTestCase):
     def signup(self):
         self.browser.visit(self.url('/'))
         signup_form = self.browser.find_by_tag('form')[1]
-        signup_form.find_by_name('username').fill('karan')
-        signup_form.find_by_name('password1').fill('123')
-        signup_form.find_by_name('password2').fill('123')
         signup_form.find_by_name('email').fill('k@k.com')
+        signup_form.find_by_name('name').fill('karan')
+        signup_form.find_by_name('password').fill('123')
         signup_form.find_by_css('input.btn').click()
-        raw_input()
         time.sleep(1)
 
     def login(self):
         self.browser.visit(self.url('/'))
         login_form = self.browser.find_by_tag('form')[0]
-        login_form.find_by_name('username').fill('karan')
+        login_form.find_by_name('username').fill('k@k.com')
         login_form.find_by_name('password').fill('123')
         login_form.find_by_css('input.btn').click()
         time.sleep(1)
