@@ -632,7 +632,8 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         if self.tagName == 'img':
             # wrap in div, except link, then wrap in a.
             if 'href' in self.kwargs():
-                wrapper = Tag('a', { 'class': self.class_name }, content=tag, wrapper=True)
+                href = tag.attribs.pop('href')
+                wrapper = Tag('a', { 'class': self.class_name, 'href': href }, content=tag, wrapper=True)
             else:
                 wrapper = Tag('div', { 'class': self.class_name }, content=tag, wrapper=True)
             tag = wrapper
