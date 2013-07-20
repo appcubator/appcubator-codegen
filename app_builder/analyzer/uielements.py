@@ -601,7 +601,10 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
     def kwargs(self):
         kw = {}
         kw = deepcopy(self.content_attribs)
-        kw['class'] = 'node ' + self.class_name
+        if self.tagName == 'img':
+            kw['class'] = 'node'
+        else:
+            kw['class'] = 'node ' + self.class_name
         return kw
 
     def visit_strings(self, f):
@@ -629,9 +632,9 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         if self.tagName == 'img':
             # wrap in div, except link, then wrap in a.
             if 'href' in self.kwargs():
-                wrapper = Tag('a', {}, content=tag)
+                wrapper = Tag('a', { 'class': self.class_name }, content=tag)
             else:
-                wrapper = Tag('div', {}, content=tag)
+                wrapper = Tag('div', { 'class': self.class_name }, content=tag)
             tag = wrapper
         if self.tagName == 'div':
             wrapper = Tag('div', {}, content=tag)
