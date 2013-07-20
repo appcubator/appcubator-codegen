@@ -4,8 +4,6 @@ import datetime
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.conf import settings
 from django.db import models
-import django.contrib.auth
-User = django.contrib.auth.get_user_model()
 
 from django.contrib.gis.utils import HAS_GEOIP
 if HAS_GEOIP:
@@ -35,7 +33,7 @@ class VisitorManager(models.Manager):
 class Visitor(models.Model):
     session_key = models.CharField(max_length=40)
     ip_address = models.CharField(max_length=20)
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     user_agent = models.CharField(max_length=255)
     referrer = models.CharField(max_length=255)
     url = models.CharField(max_length=255)
