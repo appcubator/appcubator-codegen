@@ -632,12 +632,12 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         if self.tagName == 'img':
             # wrap in div, except link, then wrap in a.
             if 'href' in self.kwargs():
-                wrapper = Tag('a', { 'class': self.class_name }, content=tag)
+                wrapper = Tag('a', { 'class': self.class_name }, content=tag, wrapper=True)
             else:
-                wrapper = Tag('div', { 'class': self.class_name }, content=tag)
+                wrapper = Tag('div', { 'class': self.class_name }, content=tag, wrapper=True)
             tag = wrapper
         if self.tagName == 'div':
-            wrapper = Tag('div', {}, content=tag)
+            wrapper = Tag('div', {}, content=tag, wrapper=True)
             tag = wrapper
         return tag
 
