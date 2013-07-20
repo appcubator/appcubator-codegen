@@ -1,22 +1,22 @@
-from datetime import datetime, timedelta
-import logging
 import traceback
+import datetime
+
+from django.utils.translation import ugettext, ugettext_lazy as _
+from django.conf import settings
+from django.db import models
+import django.contrib.auth
+User = django.contrib.auth.get_user_model()
 
 from django.contrib.gis.utils import HAS_GEOIP
-
 if HAS_GEOIP:
     from django.contrib.gis.utils import GeoIP, GeoIPException
-
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.db import models
-from django.utils.translation import ugettext, ugettext_lazy as _
-from analytics import utils
-
 USE_GEOIP = getattr(settings, 'TRACKING_USE_GEOIP', False)
 CACHE_TYPE = getattr(settings, 'GEOIP_CACHE_TYPE', 4)
 
+import logging
 log = logging.getLogger('analytics.models')
+
+from analytics import utils
 
 class VisitorManager(models.Manager):
     def active(self, timeout=None):
@@ -27,8 +27,8 @@ class VisitorManager(models.Manager):
         if not timeout:
             timeout = utils.get_timeout()
 
-        now = datetime.now()
-        cutoff = now - timedelta(minutes=timeout)
+        now = datetime.datetime.now()
+        cutoff = now - datetime.timedelta(minutes=timeout)
 
         return self.get_query_set().filter(last_update__gte=cutoff)
 

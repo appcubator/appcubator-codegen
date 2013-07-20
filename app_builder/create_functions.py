@@ -106,11 +106,15 @@ class AppComponentFactory(object):
             # get the related django model's id (from the imports.)
             rel_model = f.entity._django_model
             rel_model_id = rel_model.identifier
+            quote = True
+            if f.entity.is_user:
+                rel_model_id = "{settings}.AUTH_USER_MODEL".format(settings=m.namespace.imports()['django.settings'])
+                quote = False
             # make an id for the related name in the related model's namespace
             # TODO FIXME potential bugs with related name and field name since they are really injected into the model.Model instance namespace
             rel_name_id = rel_model.namespace.new_identifier(f.related_name, ref=rel_model)
 
-            df = m.create_relational_field(f.name, f.type, FnCodeChunk(lambda: "webapp.%s" % rel_model_id), rel_name_id, False)
+            df = m.create_relational_field(f.name, f.type, rel_model_id, rel_name_id, False, quote=quote)
                         # the django model will create an identifier based on
                         # the name
             f._django_field_identifier = df.identifier

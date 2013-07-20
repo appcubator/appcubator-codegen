@@ -10,14 +10,17 @@ if __name__ == "__main__":
 
     commands = []
     commands.append('python manage.py syncdb --noinput')
+    commands.append('python manage.py migrate')
 
     if not os.path.isdir(os.path.join(APP_DIR, 'webapp', 'migrations')):
         sys.stdout.write("\nWeb app has not yet been migrated - converting to south.")
         commands.append('python manage.py convert_to_south webapp')
+        # The following line is a workaround for this issue: http://south.aeracode.org/ticket/1179
+        commands.append('python manage.py migrate webapp 0001 --fake')
+
     else:
         commands.append('python manage.py schemamigration webapp --auto')
-
-    commands.append('python manage.py migrate')
+        commands.append('python manage.py migrate webapp')
 
     for c in commands:
         print("Running `{}`".format(c))

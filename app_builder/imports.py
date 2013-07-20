@@ -22,6 +22,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.search':            'from webapp.utils import get_results',
 
             'django.patterns':          'from django.conf.urls import patterns',
+            'django.settings':          'from django.conf import settings',
             'django.include':           'from django.conf.urls import include',
             'django.url':               'from django.conf.urls import url',
             'django.url.statics':       'from django.contrib.staticfiles.urls import staticfiles_urlpatterns',
@@ -54,7 +55,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 }
 
 
-FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.models.AbstractUser', 'django.signals.post_save', 'utils.import_export.resources'),
+FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.settings', 'django.models.AbstractUser', 'django.signals.post_save', 'utils.import_export.resources'),
                  'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',

@@ -38,6 +38,7 @@ class TestLoginSignup(SplinterTestCase):
         signup_form.find_by_name('password2').fill('123')
         signup_form.find_by_name('email').fill('k@k.com')
         signup_form.find_by_css('input.btn').click()
+        raw_input()
         time.sleep(1)
 
     def login(self):
