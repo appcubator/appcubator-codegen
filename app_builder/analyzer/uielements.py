@@ -549,7 +549,7 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
     _schema = {
         "content": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},
         "content_attribs": {"_type": {}},
-        "class_name": {"_type": ""},
+        "class_name": {"_type": "", "_default": ""},
         "tagName": {"_type": ""},
     }
 
@@ -805,7 +805,7 @@ class Iterator(DictInited, Hooked):
 
     _schema = {
         "container_info": {"_type": IteratorInfo},
-        "class_name": {"_type": ""}
+        "class_name": {"_type": "", "_default": ""}
     }
 
     def visit_strings(self, f):

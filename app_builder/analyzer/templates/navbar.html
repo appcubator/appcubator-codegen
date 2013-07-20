@@ -6,7 +6,7 @@
       <li><a href="{{ l.url_pl.to_code() }}">{{ l.title }}</a></li>
       {% endfor %}
       {{ '{% if user.is_authenticated %}' }}
-      <li class="logout-item pull-right"><a id="logout" href="{{ "{% url django.contrib.auth.views.logout %}" }}">Logout</a></li>
+      <li class="logout-item pull-right"><a id="logout" href="{{ "{% url \"django.contrib.auth.views.logout\" %}" }}">Logout</a></li>
       {{ '{% endif %}' }}
     </ul>
   </div>

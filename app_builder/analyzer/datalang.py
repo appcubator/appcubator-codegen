@@ -41,7 +41,7 @@ class DataLang(object):
                 # this must be page i think. so pass in the pc namespace if you want to get the page context variables
                 seed_id = context.get_by_ref(self.seed_entity._django_model)
 
-        if len(self.fields) == 0 and user_profile:
+        if self.seed_entity.is_user and len(self.fields) == 0 and user_profile:
             # this is for edit form, instance = request.user.getprofile()
             return '%s.get_profile()' % seed_id
 

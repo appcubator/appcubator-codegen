@@ -177,7 +177,7 @@ def write_to_fs(coder, css="", dest=None, for_user=False):
         for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
             copy_file(fname, fname)
     else:
-        for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'scripts.json', '502.html']:
+        for fname in ['__init__.py', 'manage.py', 'wsgi.py', 'scripts.json', '502.html']:
             copy_file(fname, fname)
 
     copy_file('gitignore.gitignore', '.gitignore')

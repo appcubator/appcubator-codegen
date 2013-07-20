@@ -6,6 +6,7 @@ class TestLoginSignup(SplinterTestCase):
 
     APP_DIR = APP_DIR # binds APP_DIR, a variable injected into the namespace by testrunner, to the class,
                       # so that SplinterTestCase knows how to start the server
+    VENV_DIR = VENV_DIR
     try:
         PORT = PORT
     except NameError, e:
@@ -37,6 +38,7 @@ class TestLoginSignup(SplinterTestCase):
         signup_form.find_by_name('password2').fill('123')
         signup_form.find_by_name('email').fill('k@k.com')
         signup_form.find_by_css('input.btn').click()
+        time.sleep(1)
 
     def login(self):
         self.browser.visit(self.url('/'))
@@ -44,9 +46,13 @@ class TestLoginSignup(SplinterTestCase):
         login_form.find_by_name('username').fill('karan')
         login_form.find_by_name('password').fill('123')
         login_form.find_by_css('input.btn').click()
+        time.sleep(1)
+
 
     def logout(self):
         self.browser.find_by_id('logout')[0].click()
+        time.sleep(1)
+
 
     def test_signup_redirect(self):
         # try to signup, expect to be redirected to restricted.
@@ -60,7 +66,6 @@ class TestLoginSignup(SplinterTestCase):
     def test_logout_works(self):
         self.signup()
         self.login()
-        time.sleep(.5)
         self.logout()
         self.assertEqual(self.route(self.browser.url), '/')
         self.assert_logged_out()

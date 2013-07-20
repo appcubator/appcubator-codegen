@@ -50,7 +50,7 @@ class PageLang(object):
             code = "reverse('webapp.pages.%s'%s)" %(self.page._django_view.identifier, args_str)
             return code
         else:
-            return "{%% url webapp.pages.%s %s%%}" % (self.page._django_view.identifier, datalang_variable_string)
+            return "{%% url \"webapp.pages.%s\" %s%%}" % (self.page._django_view.identifier, datalang_variable_string)
 
 def parse_lang(pagelang_string):
     """Given a string, try to parse out the page name and k, v pairs of the querystring after it."""

@@ -3,7 +3,7 @@
 import os, os.path
 import sys
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings.prod'
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", 'settings.prod')
 sys_list = sys.path
 app_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 sys_list.insert(0, app_dir)

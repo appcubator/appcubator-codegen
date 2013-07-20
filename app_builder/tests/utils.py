@@ -2,6 +2,7 @@ import os, os.path
 import unittest
 from app_builder.analyzer.analyzer import App
 from splinter import Browser
+from app_builder.app_manager import AppManager
 
 MASTER_APP_STATE = os.path.join(os.path.dirname(__file__), "app_states", "master_state.json")
 
@@ -45,9 +46,11 @@ class SplinterTestCase(unittest.TestCase):
         url = "http://%s:%d/" % (hostname, port)
 
         # start the server
-        cmd = "python manage.py testserver --addrport %d" % port
-        self.p = subprocess.Popen(shlex.split(cmd), cwd=self.__class__.APP_DIR,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
+        am = AppManager(self.__class__.APP_DIR, venv_dir=self.__class__.VENV_DIR, settings_module='settings.dev')
+
+        ret, out, err = am.run_command("python scripts/syncdb.py")
+        self.p = am.Popen("python manage.py runserver %d" % port)
+        self._app_manager = am
 
         # wait until server is ready
         ping_until_success(url)
@@ -60,6 +63,8 @@ class SplinterTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+        self._app_manager.run_command("python manage.py flush --noinput")
 
         # send sigterm to all processes in the group
         os.killpg(self.p.pid, signal.SIGTERM)
