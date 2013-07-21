@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from app_builder.analyzer import App, InvalidDict
 from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
@@ -31,7 +29,7 @@ coder_logger.setLevel('ERROR')
 controller_logger.setLevel('ERROR')
 
 logger = logging.getLogger('scripts.test_runner')
-logger.setLevel('DEBUG')
+logger.setLevel('INFO')
 logger.addHandler(logging.StreamHandler())
 
 

@@ -1,17 +1,14 @@
 import time
+import re
 import unittest
 from app_builder.tests.utils import SplinterTestCase
+import simplejson
 
 class TestLoginSignup(SplinterTestCase):
 
-    APP_DIR = APP_DIR # binds APP_DIR, a variable injected into the namespace by testrunner, to the class,
-                      # so that SplinterTestCase knows how to start the server
-    VENV_DIR = VENV_DIR
-    try:
-        PORT = PORT
-    except NameError, e:
-        print "E: %s" % e 
-        PORT = 8000
+    json_file_name = re.sub(r'_splinter\.pyc?', '.json', __file__)
+    with open(json_file_name) as f:
+        APP_STATE = simplejson.load(f)
 
     def setUp(self):
         super(TestLoginSignup, self).setUp()

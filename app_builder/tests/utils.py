@@ -1,8 +1,12 @@
 import os, os.path
 import unittest
 from app_builder.analyzer.analyzer import App
+from app_builder.controller import create_codes
+from app_builder.coder import Coder, write_to_fs
+from app_builder.app_manager import AppManager
 from splinter import Browser
 from app_builder.app_manager import AppManager
+import signal
 
 MASTER_APP_STATE = os.path.join(os.path.dirname(__file__), "app_states", "master_state.json")
 
@@ -38,15 +42,32 @@ def ping_until_success(url, retries=8):
     return
 
 
-import signal, subprocess, shlex
+def get_a_port():
+    import random
+    return random.randint(8000, 64000)
+
+VENV_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "appcubator-deploy", "child_venv"))
+assert os.path.isdir(VENV_DIR)
 class SplinterTestCase(unittest.TestCase):
+    """
+    Tests the codegen correctness by app state
+    """
     def setUp(self):
-        port = self.__class__.PORT
+        port = get_a_port()
         hostname = "testing.appcubator.com"
         url = "http://%s:%d/" % (hostname, port)
 
+        def state_to_code(app_state):
+            app = App.create_from_dict(app_state)
+            codes = create_codes(app)
+            coder = Coder.create_from_codes(codes)
+            tmpdir = write_to_fs(coder)
+            return tmpdir
+
+        app_dir = state_to_code(self.__class__.APP_STATE)
+
         # start the server
-        am = AppManager(self.__class__.APP_DIR, venv_dir=self.__class__.VENV_DIR, settings_module='settings.dev')
+        am = AppManager(app_dir, venv_dir=VENV_DIR, settings_module='settings.dev')
 
         ret, out, err = am.run_command("python scripts/syncdb.py")
         self.p = am.Popen("python manage.py runserver %d" % port)

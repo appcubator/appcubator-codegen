@@ -1,18 +1,15 @@
 import time
+import re
 import unittest
 from app_builder.tests.utils import SplinterTestCase
 import os
+import simplejson
 
 class TestSup(SplinterTestCase):
 
-    APP_DIR = APP_DIR # binds APP_DIR, a variable injected into the namespace by testrunner, to the class,
-                      # so that SplinterTestCase knows how to start the server
-
-    try:
-        PORT = PORT
-    except NameError, e:
-        print "E: %s" % e
-        PORT = 8000
+    json_file_name = re.sub(r'_splinter\.pyc?', '.json', __file__)
+    with open(json_file_name) as f:
+        APP_STATE = simplejson.load(f)
 
     def setUp(self):
         super(TestSup, self).setUp()
@@ -93,26 +90,3 @@ class TestSup(SplinterTestCase):
         self.login.click()
         self.login_to_facebook()
         self.assertEqual('/#_=_', self.route(self.browser.url))
-
-if __name__ == "__main__":
-
-    signup_redirect_test_names = ['test_signup_button_creates_and_redirects_based_on_role_three',
-                                  'test_signup_button_creates_and_redirects_based_on_role_two',
-                                  'test_signup_button_creates_and_redirects_based_on_role_one',
-                                  ]
-
-    login_redirect_test_names = ['test_login_and_logout_after_signup_works_properly_one',
-                                 'test_login_and_logout_after_signup_works_properly_two',
-                                 'test_login_and_logout_after_signup_works_properly_three',
-                                 ]
-
-    signup_redirect_suite = unittest.TestSuite(map(TestSup, signup_redirect_test_names))
-    signup_twice_suite = unittest.TestSuite([TestSup('test_signup_twice_not_allowed')])
-
-    login_redirect_suite = unittest.TestSuite(map(TestSup, login_redirect_test_names))
-    cant_login_before_signup_suite = unittest.TestSuite([TestSup('test_cant_login_before_signup')])
-
-    unittest.TextTestRunner(verbosity=2).run(signup_redirect_suite)
-    unittest.TextTestRunner(verbosity=2).run(signup_twice_suite)
-    unittest.TextTestRunner(verbosity=2).run(login_redirect_suite)
-    unittest.TextTestRunner(verbosity=2).run(cant_login_before_signup_suite)
