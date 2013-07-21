@@ -112,7 +112,10 @@ class VisitorAnalyticsMiddleware(object):
             user = None
 
         # update the tracking information
-        visitor.user_id = user.id
+        if user is None:
+            visitor.user_id = None
+        else:
+            visitor.user_id = user.id
         visitor.user_agent = user_agent
 
         if not visitor.last_update:
