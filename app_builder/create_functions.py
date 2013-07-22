@@ -650,7 +650,7 @@ class AppComponentFactory(object):
                 if isinstance(a, Form.FormInfo.FormInfoInfo.EmailAction):
                     email = form_model.app.find('emails/%s' % a.email, name_allowed=True)
                     from_email = "info@%s.appcubator.com" % form_model.app.name.lower()
-                    to_email = parse_to_datalang(a.email_to, form_model.app).to_code() + ".username"
+                    to_email = parse_to_datalang(a.email_to, form_model.app).to_code() + ".email"
                     email_template = DjangoEmailTemplate(a.email, email.content)
                     email_tuple = (from_email, to_email, a.nl_description, "", email_template)
                     email_tuples.append(email_tuple)
