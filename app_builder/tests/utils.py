@@ -4,6 +4,7 @@ from app_builder.analyzer.analyzer import App
 from app_builder.controller import create_codes
 from app_builder.coder import Coder, write_to_fs
 from app_builder.app_manager import AppManager
+import re
 from splinter import Browser
 from app_builder.app_manager import AppManager
 import signal
@@ -43,8 +44,9 @@ def ping_until_success(url, retries=8):
 
 
 def get_a_port():
-    import random
-    return random.randint(8000, 64000)
+    pid = os.getpid()
+    port = 9000 + (pid % 50000)
+    return port
 
 VENV_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "appcubator-deploy", "child_venv"))
 assert os.path.isdir(VENV_DIR)
@@ -76,7 +78,7 @@ class SplinterTestCase(unittest.TestCase):
         # wait until server is ready
         ping_until_success(url)
 
-        self.browser = Browser()
+        self.browser = Browser("phantomjs")
         self.prefix = url[:-1] # without the ending fwd slash
         self.url = lambda x: self.prefix + str(x)
         self.route = lambda x: x.replace(self.prefix, "")
