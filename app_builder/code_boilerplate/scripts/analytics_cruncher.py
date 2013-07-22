@@ -20,6 +20,12 @@ def get_total_users():
 def get_total_active_users():
   return len(Visitor.objects.active())
 
+def get_total_visitors():
+  return len(Visitor.objects.all())
+
+def get_total_active_visitors():
+  return len(Visitor.objects.active())
+
 def get_total_page_views():
   total_page_views = 0
   for visitor in Visitor.objects.all():
