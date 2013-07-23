@@ -374,11 +374,10 @@ class App(DictInited):
 
         # create a table for each user
         for u in self.users:
-            userdict = deepcopy(base_userdict)
-            userdict['name'] = u.name
-            user_inst = Entity.create_from_dict(userdict)
-            print user_inst.name
-            user_inst.fields.extend(u.fields)
+            user_inst = Entity.create_from_dict({'name': u.name, 'fields': []})
+            user_inst.fields.extend(userentity.user_fields) # first add the common fields (mem references to avoid duplication of data)
+            user_inst.fields.extend(u.fields) # then extend with this user role custom fields
+            user_inst.is_user = True
             self.tables.append(user_inst)
         #self.tables.append(userentity) # this is the old code where we only had 1 entity for all the users.
         self.userentity = userentity

@@ -103,7 +103,10 @@ def create_codes(app):
     relevant_tables = [t for t in app.tables if not t.is_user] + [app.userentity]
     for ent in relevant_tables:
         create('create model for entity', ent) # only creates primitive fields
-    for ent in relevant_table: # doing relational fields after because all models need to be created for relations to work
+    for ent in app.tables:
+        if ent not in relevant_tables:
+            ent._django_model = app.userentity._django_model
+    for ent in relevant_tables: # doing relational fields after because all models need to be created for relations to work
         create('create relational fields for entity', ent)
 
         create('import model into views', ent)

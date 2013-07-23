@@ -80,23 +80,24 @@ class AppComponentFactory(object):
                 f._django_field_identifier = df.identifier
                 f._django_field = df
 
+        # set references
+        entity._django_model = m
+        m._entity = entity
+
         # add audit fields.
         if entity.is_user:
             cf_id = m.namespace.new_identifier('date_joined')
             mf_id = m.namespace.new_identifier('last_login')
 
-            entity.created_field_identifier = cf_id
-            entity.modified_field_identifier = mf_id
+            entity._django_model.created_field_identifier = cf_id
+            entity._django_model.modified_field_identifier = mf_id
         else:
             cf = m.add_date_created_field(m.namespace.new_identifier('date_created'))
             mf = m.add_date_modified_field(m.namespace.new_identifier('date_modified'))
 
-            entity.created_field_identifier = cf.identifier
-            entity.modified_field_identifier = mf.identifier
+            entity._django_model.created_field_identifier = cf.identifier
+            entity._django_model.modified_field_identifier = mf.identifier
 
-        # set references
-        entity._django_model = m
-        m._entity = entity
         return m
 
     def create_relational_fields_for_model(self, entity):
@@ -233,6 +234,10 @@ class AppComponentFactory(object):
         page = uie.page
         view = page._django_view
 
+        if entity.is_user:
+            role_field_id = uie.app.user_role_field._django_field.identifier
+            filter_key_values.append((role_field_id, FnCodeChunk(lambda: "\"%s\"" % uie.app.userentity.get_role_id(entity.name))))
+
         for where_clause in query.where:
             key = where_clause.field._django_field.identifier
             def gen_code_for_value():
@@ -247,9 +252,9 @@ class AppComponentFactory(object):
             filter_key_values.append((key, FnCodeChunk(value)))
 
         if query.sortAccordingTo[0] == '-':
-            sort_by_id = FnCodeChunk(lambda: '-%s' % entity.created_field_identifier)
+            sort_by_id = FnCodeChunk(lambda: '-%s' % entity._django_model.created_field_identifier)
         else:
-            sort_by_id = entity.created_field_identifier
+            sort_by_id = entity._django_model.created_field_identifier
 
 
         dq = DjangoQuery(self.view_namespace.get_by_ref(('webapp.models', entity._django_model.identifier)),

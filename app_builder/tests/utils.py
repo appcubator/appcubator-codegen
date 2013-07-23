@@ -67,6 +67,7 @@ class SplinterTestCase(unittest.TestCase):
             return tmpdir
 
         app_dir = state_to_code(self.__class__.APP_STATE)
+        print "App deployed to %s" % app_dir
 
         # start the server
         am = AppManager(app_dir, venv_dir=VENV_DIR, settings_module='settings.dev')
