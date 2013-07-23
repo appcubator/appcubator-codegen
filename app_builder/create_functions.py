@@ -234,7 +234,7 @@ class AppComponentFactory(object):
         page = uie.page
         view = page._django_view
 
-        if entity.is_user:
+        if entity.is_user and app.multiple_users:
             role_field_id = uie.app.user_role_field._django_field.identifier
             filter_key_values.append((role_field_id, FnCodeChunk(lambda: "\"%s\"" % uie.app.userentity.get_role_id(entity.name))))
 
