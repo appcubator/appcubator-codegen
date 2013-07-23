@@ -12,6 +12,16 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "dep-##DEPLOYMENTID##", # preprocessed by deployment server
+        'HOST': 127.0.0.1,
+        'USER': "appcubator",
+        'PASSWORD': os.environ['ADB_PASSWORD'],
+    }
+}
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
