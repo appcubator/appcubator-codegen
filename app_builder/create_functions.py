@@ -144,7 +144,7 @@ class AppComponentFactory(object):
 
     def create_emailer(self, app):
         identifier = self.emailer_namespace.new_identifier('emailer')
-        emailer = Emailer(identifier, app.api_key)
+        emailer = Emailer(identifier, app.api_key, app.name)
         app._emailer = emailer
         return emailer
 
