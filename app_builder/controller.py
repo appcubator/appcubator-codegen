@@ -71,7 +71,7 @@ def create_codes(app):
                   # I put this in import form into the create url step 'set post url for form': factory.set_post_url_for_form,
                   'add the relation things to the form recevier': factory.add_relation_assignments_to_form_receiver,
                   'add email actions to the form receiver': factory.add_email_actions_to_form_receiver,
-                  
+
                   # USER FORM RELATED HOOKS
                   'create login form if not exists': factory.create_login_form_if_not_exists,
                   'create signup form if not exists': factory.create_signup_form_if_not_exists,
@@ -99,9 +99,11 @@ def create_codes(app):
                 codes.append(c)
 
     # setup models
-    for ent in app.tables:
+    # XXX This is critical. some of the tables are just user roles, but only the combined user entity is relevant.
+    relevant_tables = [t for t in app.tables if not t.is_user] + [app.userentity]
+    for ent in relevant_tables:
         create('create model for entity', ent) # only creates primitive fields
-    for ent in app.tables: # doing relational fields after because all models need to be created for relations to work
+    for ent in relevant_table: # doing relational fields after because all models need to be created for relations to work
         create('create relational fields for entity', ent)
 
         create('import model into views', ent)

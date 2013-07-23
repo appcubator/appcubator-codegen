@@ -301,13 +301,17 @@ class App(DictInited):
                     UserInputError("The URL %r is not valid. URL must be alphanumeric, _, -." % p.url.urlparts, p.url._path))
 
         """
-        User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
-        for translation, normalize to CurrentUser.
-        for redirects, replace redirect portion of the code with some logic
+        Backend User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
+        In analyzer:
+            First validate that user role duplicated fields have the same type.
+            Make an table per user role and add to tables array
+            Make a table with all the combined fields and put in a separate attribute called userentity
+        In datalang, normalize to CurrentUser.
+        For redirects, replace redirect portion of the code with some logic
         """
         assert_raise(len(self.users) > 0, UserInputError("You should have at least one type of User.", "users"))
         # create the user entity based on userconfig
-        userdict = {
+        base_userdict = {
             "name": "User",
             "fields": [
                 {
@@ -330,9 +334,9 @@ class App(DictInited):
         }
         self.multiple_users = len(self.users) > 1
         if self.multiple_users:
-            userdict['fields'].append({"name":"_role", "type":"text"})
+            base_userdict['fields'].append({"name":"_role", "type":"text"})
 
-        userentity = Entity.create_from_dict(userdict)
+        userentity = Entity.create_from_dict(base_userdict)
         if self.multiple_users:
             user_role_field = [ f for f in userentity.fields if f.name == '_role' ][0] # linear search
             self.user_role_field = user_role_field
@@ -368,8 +372,16 @@ class App(DictInited):
         userentity.is_user = True
         userentity.role_names = [ u.name for u in self.users ]
 
-        self.tables.append(userentity)
-        self.userentity = userentity # just binding for convenience
+        # create a table for each user
+        for u in self.users:
+            userdict = deepcopy(base_userdict)
+            userdict['name'] = u.name
+            user_inst = Entity.create_from_dict(userdict)
+            print user_inst.name
+            user_inst.fields.extend(u.fields)
+            self.tables.append(user_inst)
+        #self.tables.append(userentity) # this is the old code where we only had 1 entity for all the users.
+        self.userentity = userentity
 
         # HACK replace uielements with their subclass
         for p in self.pages:

@@ -78,7 +78,7 @@ class SplinterTestCase(unittest.TestCase):
         # wait until server is ready
         ping_until_success(url)
 
-        self.browser = Browser("phantomjs")
+        self.browser = Browser("chrome")
         self.prefix = url[:-1] # without the ending fwd slash
         self.url = lambda x: self.prefix + str(x)
         self.route = lambda x: x.replace(self.prefix, "")
