@@ -69,6 +69,8 @@ def get_tracking_analytics():
   json_data['total_active_visitors'] = get_total_active_visitors()
   json_data['total_page_views'] = get_total_page_views()
   json_data['total_page_views_dict'] = get_total_page_views_dict()
+  # json_data['active_visitors_range'] = get_total_active_visitors_list()
+  # json_data['page_views_range'] = get_total_page_views_list()
   return json_data
 
 def crunch_analytics():
