@@ -39,7 +39,6 @@ def get_total_active_visitors():
 def get_total_page_views(today):
   total_page_views = 0
   for visitor in Visitor.objects.all():
-    if visitor.
     total_page_views += visitor.page_views
   return total_page_views
 
