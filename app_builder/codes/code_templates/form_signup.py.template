@@ -12,7 +12,7 @@ class {% block class_name %}{{ form.identifier }}{% endblock %}({{forms}}.Form):
         else:
             return self.cleaned_data['email']
 
-    def save(self, commit=True):
+    def save(self):
         """
         If you call this on a valid bound form, it will create and return a user with the bound data.
         """
@@ -22,5 +22,5 @@ class {% block class_name %}{{ form.identifier }}{% endblock %}({{forms}}.Form):
         if len(name_tokens) == 1:
             name_tokens.append("")
         user.first_name, user.last_name = name_tokens[0], " ".join(name_tokens[1:])
-        user.save(commit=commit)
+        user.save()
         return user

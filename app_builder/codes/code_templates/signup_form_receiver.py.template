@@ -14,7 +14,7 @@ def {{ fr.identifier }}({{request}}):
     {% endblock %}
 
         {% block do_stuff_with_valid_form %}
-        user = form.save({% if not fr.signup_role is undefined %}commit=False{% endif %})
+        user = form.save()
         {% if not fr.signup_role is undefined %}
         user.{{fr.locals['role_field_id']}} = '{{fr.signup_role}}'
         user.save()
