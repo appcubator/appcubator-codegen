@@ -66,7 +66,7 @@ class EmailStatement(object):
 
     def render(self):
         #TODO: Get rid of harcoded request!
-        return 'send_template_email(%r, %r, %r, %r, %r, request)' % (self.from_email, self.to_email, self.subject, self.text, self.email_template.filename)
+        return 'send_template_email(%r, %s, %r, %r, %r, request)' % (self.from_email, self.to_email, self.subject, self.text, self.email_template.filename)
 
 class AssignStatement(object):
     # a simple helper for x = y statements
