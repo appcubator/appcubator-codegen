@@ -34,7 +34,7 @@ void_tags = ('area', 'base', 'br', 'col', 'embed', 'hr',
 
 class Tag(object):
 
-    def __init__(self, tagName, attribs, content=None):
+    def __init__(self, tagName, attribs, content=None, wrapper=False):
         assert tagName in valid_tags, "Invalid tagName %r" % tagName
         self.tagName = tagName
         self.id_string = attribs.get('id', '')
@@ -57,6 +57,7 @@ class Tag(object):
         self._content = content
 
         self.isSingle = self.tagName in void_tags
+        self.is_wrapper = wrapper
 
     def has_content(self):
         return self._content is not None and self._content != ""
