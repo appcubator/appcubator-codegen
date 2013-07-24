@@ -275,7 +275,7 @@ from uielements import Form, Iterator
 
 class App(DictInited):
     _schema = {
-        "name": {"_type": "", "_minlength": 2, "_maxlength": 255},
+        "name": {"_type": "", "_minlength": 1, "_maxlength": 255},
         "info": {"_type": {}, "_mapping": {
             "description": {"_type": ""},
             "keywords": {"_type": ""},
