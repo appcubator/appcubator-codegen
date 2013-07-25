@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import os
 import sys
 import subprocess
@@ -9,8 +8,10 @@ if __name__ == "__main__":
     APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     commands = []
-    commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
-    commands.append('python scripts/set_superuser_password.py')
+    from webapp import models
+    if not models.User.objects.filter(username='admin').exists():
+        commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
+        commands.append('python scripts/set_superuser_password.py')
 
     for c in commands:
         print("Running `{}`".format(c))

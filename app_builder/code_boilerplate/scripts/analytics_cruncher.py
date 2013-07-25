@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# ONLY RUN FROM THE ROOT DIRECTORY OF THE APP
 import os, os.path
 import sys
 
@@ -10,8 +8,7 @@ sys_list.insert(0, app_dir)
 
 from analytics.models import Visitor
 from collections import Counter
-import requests
-import os, os.path
+from datetime import timedelta, datetime
 import simplejson
 
 def get_total_users():
@@ -36,13 +33,27 @@ def get_total_visitors():
 def get_total_active_visitors():
   return len(Visitor.objects.active())
 
-def get_total_page_views(today):
-  total_page_views = 0
-  for visitor in Visitor.objects.all():
-    total_page_views += visitor.page_views
-  return total_page_views
+def get_total_page_views_list(num_days=7):
+  days_arr = []
+  now = datetime.now()
+  for i in range(num_days):
+    total_page_views = 0
+    day = i+1
+    cutoff = now - timedelta(days=day)
+    visitors = Visitor.objects.filter(last_update__gte=cutoff)
+    for visitor in visitors:
+      total_page_views += visitor.page_views
+    days_arr.append(total_page_views)
+  return days_arr
 
-def get_total_page_views_dict(today):
+def get_total_active_visitors_list(num_days=7):
+  days_arr = []
+  for i in range(num_days):
+    minutes_in_day = (i+1) * 24 * 60
+    days_arr.append(len(Visitor.objects.active(cutoff=minutes_in_day)))
+  return days_arr
+
+def get_total_page_views_dict():
   page_counter = Counter()
   for visitor in Visitor.objects.all():
     page_counter[visitor.url] += visitor.page_views
@@ -53,12 +64,6 @@ def get_total_page_views():
   for visitor in Visitor.objects.all():
     total_page_views += visitor.page_views
   return total_page_views
-
-def get_total_page_views_dict():
-  page_counter = Counter()
-  for visitor in Visitor.objects.all():
-    page_counter[visitor.url] += visitor.page_views
-  return dict(page_counter)
 
 # Session start, last update
 def get_tracking_analytics():
