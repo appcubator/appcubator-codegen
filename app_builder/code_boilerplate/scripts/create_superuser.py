@@ -7,13 +7,11 @@ if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", 'settings.prod')
     APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-    from webapp import models
-    for u in models.User.objects.all():
-        print u.username
-
     commands = []
-    commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
-    commands.append('python scripts/set_superuser_password.py')
+    from webapp import models
+    if not User.objects.filter(username='admin').exists():
+        commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
+        commands.append('python scripts/set_superuser_password.py')
 
     for c in commands:
         print("Running `{}`".format(c))
