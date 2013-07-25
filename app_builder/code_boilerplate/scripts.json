@@ -1,4 +1,4 @@
 {
-    "on_deploy": ["syncdb.py", "create_superuser.py", "admin_css.py"],
-    "on_redeploy": ["syncdb.py", "admin_css.py"]
+    "on_deploy": ["python scripts/syncdb.py", "python scripts/create_superuser.py", "python scripts/admin_css.py"],
+    "on_redeploy": ["python scripts/syncdb.py", "python scripts/create_superuser.py", "python scripts/admin_css.py"]
 }

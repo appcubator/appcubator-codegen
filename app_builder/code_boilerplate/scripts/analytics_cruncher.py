@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# ONLY RUN FROM THE ROOT DIRECTORY OF THE APP
 import os, os.path
 import sys
 
