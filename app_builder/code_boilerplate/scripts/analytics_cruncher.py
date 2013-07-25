@@ -70,8 +70,8 @@ def get_tracking_analytics():
   json_data = {}
   json_data['total_users'] = get_total_users()
   json_data['total_active_users'] = get_total_active_users()
-  json_data['total_users'] = get_total_visitors()
-  json_data['total_active_visitors'] = get_total_active_visitors()
+  # json_data['total_visitors'] = get_total_visitors()
+  # json_data['total_active_visitors'] = get_total_active_visitors()
   json_data['total_page_views'] = get_total_page_views()
   json_data['total_page_views_dict'] = get_total_page_views_dict()
   # json_data['active_visitors_range'] = get_total_active_visitors_list()
