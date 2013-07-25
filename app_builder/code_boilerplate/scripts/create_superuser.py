@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     commands = []
     from webapp import models
-    if not User.objects.filter(username='admin').exists():
+    if not models.User.objects.filter(username='admin').exists():
         commands.append('python manage.py createsuperuser --username admin --email team@appcubator.com --noinput')
         commands.append('python scripts/set_superuser_password.py')
 
