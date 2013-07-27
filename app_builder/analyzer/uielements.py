@@ -180,8 +180,12 @@ class Form(DictInited, Hooked):
                         opt_fields = []
                         for item in field.options:
                             opt_field_id = field._page.id_namespace.new_identifier('opt-label-%s' % field.backend_field_name)
-                            opt_fields.append(Tag('input', {'id': opt_field_id, 'class': 'field-type', 'type': 'radio', 'name':field.backend_field_name, 'value': item}))
-                            opt_fields.append(Tag('label', {'for': opt_field_id}, content=item))
+                            opt_field_options = []
+                            opt_field_options.append(Tag('input', {'id': opt_field_id, 'class': 'field-type', 'type': 'radio', 'name':field.backend_field_name, 'value': item}))
+                            opt_field_options.append(Tag('label', {'for': opt_field_id}, content=item))
+                            opt_field = Tag('div', {'class': 'option'}, content = opt_field_options)
+                            opt_fields.append(opt_field)
+
                         content = opt_fields
                         base_attribs['name'] = field.backend_field_name
                         base_attribs['class'] = 'option-boxes'
