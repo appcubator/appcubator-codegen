@@ -186,6 +186,7 @@ class AdminRegisterLine(object):
     def __init__(self, parent_namespace, model_identifier, admin_id):
         self.code_path = 'webapp/admin.py'
         self.parent_namespace = parent_namespace
+        self.namespace = parent_namespace # to make coder happy
         self.model_identifier = model_identifier
         self.admin_id = admin_id
     def render(self):

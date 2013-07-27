@@ -34,7 +34,9 @@ IMPORTS = { 'django.models':            'from django.db import models',
             'django.forms':             'from django import forms',
             'django.forms.AuthForm':    'from django.contrib.auth.forms import AuthenticationForm',
             'django.forms.UserCreationForm':    'from django.contrib.auth.forms import UserCreationForm',
+
             'django.admin':             'from django.contrib import admin',
+            'django.auth.admin':        'from django.contrib.auth.admin import UserAdmin',
             'django.auth.login':        'from django.contrib.auth import login',
             'django.auth.authenticate': 'from django.contrib.auth import authenticate',
             'django.auth.logout_view':  'from django.contrib.auth.views import logout',
@@ -56,7 +58,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 
 
 FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.settings', 'django.models.AbstractUser', 'django.signals.post_save', 'utils.import_export.resources'),
-                 'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin'),
+                 'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin', 'django.auth.admin'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',
                                     'django.require_GET',
