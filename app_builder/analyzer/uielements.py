@@ -637,6 +637,9 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
         if self.tagName == 'div':
             wrapper = Tag('div', {}, content=tag, wrapper=True)
             tag = wrapper
+        if self.tagName == 'a':
+            wrapper = Tag('div', {}, content=tag, wrapper=True)
+            tag = wrapper
         return tag
 
 class ImageSlider(DictInited, Hooked):  # image slider
