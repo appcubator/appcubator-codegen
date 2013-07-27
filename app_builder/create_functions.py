@@ -272,10 +272,12 @@ class AppComponentFactory(object):
             sort_by_id = entity._django_model.created_field_identifier
 
 
+        exclude_admin = entity.is_user
         dq = DjangoQuery(self.view_namespace.get_by_ref(('webapp.models', entity._django_model.identifier)),
                                                           where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
-                                                          limit=query.numberOfRows)
+                                                          limit=query.numberOfRows,
+                                                          exclude_admin=exclude_admin)
 
         view.add_query(dq)
 
