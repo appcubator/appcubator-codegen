@@ -62,21 +62,18 @@ class Tag(object):
     def has_content(self):
         return self._content is not None and self._content != ""
 
-    def content_before_newline(self):
+    def content(self):
         def handle_unknown_type(content):
             if content is None:
                 return ""
             assert not self.isSingle, "Content doesn't work for single tags"
             if isinstance(content, basestring):
-                return content.strip()
+                return content.strip().replace('\n', '<br>')
             try:
                 return content.render().strip()
             except AttributeError:
                 return '\n'.join([handle_unknown_type(c) for c in content]).strip()
         return handle_unknown_type(self._content)
-
-    def content(self):
-        return self.content_before_newline().replace('\n', '<br>')
 
     def render(self):
         return env.get_template('htmltag.html').render(context=self)
