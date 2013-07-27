@@ -152,7 +152,7 @@ class Form(DictInited, Hooked):
 
                         if edit_inst_code_fn is not None:
                             edit_id = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
-                            if field.display_type == 'paragraph-text':
+                            if field.displayType == 'paragraph-text':
                                 content = edit_id
                             else:
                                 base_attribs['value'] = edit_id
