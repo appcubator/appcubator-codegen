@@ -23,15 +23,19 @@ class SearchQuery(object):
 
 class DjangoQuery(object):
 
-    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None):
+    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None, exclude_admin=False):
         self.model_id = model_id
         self.where_data = where_data if where_data is not None else []
         # TODO implement these
         self.sort_by_id = sort_by_id
         self.limit = limit
+        self.exclude_admin = exclude_admin
 
     def render(self):
-        code_line = "%s.objects.all()" % self.model_id
+        if self.exclude_admin:
+            code_line = "%s.objects.exclude(username='admin')" % self.model_id
+        else:
+            code_line = "%s.objects.all()" % self.model_id
 
         if len(self.where_data) != 0:
             code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
@@ -186,6 +190,7 @@ class AdminRegisterLine(object):
     def __init__(self, parent_namespace, model_identifier, admin_id):
         self.code_path = 'webapp/admin.py'
         self.parent_namespace = parent_namespace
+        self.namespace = parent_namespace # to make coder happy
         self.model_identifier = model_identifier
         self.admin_id = admin_id
     def render(self):
