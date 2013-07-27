@@ -151,7 +151,11 @@ class Form(DictInited, Hooked):
                             tagname = 'textarea'
 
                         if edit_inst_code_fn is not None:
-                            base_attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
+                            edit_id = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
+                            if field.display_type == 'paragraph-text':
+                                content = edit_id
+                            else:
+                                base_attribs['value'] = edit_id
                             # don't use place holder if some edit value is going to be filled in anyway.
                             del base_attribs['placeholder']
 
