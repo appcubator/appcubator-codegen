@@ -40,7 +40,7 @@ class RoleRouting(DictInited, Resolvable):
 
     def validate(self):
         assert_raise(self.role in [u.name for u in self.app.users],
-                UserInputError("This role was not recognized: %r Maybe you had it once and then deleted it?" % self.role, self._path))
+                UserInputError("You deleted a user role, but there are old references to it. Please update or remove them.", self._path))
 
 
 class Layout(DictInited):
@@ -333,7 +333,7 @@ class Form(DictInited, Hooked):
                     assert not (self.signupRole is None and self.loginRoutes is None), "signupRole and loginRoutes can't both be null."
                 if self.action == 'login':
                     assert_raise(len(self.loginRoutes) == len(self.app.users),
-                            UserInputError("You added or deleted a user role, so you need to update the redirecting post-login.", self._path + "/loginRoutes"))
+                            UserInputError("You deleted a user role, but there are old references to it. Please update or remove them.", self._path + "/loginRoutes"))
                     assert self.goto is None, "Login form must use loginRoutes, not goto"
                 else:
                     assert self.goto is not None, "All forms other than login form must have goto"
@@ -341,7 +341,7 @@ class Form(DictInited, Hooked):
                 if self.action == 'signup':
                     assert self.signupRole is not None, "signup form must have signupRole"
                     assert_raise(self.signupRole in [u.name for u in self.app.users],
-                            UserInputError("You deleted a user role, so you need to update your signup form.", self._path + "/loginRoutes"))
+                            UserInputError("You deleted a user role, but there are old references to it. Please update or remove them.", self._path + "/loginRoutes"))
 
                 if self.action == 'edit':
                     assert self.editOn is not None, "Editform takes editOn arg."
@@ -484,7 +484,7 @@ class ThirdPartyLogin(DictInited, Hooked, Resolvable):
         elif self.action != 'signup':
             assert_raise(len(self.loginRoutes) == len(self.app.users), UserInputError("Please update the role-based redirect actions on the signup form.", self._path))
         else:
-            assert_raise(False, UserInputError("Please remove the social signup button and drag the generic login/signup button instead.", self._path))
+            assert_raise(False, UserInputError("Since you deleted a user role, but the social signup button was designed for multiple user roles. Please delete it and drag a social combined login/signup button onto the page instead.", self._path))
 
     def resolve_page(self):
         if self.action == 'login':
@@ -589,22 +589,22 @@ class Node(DictInited, Hooked):  # a uielement with no container_info
                 try:
                     v(s)
                 except DictInited.FindFailed:
-                    raise UserInputError("Link has stale reference.", self._path)
+                    raise UserInputError("You deleted a page, while there are old links to this page on other pages. You should delete those too.", self._path)
                 except pagelang.UrlDataMismatch:
-                    raise UserInputError("Link doesn't give the right url data for the referenced page.", self._path)
+                    raise UserInputError("You updated the URL of a page, so you need to update the existing links to this page. It's best to delete the old links and drag new ones onto the page.", self._path)
             elif s.startswith('{{'):
                 def test_v2(m):
                     try:
                         v2(m.group(1))
                     except DictInited.FindFailed:
-                        raise UserInputError("Stale reference in datalang", self._path)
+                        raise UserInputError("You deleted a field or a table, so you need to update the old elements that referred to it.", self._path)
                     return "" # makes re.sub happy
                 v2_wrap = lambda x: re.sub(r'\{\{ ?([^\}]*) ?\}\}', test_v2, x)
                 v2_wrap(s)
             elif s == '/static/img/placeholder.png':
                 pass
             else:
-                raise UserInputError("Broken link: %s" % s, self._path)
+                raise UserInputError("This link is not valid, and probably will cause an error in your web app: %s" % s, self._path)
 
     def kwargs(self):
         kw = {}
