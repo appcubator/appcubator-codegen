@@ -346,6 +346,12 @@ class Form(DictInited, Hooked):
                 if self.action == 'edit':
                     assert self.editOn is not None, "Editform takes editOn arg."
 
+            def resolve(self):
+                if self.action == 'login':
+                    self.entity = self.app.userentity
+                else:
+                    super(Form.FormInfo.FormInfoInfo, self).resolve()
+
             def resolve_page(self):
                 if self.goto is None:
                     self.redirect = False
