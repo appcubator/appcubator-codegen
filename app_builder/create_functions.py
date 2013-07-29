@@ -157,6 +157,13 @@ class AppComponentFactory(object):
         return ier
 
     def create_import_export_admin_model(self, entity):
+        """
+        Creates the ModelAdmin for an entity, puts in webapp/admin.py.
+           If entity is user, do nothing, because django.contrib.auth ships with a User ModelAdmin.
+           Else, subclass django-import-export's ModelAdmin and set model = entity's model.
+        """
+        if entity.is_user:
+            return
         identifier = self.admin_namespace.new_identifier('%sModelAdmin' % entity.name, cap_words=True)
         iem = DjangoImportExportAdminModel(identifier)
         entity._django_model_admin = iem
@@ -168,9 +175,17 @@ class AppComponentFactory(object):
         self.admin_namespace.find_or_create_import(import_symbol, m.identifier)
 
     def register_model_with_admin(self, entity):
+        """
+        Registers the ModelAdmin from admin.py with the Model from models.py.
+        Drops a line of code to do this in webapp/admin.py
+           If entity is user, register with django.contrib.auth.admin.UserAdmin
+           Else, import from admin.py.
+        """
         if entity.is_user:
-            return
-        return AdminRegisterLine(self.admin_namespace, entity._django_model.identifier, entity._django_model_admin.identifier)
+            model_admin_id = self.admin_namespace.imports()['django.auth.admin']
+        else:
+            model_admin_id = entity._django_model_admin.identifier
+        return AdminRegisterLine(self.admin_namespace, entity._django_model.identifier, model_admin_id)
 
 
     # VIEWS
@@ -257,10 +272,12 @@ class AppComponentFactory(object):
             sort_by_id = entity._django_model.created_field_identifier
 
 
+        exclude_admin = entity.is_user
         dq = DjangoQuery(self.view_namespace.get_by_ref(('webapp.models', entity._django_model.identifier)),
                                                           where_data=filter_key_values,
                                                           sort_by_id=sort_by_id,
-                                                          limit=query.numberOfRows)
+                                                          limit=query.numberOfRows,
+                                                          exclude_admin=exclude_admin)
 
         view.add_query(dq)
 

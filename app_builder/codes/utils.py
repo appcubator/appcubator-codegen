@@ -8,6 +8,7 @@ CANON_TYPE_MAP = {'text': 'TextField',
                  'file': 'TextField',
                  }
 
+class_namespace_keywords = ('__new__', '__init__', '__del__', '__repr__', '__str__', '__lt__', '__cmp__', '__rcmp__', '__hash__', '__nonzero__', '__unicode__', '__getattr__', '__setattr__', '__delattr__', '__getattribute__', '__get__', '__set__', '__delete__', '__slots__', '__metaclass__', '__instancecheck__', '__subclasscheck__', '__call__', '__len__', '__getitem__', '__setitem__', '__delitem__', '__iter__', '__reversed__', '__contains__', '__getslice__', '__setslice__', '__delslice__', '__add__', '__div__', '__radd__', '__iadd__', '__neg__', '__complex__', '__oct__', '__index__', '__coerce__', '__enter__', '__exit__')
 
 class RoleRedirectChunk(object):
     def __init__(self, role_codechunk_tuples, role_field_id):

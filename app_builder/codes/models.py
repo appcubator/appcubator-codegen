@@ -4,6 +4,16 @@ from datetime import datetime
 from . import env
 import utils
 
+model_namespace_keywords = utils.class_namespace_keywords + ("clean", "clean_fields", "validate_unique", "save", "pk", "delete", "__unicode__", "__str__", "get_absolute_url", "permalink", "objects")
+user_model_namespace_keywords = ("password", "groups", "is_staff", "is_active", "is_superuser", "last_login", "date_joined", "get_username", "is_anonymous", "is_authenticated", "get_full_name", "set_password", "check_password", "set_unusable_password", "has_usable_password", "get_group_permissions", "get_all_permissions", "has_perm", "has_perms", "has_module_perms", "email_user", "get_profile")
+
+def block_namespace(namespace, list_of_ids):
+    "Blocks a namespace with a list of ids"
+    for i in list_of_ids:
+        namespace.new_identifier(i, ref=('BLOCKED', i))
+    return namespace
+
+
 class SearchQuery(object):
 
     def __init__(self, model_id, sort_by_id=None, limit=-1):
@@ -23,15 +33,19 @@ class SearchQuery(object):
 
 class DjangoQuery(object):
 
-    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None):
+    def __init__(self, model_id, where_data=None, sort_by_id=None, limit=None, exclude_admin=False):
         self.model_id = model_id
         self.where_data = where_data if where_data is not None else []
         # TODO implement these
         self.sort_by_id = sort_by_id
         self.limit = limit
+        self.exclude_admin = exclude_admin
 
     def render(self):
-        code_line = "%s.objects.all()" % self.model_id
+        if self.exclude_admin:
+            code_line = "%s.objects.exclude(username='admin')" % self.model_id
+        else:
+            code_line = "%s.objects.all()" % self.model_id
 
         if len(self.where_data) != 0:
             code_line += '.filter(' + ', '.join(["%s=%s" % (a, b) for a, b in self.where_data]) + ')'
@@ -113,6 +127,7 @@ class DjangoModel(object):
         identifier.ref = self
         self.code_path = "webapp/models.py"
         self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
+        block_namespace(self.namespace, model_namespace_keywords)
         self.fields = []
 
     def create_field(self, name, canonical_type, required):
@@ -152,6 +167,7 @@ class DjangoUserModel(DjangoModel):
 
         """
         super(DjangoUserModel, self).__init__(user_identifier)
+        block_namespace(self.namespace, user_model_namespace_keywords)
         self.is_user_model = True
 
     def render(self):
@@ -164,6 +180,7 @@ class DjangoImportExportResource(object):
         self.code_path = 'webapp/models.py'
         self.model_identifier = model_id
         self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
+        block_namespace(self.namespace, model_namespace_keywords)
 
     def render(self):
         return """class {this_id}({resources_id}.ModelResource):
@@ -176,6 +193,7 @@ class DjangoImportExportAdminModel(object):
         self.code_path = 'webapp/admin.py'
         self.identifier = identifier
         self.namespace = naming.Namespace(parent_namespace=self.identifier.ns)
+        block_namespace(self.namespace, model_namespace_keywords)
 
     def render(self):
         return """class {this_id}({iem_admin_id}):
@@ -186,6 +204,7 @@ class AdminRegisterLine(object):
     def __init__(self, parent_namespace, model_identifier, admin_id):
         self.code_path = 'webapp/admin.py'
         self.parent_namespace = parent_namespace
+        self.namespace = parent_namespace # to make coder happy
         self.model_identifier = model_identifier
         self.admin_id = admin_id
     def render(self):

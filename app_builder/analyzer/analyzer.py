@@ -298,7 +298,7 @@ class App(DictInited):
 
         for p in self.pages:
             assert_raise(p.url.is_valid(),
-                    UserInputError("The URL %r is not valid. URL must be alphanumeric, _, -." % p.url.urlparts, p.url._path))
+                    UserInputError("This URL is invalid. URLs must only contain letters, numbers, underscores and hyphens.", p.url._path))
 
         """
         Backend User role strategy: combine all the roles into one user model, and create a role field to tell roles apart.
@@ -309,7 +309,7 @@ class App(DictInited):
         In datalang, normalize to CurrentUser.
         For redirects, replace redirect portion of the code with some logic
         """
-        assert_raise(len(self.users) > 0, UserInputError("You should have at least one type of User.", "users"))
+        assert_raise(len(self.users) > 0, UserInputError("You can\'t remove all Users, you need to have at least one User.", "users"))
         # create the user entity based on userconfig
         base_userdict = {
             "name": "User",
@@ -357,7 +357,7 @@ class App(DictInited):
                 if field.name == already_added_field.name:
                     dupe = True
                     assert_raise(field.type == already_added_field.type,
-                            UserInputError("Two user role fields had same name but different type.", field._path))
+                            UserInputError("You changed the type of the field in this user, but a field with the same name has a different type in another user. Please make the types the same or delete the field and create a new one with a different name.", field._path))
                     break
             if not dupe:
                 user_profile_field_set.append(field)

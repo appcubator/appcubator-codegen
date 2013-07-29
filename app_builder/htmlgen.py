@@ -68,7 +68,7 @@ class Tag(object):
                 return ""
             assert not self.isSingle, "Content doesn't work for single tags"
             if isinstance(content, basestring):
-                return content.strip()
+                return content.strip().replace('\n', '<br>')
             try:
                 return content.render().strip()
             except AttributeError:
