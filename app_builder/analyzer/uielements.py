@@ -349,7 +349,7 @@ class Form(DictInited, Hooked):
 
             def resolve(self):
                 if self.action == 'login':
-                    pass
+                    self.entity = self.app.userentity
                 else:
                     super(Form.FormInfo.FormInfoInfo, self).resolve()
 

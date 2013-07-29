@@ -379,7 +379,7 @@ class App(DictInited):
             user_inst.fields.extend(u.fields) # then extend with this user role custom fields
             user_inst.is_user = True
             self.tables.append(user_inst)
-        self.tables.append(userentity) # User will still work for resolving purposes in login and signup form.
+        #self.tables.append(userentity) # old code
         self.userentity = userentity
 
         # HACK replace uielements with their subclass
