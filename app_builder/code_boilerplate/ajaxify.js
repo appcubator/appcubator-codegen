@@ -1,5 +1,18 @@
 $(document).ready(function() {
   filepicker.setKey("AAO81GwtTTec7D8nH9SaTz");
+
+  function openFilepicker(callback) {
+    filepicker.pick({
+        services: ['COMPUTER', 'BOX', 'DROPBOX', 'GOOGLE_DRIVE', 'SKYDRIVE', 'URL'],
+      },
+      function(fpfile){
+        callback(fpfile);
+      },
+      function(fperror){
+        console.log(fperror);
+        alert(fperror);
+      });
+  }
   function openImagepicker(callback) {
     filepicker.pick({
         mimetypes: ['image/*'],
@@ -66,10 +79,21 @@ $(document).ready(function() {
 
   // image upload buttons
   $('.btn.upload-img, .btn.upload-file').click(function(e) {
-    openImagepicker(function(file){
-      var fieldId = String(e.target.getAttribute("data-name"));
-      $('input[type="hidden"][name="'+fieldId+'"]').val(file.url);
-    });
+    // open file or img picker, depending on the classname
+    if($(this).hasClass('upload-file')){
+        openFilepicker(function(file){
+          var fieldId = String(e.target.getAttribute("data-name"));
+          $('input[type="hidden"][name="'+fieldId+'"]').val(file.url);
+        });
+    } else if ($(this).hasClass('upload-img')) {
+        openImagepicker(function(file){
+          var fieldId = String(e.target.getAttribute("data-name"));
+          $('input[type="hidden"][name="'+fieldId+'"]').val(file.url);
+        });
+    } else {
+        // this case wont happen
+        alert("Not a file, not an image, so this is broken.");
+    }
 
     e.preventDefault();
   });
