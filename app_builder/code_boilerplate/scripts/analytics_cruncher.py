@@ -50,7 +50,7 @@ def get_total_active_visitors_list(num_days=7):
   days_arr = []
   for i in range(num_days):
     minutes_in_day = (i+1) * 24 * 60
-    days_arr.append(len(Visitor.objects.active(last_update__gte=minutes_in_day)))
+    days_arr.append(len(Visitor.objects.active(timeout=minutes_in_day)))
   return days_arr
 
 def get_total_page_views_dict():
