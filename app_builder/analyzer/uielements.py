@@ -317,7 +317,6 @@ class Form(DictInited, Hooked):
 
             }
 
-            # overridden resolve function => entity_resolved will only exist if action != login see the code for that fn.
             _resolve_attrs = (('entity', 'entity_resolved'),)
             # overridden resolve_page function => goto_pl will only exist if redirect = True. see the code for that fn.
             _pagelang_attrs = (('goto', 'goto_pl'), )
