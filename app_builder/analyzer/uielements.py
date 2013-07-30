@@ -303,11 +303,7 @@ class Form(DictInited, Hooked):
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
-                "actions": {"_one_of": [
-                                        {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                                        {"_type": [], "_default": [], "_each": {"_type": EmailAction}}
-                                        ]
-                            },
+                "actions": {"_type": [], "_default": deepcopy([]), "_each": { "_one_of": [{ "_type": RelationalAction}, {"_type": EmailAction}] }},
 
                 "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
                     # or (checked in validate, which is called in app's create from dict)
