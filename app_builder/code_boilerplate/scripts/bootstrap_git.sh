@@ -3,10 +3,12 @@
 # Bare Repository and Current Deployment directory
 
 EXPECTED_ARGS = 2
+
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo "Incorrect args. Generated tmp file"
   touch /tmp/incorrect_args.txt
+  exit
 fi
 
 echo "Starting bootstrap."
