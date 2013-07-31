@@ -10,6 +10,8 @@ mkdir $1
 cd $1
 echo "Initializing bare git repository."
 git init --bare
+cd ..
+chown -R v1factory:git $1
 echo "Changing directory to $2"
 cd /var/www/apps/$2
 git init
