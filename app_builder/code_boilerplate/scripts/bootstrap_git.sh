@@ -2,6 +2,13 @@
 # Takes in 2 arguments
 # Bare Repository and Current Deployment directory
 
+EXPECTED_ARGS = 2
+if [ $# -ne $EXPECTED_ARGS ]
+then
+  echo "Incorrect args. Generated tmp file"
+  touch /tmp/incorrect_args.txt
+fi
+
 echo "Starting bootstrap."
 cd /var/www/apps/$2
 echo "Changing directory to git-apps/$1"
