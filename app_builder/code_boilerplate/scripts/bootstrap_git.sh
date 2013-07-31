@@ -5,7 +5,7 @@
 echo "Starting bootstrap."
 cd /var/www/apps/$2
 echo "Changing directory to git-apps/$1"
-cd ../../git-apps/
+cd /var/www/git-apps/
 mkdir $1
 cd $1
 echo "Initializing bare git repository."
