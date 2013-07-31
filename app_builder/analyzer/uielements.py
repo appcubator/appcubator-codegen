@@ -197,7 +197,7 @@ class Form(DictInited, Hooked):
                     elif field.displayType == 'date-picker':
                         tagname = 'div'
                         base_attribs['class'] = 'date-picker-wrapper'
-                        inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name}) # TODO find alternative to id-{name}
+                        inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name})
                         img = Tag('img', { 'class': "date-picker-icon"})
                         content = [inp, img]
 
@@ -298,16 +298,14 @@ class Form(DictInited, Hooked):
                 # in the strings, "this" will refer to the instance of the entity being created in the form
                 # set fk could be something like, "this.teacher" or "CurrentUser.mygroup".
                 # to object could be something like, "Page.Teacher" or "Page.Group"
+                _datalang_attrs = (('set_fk', 'set_fk_dl'), ('to_object', 'to_object_dl'))
+
 
             _schema = {
                 "entity": {"_type": ""},
                 "action": {"_type": ""},
                 "fields": {"_type": [], "_each": {"_one_of": [{"_type": FormModelField},{"_type": FormNormalField},{"_type": ButtonField}]}},
-                "actions": {"_one_of": [
-                                        {"_type": [], "_default": [], "_each": {"_type": RelationalAction}},
-                                        {"_type": [], "_default": [], "_each": {"_type": EmailAction}}
-                                        ]
-                            },
+                "actions": {"_type": [], "_default": deepcopy([]), "_each": { "_one_of": [{ "_type": RelationalAction}, {"_type": EmailAction}] }},
 
                 "loginRoutes": {"_one_of": [{"_type" : [], "_each": {"_type": RoleRouting}}, {"_type": None}], "_default": None},
                     # or (checked in validate, which is called in app's create from dict)
@@ -382,11 +380,14 @@ class Form(DictInited, Hooked):
                         email_tuples.append(email_tuple)
                 return email_tuples
 
-            def get_relational_actions_as_tuples(self):
+            def get_relational_actions_as_tuples(self, dl=False):
                 ans = []
                 for a in self.actions:
                     if isinstance(a, Form.FormInfo.FormInfoInfo.RelationalAction):
-                        ans.append((a.set_fk, a.to_object))
+                        if dl:
+                            ans.append((a.set_fk_dl, a.to_object_dl))
+                        else:
+                            ans.append((a.set_fk, a.to_object))
                 return ans
 
             def string_ref_to_inst_only(self, s):
