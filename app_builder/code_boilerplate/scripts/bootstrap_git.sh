@@ -15,7 +15,7 @@ cd /var/www/apps/$2
 git init
 git add *.py webapp/
 git commit -am "Bootstrap Commit."
-git remote add appcubator v1factory@staging.appcubator.com:/var/www/git-apps/$2/
+git remote add appcubator v1factory@staging.appcubator.com:/var/www/git-apps/$1/
 git push appcubator master
 echo "Pushed code to bare git repository."
 echo "Success!"
