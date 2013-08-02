@@ -1,29 +1,26 @@
 #!/bin/bash
 # Takes in 2 arguments
-# Bare Repository and Current Deployment directory
+# Current Deployment directory ($1) and Repository name ($2)
 
-EXPECTED_ARGS = 2
+EXPECTED_ARGS=2
 
 if [ $# -ne $EXPECTED_ARGS ]
 then
   echo "Incorrect args. Generated tmp file"
-  touch /tmp/incorrect_args.txt
   exit
 fi
 
 echo "Starting bootstrap."
-cd /var/www/apps/$2
-echo "Changing directory to git-apps/$1"
-cd /var/www/git-apps/
-mkdir $1
-cd $1
-echo "Initializing bare git repository."
-git init --bare
-cd ..
-echo "Changing directory to $2"
-cd /var/www/apps/$2
-git init
+echo "Changing directory to /var/www/git-apps"
+cd /var/www/git-apps
+echo "Creating repository $2"
+git clone git@staging.appcubator.com:$2
+echo "Adding relevant files into $2"
+cd $2
+cp -r $1/webapp/ .
+cp -r $1/*.py .
 git add *.py webapp/
-git commit -am "Bootstrap Commit."
-git remote add appcubator git@staging.appcubator.com:/var/www/git-apps/$1/
+git commit -m "Bootstrap Commit."
+git push origin master
 echo "Success!"
+exit
