@@ -1,6 +1,6 @@
 {
 
     "on_deploy": ["python scripts/syncdb.py", "python scripts/create_superuser.py", "python scripts/admin_css.py", "bash -x scripts/bootstrap_git.sh"],
-    "on_redeploy": ["python scripts/syncdb.py", "python scripts/create_superuser.py", "python scripts/admin_css.py"]
+    "on_redeploy": ["python scripts/syncdb.py", "python scripts/create_superuser.py", "python scripts/admin_css.py"],
     "on_fast_deploy": ["python scripts/admin_css.py"]
 }
