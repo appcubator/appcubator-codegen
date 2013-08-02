@@ -66,8 +66,10 @@ class Coder(object):
                         i = Import(real_import_name, identifier, from_string=from_string)
                         import_codes.append(i)
 
-                    imports_by_from_string = { fs: [i for i in import_codes if i.from_string == fs] for fs in set([i.from_string for i in import_codes])}
-                    normal_imports = '\n'.join([i.render() for i in imports_by_from_string.get('',[])])
+                    # looks complicated, but it's just collecting the imports by same from_string,
+                    # using sorted to ensure determinism of outputted code, for fast deploy to work.
+                    imports_by_from_string = { fs: [i for i in import_codes if i.from_string == fs] for fs in sorted(set([i.from_string for i in import_codes]))}
+                    normal_imports = '\n'.join([i.render() for i in sorted(imports_by_from_string.get('',[]))])
                     try:
                         del imports_by_from_string['']
                     except KeyError:
