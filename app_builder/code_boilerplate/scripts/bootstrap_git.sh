@@ -11,6 +11,17 @@ then
 fi
 
 echo "Starting bootstrap."
+echo "Adding repository. Assuming public key has been added."
+cd /home/v1factory/gitolite-admin/conf
+echo "" >> gitolite.conf
+echo "repo $2" >> gitolite.conf
+# TODO: change this to the user
+echo "    RW+     =   www-data" >> gitolite.conf
+echo "    RW+     =   vps" >> gitolite.conf
+git add gitolite.conf
+# TODO: change this to the user
+git commit -m "Added repository $2 for vps"
+git push
 echo "Changing directory to /var/www/git-apps"
 cd /var/www/git-apps
 echo "Creating repository $2"
