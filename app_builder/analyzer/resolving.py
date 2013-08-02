@@ -23,7 +23,7 @@ class Resolvable(object):
                     try:
                         dest_list.append(self.app.find(path_string, name_allowed=True))
                     except DictInited.FindFailed:
-                        raise UserInputError("Stale reference", self._path)
+                        raise UserInputError("You deleted or changed something, but there are still references to those things. Please fix them.", self._path)
 
                 setattr(self, dest_attr, dest_list)
             else:
@@ -31,7 +31,7 @@ class Resolvable(object):
                     path_string = decode_braces(getattr(self, src_attr))
                     setattr(self, dest_attr,  self.app.find(path_string, name_allowed=True))
                 except DictInited.FindFailed:
-                    raise UserInputError("Stale reference", self._path)
+                    raise UserInputError("You deleted or changed something, but there are still references to those things. Please fix them.", self._path)
 
     def resolve_data(self):
         if not hasattr(self.__class__, '_datalang_attrs'):
@@ -42,7 +42,7 @@ class Resolvable(object):
             try:
                 dl = parse_to_datalang(datalang_string, self.app)
             except DictInited.FindFailed:
-                raise UserInputError("Stale reference", self._path)
+                raise UserInputError("You deleted or changed a field or table, but old references to those things still exist. Please fix them.", self._path)
             setattr(self, dest_attr, dl)
 
     def resolve_page(self):
@@ -54,7 +54,7 @@ class Resolvable(object):
             try:
                 pl = parse_to_pagelang(pagelang_string, self.app)
             except DictInited.FindFailed:
-                raise UserInputError("Stale reference", self._path)
+                raise UserInputError("You deleted or changed something, but there are still references to those things. Please fix them.", self._path)
             except pagelang.UrlDataMismatch:
                 raise UserInputError("Url data mismatch in pagelang", self._path)
             setattr(self, dest_attr, pl)
