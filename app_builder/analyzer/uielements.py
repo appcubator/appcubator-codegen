@@ -23,7 +23,8 @@ def get_uielement_by_type(type_string):
                           'thirdpartylogin' : ThirdPartyLogin,
                           'search' : Search,
                           'imageslider': ImageSlider,
-                          'facebookshare': FacebookShare
+                          'facebookshare': FacebookShare,
+                          'custom': CustomEl
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -863,3 +864,17 @@ class Iterator(DictInited, Hooked):
             loop_contents.append("{% endfor %}")
         return loop_wrapper
 
+
+class CustomEl(DictInited, Hooked):
+
+    _schema = {}
+
+    def __init__(self, *args, **kwargs):
+        super(CustomEl, self).__init__(*args, **kwargs)
+
+    def validate(self):
+        pass
+
+    def html(self):
+        t = Tag('div', {}, content='hi')
+        return t
