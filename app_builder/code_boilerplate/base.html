@@ -20,7 +20,8 @@
       .list-container .list-entry .node {
         position: relative;
       }
-      {% block css %}{% endblock %}
+      {% block css %}
+      {% endblock %}
     </style>
 </head>
 
@@ -35,13 +36,26 @@
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
 
-    {% block navbar %}{% endblock %}
+
+    <!-- BEGIN NAVBAR -->
+    {% block navbar %}
+    {% endblock %}
+    <!-- END NAVBAR -->
+
+
     <div class="row">
       <div class="container" style="position:relative;">
         {% block content %}{% endblock %}
       </div>
     </div>
-    {% block footer %}{% endblock %}
+
+
+    <!-- BEGIN FOOTER -->
+    {% block footer %}
+    {% endblock %}
+    <!-- END FOOTER -->
+
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}jslibs/underscore.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}jslibs/backbone.js"></script>
@@ -87,5 +101,7 @@
           $( ".date-picker-input" ).datepicker();
         });
     </script>
+    {% block js %}
+    {% endblock %}
 </body>
 </html>
