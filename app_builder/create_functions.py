@@ -86,8 +86,8 @@ class AppComponentFactory(object):
 
         # add audit fields.
         if entity.is_user:
-            cf_id = m.namespace.new_identifier('date_joined')
-            mf_id = m.namespace.new_identifier('last_login')
+            cf_id = 'date_joined'
+            mf_id = 'last_login'
 
             entity._django_model.created_field_identifier = cf_id
             entity._django_model.modified_field_identifier = mf_id
