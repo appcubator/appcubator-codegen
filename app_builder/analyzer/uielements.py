@@ -749,7 +749,7 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
         attrs["id"] = "fb-like"
         attrs["data-href"] = ""
         attrs["data-send"] = "true"
-        attrs["data-width"] = "450"
+        attrs["data-width"] = self.layout.width * 80
         attrs["data-show-faces"] = "true"
         attrs["data-font"] = "arial"
         attrs["onload"] = "this.dataset.href=window.location.href;"
