@@ -257,6 +257,12 @@ class DjangoTemplate(object):
                             c.uiels, top_offset=inner_top_offset, left_offset=inner_left_offset, recursive_num=recursive_num + 1)
         return tree
 
+    def add_css(self, something):
+        pass
+
+    def add_script(self, something):
+        pass
+
     def render(self):
         return env.get_template('htmlgen/djangotemplate.html').render(template=self)
 

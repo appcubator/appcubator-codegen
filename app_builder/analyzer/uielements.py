@@ -24,7 +24,7 @@ def get_uielement_by_type(type_string):
                           'search' : Search,
                           'imageslider': ImageSlider,
                           'facebookshare': FacebookShare,
-                          'custom': CustomEl
+                          'custom': CustomEl,
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -866,8 +866,15 @@ class Iterator(DictInited, Hooked):
 
 
 class CustomEl(DictInited, Hooked):
+    """
+    An evil little one-off uielement.
+    """
 
-    _schema = {}
+    _schema = {
+        "htmlC": { "_type": "" },
+        "cssC": { "_type": "" },
+        "jsC": { "_type": "" },
+    }
 
     def __init__(self, *args, **kwargs):
         super(CustomEl, self).__init__(*args, **kwargs)
@@ -875,6 +882,17 @@ class CustomEl(DictInited, Hooked):
     def validate(self):
         pass
 
+    def css(self):
+        t = Tag('style', {}, content=self.cssC)
+        return t
+
+    def script(self):
+        js = 'function($) {  "use strict";\n'
+        js += self.jsC + '\n',
+        js += '}(window.jQuery);'
+        t = Tag('script', {}, content=js)
+        return t
+
     def html(self):
-        t = Tag('div', {}, content='hi')
+        t = Tag('div', {}, content=self.htmlC)
         return t

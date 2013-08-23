@@ -14,7 +14,7 @@ from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectCh
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 from app_builder.analyzer.datalang import parse_to_datalang
-from app_builder.analyzer.uielements import Form
+from app_builder.analyzer.uielements import Form, CustomEl
 
 import logging
 logger = logging.getLogger("app_builder.create_functions")
@@ -325,6 +325,15 @@ class AppComponentFactory(object):
         t = DjangoTemplate(page._django_view.identifier)
                             # this is an underscore-name, so it should be good as a filename
         t.create_tree(page.uielements)
+
+        # css and script for custom code
+        for u in page.uielements:
+            if isinstance(u, CustomEl):
+                css_node = t.css()
+                t.add_css(css_node)
+                script_node = t.script()
+                t.add_script(script_node)
+
         t.page = page
         page._django_template = t
         page._django_view.template_code_path = t.filename
