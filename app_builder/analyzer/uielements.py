@@ -754,7 +754,7 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
         attrs["data-font"] = "arial"
         attrs["onload"] = "this.dataset.href=window.location.href;"
         widget = Tag('div', attrs, content="")
-        script = Tag('script', {type: 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
+        script = Tag('script', {'type': 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
         return Tag('div', {}, content=[widget, script])
 
 
@@ -893,7 +893,7 @@ class CustomEl(DictInited, Hooked):
         js = 'function($) {  "use strict";\n'
         js += self.jsC + '\n'
         js += '}(window.jQuery);'
-        t = Tag('script', {}, content=js, nl_to_br=False)
+        t = Tag('script', {'type': 'text/javascript'}, content=js, nl_to_br=False)
         return t
 
     def html(self):
