@@ -34,12 +34,13 @@ void_tags = ('area', 'base', 'br', 'col', 'embed', 'hr',
 
 class Tag(object):
 
-    def __init__(self, tagName, attribs, content=None, wrapper=False):
+    def __init__(self, tagName, attribs, content=None, wrapper=False, nl_to_br=True):
         assert tagName in valid_tags, "Invalid tagName %r" % tagName
         self.tagName = tagName
         self.id_string = attribs.get('id', '')
         self.class_string = attribs.get('class', '')
         self.style_string = attribs.get('style', '')
+        self.nl_to_br = nl_to_br
         attribs = deepcopy(attribs)
         try:
             del attribs['id']
@@ -63,17 +64,20 @@ class Tag(object):
         return self._content is not None and self._content != ""
 
     def content(self):
-        def handle_unknown_type(content):
+        def handle_unknown_type(content, nl_to_br=True):
             if content is None:
                 return ""
             assert not self.isSingle, "Content doesn't work for single tags"
             if isinstance(content, basestring):
-                return content.strip().replace('\n', '<br>')
+                if nl_to_br:
+                    return content.strip().replace('\n', '<br>')
+                else:
+                    return content.strip()
             try:
                 return content.render().strip()
             except AttributeError:
-                return '\n'.join([handle_unknown_type(c) for c in content]).strip()
-        return handle_unknown_type(self._content)
+                return '\n'.join([handle_unknown_type(c, nl_to_br=nl_to_br) for c in content]).strip()
+        return handle_unknown_type(self._content, nl_to_br=self.nl_to_br)
 
     def render(self):
         return env.get_template('htmltag.html').render(context=self)

@@ -886,16 +886,16 @@ class CustomEl(DictInited, Hooked):
         pass
 
     def css(self):
-        t = Tag('style', {}, content=self.cssC)
+        t = Tag('style', {}, content=self.cssC, nl_to_br=False)
         return t
 
     def script(self):
         js = 'function($) {  "use strict";\n'
         js += self.jsC + '\n'
         js += '}(window.jQuery);'
-        t = Tag('script', {}, content=js)
+        t = Tag('script', {}, content=js, nl_to_br=False)
         return t
 
     def html(self):
-        t = Tag('div', {}, content=self.htmlC)
+        t = Tag('div', {}, content=self.htmlC, nl_to_br=False)
         return t
