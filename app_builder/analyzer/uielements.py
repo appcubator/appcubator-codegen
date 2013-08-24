@@ -890,9 +890,9 @@ class CustomEl(DictInited, Hooked):
         return t
 
     def script(self):
-        js = 'function($) {  "use strict";\n'
+        js = '(function($) {  "use strict";\n'
         js += self.jsC + '\n'
-        js += '}(window.jQuery);'
+        js += '})(window.jQuery);'
         t = Tag('script', {'type': 'text/javascript'}, content=js, nl_to_br=False)
         return t
 
