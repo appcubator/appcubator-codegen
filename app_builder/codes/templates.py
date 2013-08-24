@@ -115,6 +115,8 @@ class DjangoTemplate(object):
         self.identifier = identifier
         self.filename = '%s.html' % identifier
         self.code_path = "webapp/templates/" + self.filename
+        self.css_nodes = []
+        self.js_nodes = []
 
     def split_to_cols(self, uiels, left_offset=0):
         """Given some uielements, separate them into non-overlapping columns"""
@@ -257,13 +259,15 @@ class DjangoTemplate(object):
                             c.uiels, top_offset=inner_top_offset, left_offset=inner_left_offset, recursive_num=recursive_num + 1)
         return tree
 
-    def add_css(self, something):
-        pass
+    def add_css(self, css_node):
+        self.css_nodes.append(css_node)
 
-    def add_script(self, something):
-        pass
+    def add_script(self, js_node):
+        self.js_nodes.append(js_node)
 
     def render(self):
+        self.css_code = '\n'.join([ n.render() for n in self.css_nodes ])
+        self.js_code = '\n'.join([ n.render() for n in self.js_nodes ])
         return env.get_template('htmlgen/djangotemplate.html').render(template=self)
 
 class DjangoEmailTemplate(object):

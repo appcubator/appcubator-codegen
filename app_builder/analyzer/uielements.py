@@ -882,13 +882,16 @@ class CustomEl(DictInited, Hooked):
     def validate(self):
         pass
 
+    def visit_strings(self, f):
+        pass
+
     def css(self):
         t = Tag('style', {}, content=self.cssC)
         return t
 
     def script(self):
         js = 'function($) {  "use strict";\n'
-        js += self.jsC + '\n',
+        js += self.jsC + '\n'
         js += '}(window.jQuery);'
         t = Tag('script', {}, content=js)
         return t

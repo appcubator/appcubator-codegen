@@ -329,9 +329,9 @@ class AppComponentFactory(object):
         # css and script for custom code
         for u in page.uielements:
             if isinstance(u, CustomEl):
-                css_node = t.css()
+                css_node = u.css()
                 t.add_css(css_node)
-                script_node = t.script()
+                script_node = u.script()
                 t.add_script(script_node)
 
         t.page = page
