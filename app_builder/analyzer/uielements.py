@@ -727,6 +727,7 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
     class FBInfo(DictInited):
         _schema = {
             "action": {"_type": ""},
+            "pageLink": {"_default": None, "_one_of": [{"_type": None}, {"_type": "", "_default": ""}]},
         }
 
     _schema = {
@@ -744,18 +745,30 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
         pass
 
     def html(self):
-        attrs = {}
-        attrs["class"] = "fb-like"
-        attrs["id"] = "fb-like"
-        attrs["data-href"] = ""
-        attrs["data-send"] = "true"
-        attrs["data-width"] = self.layout.width * 80
-        attrs["data-show-faces"] = "true"
-        attrs["data-font"] = "arial"
-        attrs["onload"] = "this.dataset.href=window.location.href;"
-        widget = Tag('div', attrs, content="")
-        script = Tag('script', {'type': 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
-        return Tag('div', {}, content=[widget, script])
+        if self.container_info.pageLink is not None:
+            attrs = {}
+            attrs["class"] = "fb-like-box"
+            attrs["data-href"] = self.container_info.pageLink
+            attrs["data-width"] = self.layout.width * 80
+            attrs["data-height"] = self.layout.height * 15
+            attrs["data-show-faces"] = "false"
+            attrs["data-header"] = "false"
+            attrs["data-stream"] = "false" 
+            attrs["data-show-border"] = "false"
+            return Tag('div', attrs, content="")
+        else:
+            attrs = {}
+            attrs["class"] = "fb-like"
+            attrs["id"] = "fb-like"
+            attrs["data-href"] = ""
+            attrs["data-send"] = "true"
+            attrs["data-width"] = self.layout.width * 80
+            attrs["data-show-faces"] = "true"
+            attrs["data-font"] = "arial"
+            attrs["onload"] = "this.dataset.href=window.location.href;"
+            widget = Tag('div', attrs, content="")
+            script = Tag('script', {'type': 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
+            return Tag('div', {}, content=[widget, script])
 
 
 class Iterator(DictInited, Hooked):
