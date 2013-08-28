@@ -24,6 +24,7 @@ def get_uielement_by_type(type_string):
                           'search' : Search,
                           'imageslider': ImageSlider,
                           'facebookshare': FacebookShare,
+                          'videoembed': VideoEmbed,
                           'custom': CustomEl,
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
@@ -770,6 +771,40 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
             script = Tag('script', {'type': 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
             return Tag('div', {}, content=[widget, script])
 
+
+class VideoEmbed(DictInited, Hooked):  # Facebook 'Like' Button
+    _hooks = ['resolve links href']
+
+    class VideoInfo(DictInited):
+        _schema = {
+            "action": {"_type": ""},
+            "youtubeURL": {"_type": "", "_default": ""},
+        }
+
+    _schema = {
+        "container_info": {"_type": VideoInfo},
+        "content_attribs": {"_type": {}}
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(VideoEmbed, self).__init__(*args, **kwargs)
+
+    def kwargs(self):
+        pass
+
+    def visit_strings(self, f):
+        pass
+
+    def html(self):
+        url = self.container_info.youtubeURL
+        url = url.replace('http://www.youtube.com/watch?v=', '')
+        attrs = {}
+        attrs["class"] = "video-embed"
+        attrs["src"] = "//www.youtube.com/embed/"+url+"?rel=0"
+        attrs["width"] = self.layout.width * 80
+        attrs["height"] = self.layout.height * 80
+        attrs["frameborder"] = 0
+        return Tag('iframe', attrs, content="")
 
 class Iterator(DictInited, Hooked):
     @property
