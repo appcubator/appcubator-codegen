@@ -919,13 +919,19 @@ class CustomEl(DictInited, Hooked):
     """
 
     _schema = {
-        "htmlC": { "_type": "" },
-        "cssC": { "_type": "" },
-        "jsC": { "_type": "" },
+        "htmlC": {"_one_of": [{ "_type": "" }, {"_type": None}] },
+        "cssC": {"_one_of": [{ "_type": "" }, {"_type": None}] },
+        "jsC": {"_one_of": [{ "_type": "" }, {"_type": None}] }
     }
 
     def __init__(self, *args, **kwargs):
         super(CustomEl, self).__init__(*args, **kwargs)
+        if self.htmlC is None:
+            self.htmlC = ""
+        if self.cssC is None:
+            self.cssC = ""
+        if self.jsC is None:
+            self.jsC = ""
 
     def validate(self):
         pass
