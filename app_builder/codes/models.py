@@ -5,7 +5,7 @@ from . import env
 import utils
 
 model_namespace_keywords = utils.class_namespace_keywords + ("clean", "clean_fields", "validate_unique", "save", "pk", "delete", "__unicode__", "__str__", "get_absolute_url", "permalink", "objects")
-user_model_namespace_keywords = ("password", "groups", "is_staff", "is_active", "is_superuser", "last_login", "date_joined", "get_username", "is_anonymous", "is_authenticated", "get_full_name", "set_password", "check_password", "set_unusable_password", "has_usable_password", "get_group_permissions", "get_all_permissions", "has_perm", "has_perms", "has_module_perms", "email_user", "get_profile")
+user_model_namespace_keywords = ("username", "first_name", "last_name", "password", "groups", "is_staff", "is_active", "is_superuser", "last_login", "date_joined", "get_username", "is_anonymous", "is_authenticated", "get_full_name", "set_password", "check_password", "set_unusable_password", "has_usable_password", "get_group_permissions", "get_all_permissions", "has_perm", "has_perms", "has_module_perms", "email_user", "get_profile")
 
 def block_namespace(namespace, list_of_ids):
     "Blocks a namespace with a list of ids"
