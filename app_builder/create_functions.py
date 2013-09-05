@@ -520,7 +520,7 @@ class AppComponentFactory(object):
                 self.fr_namespace.find_or_create_import('django.auth.authenticate', 'authenticate')
             fr = DjangoSignupFormReceiver(fr_id, uie._django_form.identifier, redirect=uie.container_info.form.redirect)
             if uie.container_info.form.redirect:
-                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False)
+                fr.locals['redirect_url_code'] = lambda: uie.container_info.form.goto_pl.to_code(template=False, seed_id="user") # this is what the newly created user is called.
             if uie.app.multiple_users:
                 role_field_id = uie.app.user_role_field._django_field.identifier
                 fr.add_signup_role(uie.app.userentity.get_role_id(uie.container_info.form.signupRole), role_field_id)
