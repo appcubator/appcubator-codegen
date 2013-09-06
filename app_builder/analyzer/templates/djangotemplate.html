@@ -3,7 +3,7 @@
 {{ "{% block title %}" }}{{ template.page.name }}{{ "{% endblock %}" }}
 
 {{ "{% block navbar %}" }}
-{{ template.page.navbar.render() }}
+{{ template.page.navbar.render(template.page) }}
 {{ "{% endblock %}" }}
 
 

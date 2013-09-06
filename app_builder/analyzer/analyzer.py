@@ -151,16 +151,19 @@ class Navbar(DictInited):
                 admin_check = self.url[len("internal://"):].lower()
                 return admin_check is not "admin" and admin_check is not "admin/"
 
+        def is_current_page(self, page):
+            return self.url_pl.page is page
+
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},
         "isHidden": {"_type": True},
         "links": {"_type": [], "_each": {"_type": NavbarItem}}
     }
 
-    def render(self):
+    def render(self, parent_page):
         if self.brandName is None:
             self.brandName = self.app.name
-        return env.get_template('navbar.html').render(navbar=self)
+        return env.get_template('navbar.html').render(navbar=self, page=parent_page)
 
 class Footer(DictInited):
 
