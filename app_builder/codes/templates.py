@@ -284,8 +284,9 @@ class DjangoEmailTemplate(object):
 
 
 class DjangoBaseHtml(object):
-    def __init__(self, description=None):
+    def __init__(self, description):
         self.description = description
+        self.code_path = "webapp/templates/base.html"
 
     def render(self):
         from jinja2 import escape
