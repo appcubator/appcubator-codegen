@@ -62,6 +62,7 @@ def create_codes(app):
                   'translate strings in uielements': factory.properly_name_variables_in_template,
                   'create row/col structure for nodes': factory.create_tree_structure_for_page_nodes,
                   'create tests for static pages': factory.create_tests_for_static_pages,
+                  'generate base.html': factory.create_base_html,
 
                   # ENTITY FORM RELATED HOOKS
                   'create form object': factory.create_django_form_for_entity_based_form,
@@ -160,6 +161,7 @@ def create_codes(app):
 
     # random app-wide stuff
     create('create tests for static pages', app)
+    create('generate base.html', app)
 
     return codes
 

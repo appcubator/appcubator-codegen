@@ -185,7 +185,7 @@ def write_to_fs(coder, css="", dest=None, for_user=False):
     copy_file('gitignore.gitignore', '.gitignore')
     f_transporter('scripts', 'scripts', shutil.copytree)
     f_transporter('settings', 'settings', shutil.copytree)
-    copy_file('base.html', 'webapp/templates/base.html')
+    #copy_file('base.html', 'webapp/templates/base.html') this is dynamic now. see controller.py
     copy_file('500.html', 'webapp/templates/500.html')
     copy_file('404.html', 'webapp/templates/404.html')
 

@@ -270,6 +270,7 @@ class DjangoTemplate(object):
         self.js_code = '\n'.join([ n.render() for n in self.js_nodes ])
         return env.get_template('htmlgen/djangotemplate.html').render(template=self)
 
+
 class DjangoEmailTemplate(object):
 
     def __init__(self, identifier, template_content):
@@ -280,3 +281,125 @@ class DjangoEmailTemplate(object):
 
     def render(self):
         return self.template_content
+
+
+class DjangoBaseHtml(object):
+    def __init__(self, description=None):
+        self.description = description
+
+    def render(self):
+        from jinja2 import escape
+        meta_line = """<meta name="description" content="%s">""" % escape(self.description)
+        new_base = BASEHTML.replace("#### META LINE ###", meta_line)
+        return new_base
+
+
+BASEHTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ STATIC_URL }}reset.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}style.css"/>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+    <title>{% block title %}{% endblock %}</title>
+    #### META LINE ###
+    <style>
+      .list-container {
+        overflow-y: scroll;
+      }
+      .list-entry {
+        position: relative;
+      }
+      .list-container .list-entry .node-wrapper {
+        position: absolute;
+      }
+      .list-container .list-entry .node {
+        position: relative;
+      }
+    </style>
+    {% block css %}
+    {% endblock %}
+</head>
+
+<body>
+    <!-- fb js sdk -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=379124615521841";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+
+    <!-- BEGIN NAVBAR -->
+    {% block navbar %}
+    {% endblock %}
+    <!-- END NAVBAR -->
+
+
+    <div class="row">
+      <div class="container" style="position:relative;">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+
+
+    <!-- BEGIN FOOTER -->
+    {% block footer %}
+    {% endblock %}
+    <!-- END FOOTER -->
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jslibs/underscore.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jslibs/backbone.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}jslibs/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}ajaxify.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.carousel').carousel().find('.carousel-indicators li').click(function(e) {
+          var target = e.currentTarget.dataset.target;
+          var index = parseInt(e.currentTarget.dataset.slideTo, 10);
+          $(target).data('carousel').pause().to(index).cycle();
+        }).end().on('slid', function(e) {
+          var $carousel = $(e.currentTarget);
+          // reset active indicator on slide change
+          // WTF bootstrap carousel is supposed to do this but oh well
+          var active = $carousel.find('.item.active');
+          var index = active.parent().children().index(active);
+          index = parseInt(index, 10);
+          $carousel.find('.carousel-indicators li')
+                   .removeClass('active')
+                   .eq(index).addClass('active');
+        });
+      });
+    </script>
+    <script type="text/javascript">
+        // sticky footer fix
+        var offset = $('.footer').offset().top;
+        var height = $('.footer').height();
+        var pageHeight = $(document.body).height();
+
+        function resize() {
+            if(offset+height < pageHeight) {
+                    $('.footer').css('margin-top', pageHeight - (offset+height) - 20);
+            }
+        }
+
+        resize();
+
+        $(function() {
+          $( ".date-picker-input" ).datepicker();
+        });
+    </script>
+    {% block js %}
+    {% endblock %}
+</body>
+</html>
+"""

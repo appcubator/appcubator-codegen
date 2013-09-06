@@ -7,7 +7,7 @@ from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, 
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, SearchQuery
 from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormReceiver
 from app_builder.codes import DjangoLoginForm, DjangoSignupForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
-from app_builder.codes import DjangoEmailTemplate
+from app_builder.codes import DjangoEmailTemplate, DjangoBaseHtml
 from app_builder.codes import DjangoImportExportResource, DjangoImportExportAdminModel, AdminRegisterLine
 from app_builder.codes import Emailer
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
@@ -288,6 +288,10 @@ class AppComponentFactory(object):
 
 
     # HTML GEN
+
+    def create_base_html(self, app):
+        c = DjangoBaseHtml(app.info['description'])
+        return c
 
     def properly_name_variables_in_template(self, page):
         def oneshot_datalang(s, req_handler):
