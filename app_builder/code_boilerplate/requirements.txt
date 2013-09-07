@@ -8,3 +8,4 @@ django-social-auth==0.7.22
 django-grappelli==2.4.5
 south==0.8.1
 django-import-export==0.1.3
+appcubator-analytics==0.1.0
