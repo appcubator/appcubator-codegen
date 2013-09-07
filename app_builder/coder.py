@@ -135,7 +135,7 @@ class Coder(object):
                 bootstrap.min.js
 """
 
-def write_to_fs(coder, css="", dest=None, for_user=False):
+def write_to_fs(coder, css="", dest=None):
     logger.info("Writing app to temporary directory.")
 
     if dest is None:
@@ -175,15 +175,10 @@ def write_to_fs(coder, css="", dest=None, for_user=False):
 
     # copy boilerplate
     logger.debug("Copying boilerplate files.")
-    if for_user:
-        for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
-            copy_file(fname, fname)
-    else:
-        for fname in ['__init__.py', 'manage.py', 'wsgi.py', 'scripts.json', '502.html']:
-            copy_file(fname, fname)
+    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
+        copy_file(fname, fname)
 
     copy_file('gitignore.gitignore', '.gitignore')
-    f_transporter('scripts', 'scripts', shutil.copytree)
     f_transporter('settings', 'settings', shutil.copytree)
     #copy_file('base.html', 'webapp/templates/base.html') this is dynamic now. see controller.py
     copy_file('500.html', 'webapp/templates/500.html')
