@@ -300,6 +300,7 @@ BASEHTML = """<!DOCTYPE html>
 <head>
     <link rel="stylesheet" href="{{ STATIC_URL }}reset.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap-responsive.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}style.css"/>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
