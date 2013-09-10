@@ -47,7 +47,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 
             'utils.import_export.resources':  'from import_export import resources',
             'utils.import_export.admin.model_admin': 'from import_export.admin import ImportExportModelAdmin',
-            'utils.requests':           'from requests import post',
+            'utils.requests.post':           'from requests import post',
 
             # Generated application imports
             'utils.webapp.emailer':           'from webapp.emailer import send_email',
@@ -89,7 +89,7 @@ FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.settings', 'dj
                                     'django.include', 'django.url',
                                     'django.url.statics', 'django.auth.logout_view',
                                     'django.cbv.redirect_view', 'django.url.reverse'),
-                 'webapp/emailer.py': ('utils.requests','django.template.render_to_string'),
+                 'webapp/emailer.py': ('utils.requests.post','django.template.render_to_string'),
                  'webapp/tests.py': ('django.test.TestCase', 'django.test.Client')
 }
 
