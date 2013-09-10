@@ -298,8 +298,11 @@ class DjangoBaseHtml(object):
 BASEHTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="{{ STATIC_URL }}reset.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap-responsive.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}style.css"/>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
