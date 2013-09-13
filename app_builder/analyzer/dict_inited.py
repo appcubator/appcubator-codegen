@@ -258,8 +258,7 @@ class DictInited(object):
                     try:
                         name_matches = [i for i in this_obj if i.name == attr]
                     except AttributeError:
-                        name_matches = [i for i in this_obj if i[
-                            'name'] == attr]
+                        name_matches = [i for i in this_obj if i['name'] == attr]
 
                     if len(name_matches) == 1:
                         this_obj = name_matches[0]
