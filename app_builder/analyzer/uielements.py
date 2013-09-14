@@ -541,7 +541,20 @@ class Search(DictInited, Hooked):
             self.searchOn = encode_braces('tables/%s' % self.searchOn)
 
         def validate(self):
+            # the ui should not allow this
             assert not self.searchPageResolved.is_external
+            # also the target page should contain a search list
+            target_page = self.searchPageResolved.page
+            has_any_list = False
+            has_search_list = False
+            for uie in target_page.uielements:
+                if isinstance(uie, Iterator):
+                    has_any_list = True
+                    if uie.container_info.search is not None:
+                        has_search_list = True
+                        break
+            assert_raise(has_any_list, UserInputError("Please add a Search Results list to the %s page, or make the search box point to a page that has one on it already." % target_page.name, self._path))
+            assert_raise(has_search_list, UserInputError("Please add a Search Results List (it's a special type of UI Element) to the %s page." % target_page.name, self._path))
 
     def html(self):
         list_of_field_ids = [unicode(f._django_field_identifier) for f in self.searchQuery.searchFieldsResolved]
