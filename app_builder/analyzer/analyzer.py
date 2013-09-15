@@ -336,10 +336,15 @@ class App(DictInited):
             ]
         }
         self.multiple_users = len(self.users) > 1
+
+        # pretend the user added a _role field (type text)
         if self.multiple_users:
             base_userdict['fields'].append({"name":"_role", "type":"text"})
 
+        # dict -> App
         userentity = Entity.create_from_dict(base_userdict)
+            # bind user_role_field to app for convenience
+            # define the standard username first name etc fields as "user fields" (Because they'll be in django user model)
         if self.multiple_users:
             user_role_field = [ f for f in userentity.fields if f.name == '_role' ][0] # linear search
             self.user_role_field = user_role_field
@@ -347,23 +352,33 @@ class App(DictInited):
         else:
             userentity.user_fields = [f for f in userentity.fields] # create a new list, bc the old one is mutated later
 
-        # combine all the fields from all the user roles
+        # for all the fields in all the users, dump them together
+        #   in preparation for next step: deduping.
         combined_fields_from_all_roles = []
         for u in self.users:
             combined_fields_from_all_roles.extend(u.fields)
 
         # deduplicate by name to get the total set of fields that the userprofile will have.
-        user_profile_field_set = []
+        user_profile_field_set = [] # <- this will contained the deduped set of user-added fields
+        dupe_user_field_set = [] # this is for remember which were duplicated, so we can fix the entity -> field reference (true deduping)
         for field in combined_fields_from_all_roles:
             dupe = False
             for already_added_field in user_profile_field_set:
                 if field.name == already_added_field.name:
                     dupe = True
+                    dupe_user_field_set.append((field, already_added_field))
                     assert_raise(field.type == already_added_field.type,
                             UserInputError("You changed the type of the field in this user, but a field with the same name has a different type in another user. Please make the types the same or delete the field and create a new one with a different name.", field._path))
                     break
             if not dupe:
                 user_profile_field_set.append(field)
+
+        for u in self.users:
+            for idx, f in enumerate(u.fields):
+                for dupe_field, relabel_target_field in dupe_user_field_set:
+                    if f is dupe_field:
+                        u.fields[idx] = relabel_target_field
+
 
         if self.multiple_users:
             userentity.user_profile_fields = user_profile_field_set + [user_role_field]
@@ -377,7 +392,7 @@ class App(DictInited):
 
         # create a table for each user
         for u in self.users:
-            user_inst = Entity.create_from_dict({'name': u.name, 'fields': []})
+            user_inst = Entity.create_from_dict({'name': u.name, 'fields': deepcopy([])})
             user_inst.fields.extend(userentity.user_fields) # first add the common fields (mem references to avoid duplication of data)
             user_inst.fields.extend(u.fields) # then extend with this user role custom fields
             user_inst.is_user = True
