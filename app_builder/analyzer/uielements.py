@@ -800,7 +800,7 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
     }
 
     def __init__(self, *args, **kwargs):
-        super(FacebookShare, self).__init__(*args, **kwargs)
+        super(BuyButton, self).__init__(*args, **kwargs)
 
     def kwargs(self):
         pass
