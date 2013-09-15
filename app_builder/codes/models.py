@@ -82,7 +82,7 @@ class DjangoField(object):
             # Date time defaults should be skipped now.
             # if field.canon_type in ['date', '_CREATED', '_MODIFIED']:
             #     kwargs['default'] = datetime.now
-            elif field.canon_type is 'number':
+            elif field.canon_type in ['number', 'money']:
                 kwargs['default'] = 0
         else:
             kwargs['blank'] = True

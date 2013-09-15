@@ -27,7 +27,7 @@ $(document).ready(function() {
       });
   }
 
-  $('form:not(.search-box)').each(function(ind, this_form) {
+  $('form:not(.search-box):not(.no-ajax)').each(function(ind, this_form) {
 
     $(this_form).submit(function(e) {
       var self = this;

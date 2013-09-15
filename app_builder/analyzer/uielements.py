@@ -808,31 +808,56 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
     def visit_strings(self, f):
         pass
 
+    """
+    <form name="_xclick" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+    <input type="hidden" name="cmd" value="_xclick">
+    <input type="hidden" name="business" value="me@mybusiness.com">
+    <input type="hidden" name="currency_code" value="USD">
+    <input type="hidden" name="item_name" value="Teddy Bear">
+    <input type="hidden" name="amount" value="12.99">
+    <input type="image" src="http://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+    </form>
+    """
     def html(self):
-        if self.container_info.pageLink is not None:
-            attrs = {}
-            attrs["class"] = "fb-like-box"
-            attrs["data-href"] = self.container_info.pageLink
-            attrs["data-width"] = self.layout.width * 80
-            attrs["data-height"] = self.layout.height * 15
-            attrs["data-show-faces"] = "false"
-            attrs["data-header"] = "false"
-            attrs["data-stream"] = "false" 
-            attrs["data-show-border"] = "false"
-            return Tag('div', attrs, content="")
-        else:
-            attrs = {}
-            attrs["class"] = "fb-like"
-            attrs["id"] = "fb-like"
-            attrs["data-href"] = ""
-            attrs["data-send"] = "true"
-            attrs["data-width"] = self.layout.width * 80
-            attrs["data-show-faces"] = "true"
-            attrs["data-font"] = "arial"
-            attrs["onload"] = "this.dataset.href=window.location.href;"
-            widget = Tag('div', attrs, content="")
-            script = Tag('script', {'type': 'text/javascript'}, content="document.getElementById('fb-like').dataset.href=window.location.href;")
-            return Tag('div', {}, content=[widget, script])
+        f_attrs = {}
+        f_attrs["name"] = "_xclick"
+        f_attrs["action"] = "https://www.paypal.com/cgi-bin/webscr"
+        f_attrs["method"] = "post"
+        f_attrs["class"] = "no-ajax"
+        i1_attrs = {}
+        i1_attrs["type"] = "hidden"
+        i1_attrs["name"] = "cmd"
+        i1_attrs["value"] = "_xclick"
+        inp1 = Tag('input', i1_attrs, content="")
+        i2_attrs = {}
+        i2_attrs["type"] = "hidden"
+        i2_attrs["name"] = "business"
+        i2_attrs["value"] = "iltercanberk@gmail.com"
+        inp2 = Tag('input', i2_attrs, content="")
+        i3_attrs = {}
+        i3_attrs["type"] = "hidden"
+        i3_attrs["name"] = "currency_code"
+        i3_attrs["value"] = "USD"
+        i3_attrs["type"] = "hidden"
+        inp3 = Tag('input', i3_attrs, content="")
+        i4_attrs = {}
+        i4_attrs["name"] = "item_name"
+        i4_attrs["value"] = "Teddy Bear"
+        i4_attrs["type"] = "hidden"
+        inp4 = Tag('input', i4_attrs, content="")
+        i5_attrs = {}
+        i5_attrs["name"] = "amount"
+        i5_attrs["value"] = self.container_info.amount
+        i5_attrs["type"] = "hidden"
+        inp5 = Tag('input', i5_attrs, content="")
+        i6_attrs = {}
+        i6_attrs["name"] = "submit"
+        i6_attrs["type"] = "submit"
+        i6_attrs["class"] = "btn"
+        i6_attrs["value"] = "Purchase"
+        inp6 = Tag('input', i6_attrs, content="")
+
+        return Tag('form', f_attrs, content=[inp1, inp2, inp3, inp4, inp5, inp6])
 
 class VideoEmbed(DictInited, Hooked):  # Facebook 'Like' Button
     _hooks = ['resolve links href']
