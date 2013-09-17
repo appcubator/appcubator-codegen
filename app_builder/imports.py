@@ -58,7 +58,7 @@ IMPORTS = { 'django.models':            'from django.db import models',
 
 
 FILE_IMPORT_MAP = { 'webapp/models.py': ('django.models', 'django.settings', 'django.models.AbstractUser', 'django.signals.post_save', 'utils.import_export.resources'),
-                 'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin', 'django.auth.admin'),
+                 'webapp/admin.py': ('utils.import_export.admin.model_admin', 'django.admin', 'django.auth.admin','django.forms'),
                  'webapp/pages.py': ('django.HttpResponse',
                                     'django.login_required',
                                     'django.require_GET',
