@@ -183,6 +183,8 @@ def write_to_fs(coder, css="", dest=None):
     #copy_file('base.html', 'webapp/templates/base.html') this is dynamic now. see controller.py
     copy_file('500.html', 'webapp/templates/500.html')
     copy_file('404.html', 'webapp/templates/404.html')
+    os.makedirs(join(dest, "webapp", "templates", "admin", "auth"))
+    copy_file("admin_user_create.html", join(dest, "webapp/templates/admin/auth/add_user.html"))
 
     # main webapp files
     logger.debug("Rendering and writing webapp files.")
