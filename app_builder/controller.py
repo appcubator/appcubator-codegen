@@ -124,7 +124,8 @@ def create_codes(app):
         create('create import export resource', ent)
         create('import model ie resource into admin', ent)
         create('create import export admin model', ent)
-        create('register admin model with admin site', ent)
+        if ent is not app.userentity: # for user entity, delay to end, because of some form/user admin stuff...
+            create('register admin model with admin site', ent)
 
     create('setup user roles namespace', app)
 
@@ -166,6 +167,7 @@ def create_codes(app):
     # random app-wide stuff
     create("create admin create user form", app),
     create("create useradmin", app),
+    create('register admin model with admin site', app.userentity)
     create('create tests for static pages', app)
     create('generate base.html', app)
 
