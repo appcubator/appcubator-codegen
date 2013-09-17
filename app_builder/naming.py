@@ -144,6 +144,7 @@ class Namespace(object):
         return new_ident
 
     def make_name_safe_and_unique(self, name):
+        name = unicode(name)
         candidate = make_safe(name)
 
         while candidate in (i.identifier for i in self.used_ids()):
