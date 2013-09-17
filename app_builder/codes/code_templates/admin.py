@@ -1,4 +1,4 @@
-
+from django.utils.translation import ugettext, ugettext_lazy as
 class MyUserAdmin(UserAdmin):
     """
     Overrides UserAdmin to accomodate our custom User Model,
