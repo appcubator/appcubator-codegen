@@ -199,6 +199,7 @@ class AppComponentFactory(object):
             form_obj = self._django_signup_admin_form
             identifier = self.admin_namespace.new_identifier('MyUserAdmin', cap_words=True)
             admin_obj = DjangoMyUserAdmin(identifier, form_obj.identifier)
+            self._django_myuseradmin = admin_obj # bind the result of this to self for future functions to lookup
             return admin_obj
 
     def register_model_with_admin(self, entity):
@@ -211,7 +212,10 @@ class AppComponentFactory(object):
         admin.site.register(User, MyUserAdmin)
         """
         if entity.is_user:
-            model_admin_id = self.admin_namespace.imports()['django.auth.admin']
+            if hasattr(self, '_django_signup_form'):
+                model_admin_id = self._django_myuseradmin.identifier
+            else:
+                model_admin_id = self.admin_namespace.imports()['django.auth.admin']
         else:
             model_admin_id = entity._django_model_admin.identifier
         return AdminRegisterLine(self.admin_namespace, entity._django_model.identifier, model_admin_id)

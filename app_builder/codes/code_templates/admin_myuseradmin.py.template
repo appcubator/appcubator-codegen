@@ -1,8 +1,8 @@
-{% set ssf = self.super_class_id %}
-{% set useradmin = self.imports['django.auth.admin'] %}
-{% set forms = self.imports['django.forms'] %}
+{% set ssf = form.super_class_id %}
+{% set useradmin = imports['django.auth.admin'] %}
+{% set forms = imports['django.forms'] %}
 from django.utils.translation import ugettext, ugettext_lazy as _
-class {{self.identifier}}({{useradmin}}):
+class {{form.identifier}}({{useradmin}}):
     """
     Overrides UserAdmin to accomodate our custom User Model,
     which takes email, name, and password.
