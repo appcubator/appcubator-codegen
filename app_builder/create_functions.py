@@ -174,12 +174,49 @@ class AppComponentFactory(object):
         import_symbol = ('webapp.models', m.identifier)
         self.admin_namespace.find_or_create_import(import_symbol, m.identifier)
 
+    def import_user_signup_form_into_admin(self):
+        """
+        This is required to create a wrapper signup form that plays nice w the UserAdmin
+            from webapp.forms import ShortSignupForm
+        """
+
+    def create_admin_create_user_form(self):
+        """
+        class AdminUserCreateForm(ShortSignupForm)
+        """
+        if hasattr(self, '_django_signup_form'):
+            # get the signup form internal obj, find/create an import identifier
+            original_signup_form_obj = self._django_signup_form
+            import_symbol = ('webapp.forms', original_signup_form_obj.identifier)
+            original_sform_id = ns.find_or_create_import(import_symbol, original_signup_form_obj.identifier)
+            identifier = self.admin_namespace.new_identifier('MyUserAdmin', cap_words=True)
+            form_obj = DjangoAdminUserCreationForm(identifier, original_sform_id)
+            return form_obj
+
+    def create_useradmin(self):
+        """
+        MyUserAdmin(UserAdmin)
+        """
+        # XXX XXX
+        """
+        if hasattr(self, '_django_signup_form'):
+            # get the signup form internal obj, find/create an import identifier
+            original_signup_form_obj = self._django_signup_form
+            import_symbol = ('webapp.forms', original_signup_form_obj.identifier)
+            original_sform_id = ns.find_or_create_import(import_symbol, original_signup_form_obj.identifier)
+            identifier = self.admin_namespace.new_identifier('MyUserAdmin', cap_words=True)
+            form_obj = DjangoAdminUserCreationForm(identifier, original_sform_id)
+            return form_obj
+        """
+
     def register_model_with_admin(self, entity):
         """
         Registers the ModelAdmin from admin.py with the Model from models.py.
         Drops a line of code to do this in webapp/admin.py
            If entity is user, register with django.contrib.auth.admin.UserAdmin
            Else, import from admin.py.
+
+        admin.site.register(User, MyUserAdmin)
         """
         if entity.is_user:
             model_admin_id = self.admin_namespace.imports()['django.auth.admin']

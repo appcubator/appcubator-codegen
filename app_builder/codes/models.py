@@ -200,6 +200,9 @@ class DjangoImportExportAdminModel(object):
     pass
         """.format(this_id=self.identifier, iem_admin_id=self.namespace.imports()['utils.import_export.admin.model_admin'])
 
+class DjangoMyUserAdmin(object):
+    pass
+
 class AdminRegisterLine(object):
     def __init__(self, parent_namespace, model_identifier, admin_id):
         self.code_path = 'webapp/admin.py'
