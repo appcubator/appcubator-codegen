@@ -189,8 +189,10 @@ class AppComponentFactory(object):
             original_signup_form_obj = self._django_signup_form
             import_symbol = ('webapp.forms', original_signup_form_obj.identifier)
             original_sform_id = ns.find_or_create_import(import_symbol, original_signup_form_obj.identifier)
-            identifier = self.admin_namespace.new_identifier('MyUserAdmin', cap_words=True)
+            identifier = self.admin_namespace.new_identifier('AdminUserCreateForm', cap_words=True)
             form_obj = DjangoAdminUserCreationForm(identifier, original_sform_id)
+
+            self._django_signup_admin_form = form_obj # bind the result of this to self for future functions to lookup
             return form_obj
 
     def create_useradmin(self):
@@ -198,15 +200,12 @@ class AppComponentFactory(object):
         MyUserAdmin(UserAdmin)
         """
         # XXX XXX
-        """
         if hasattr(self, '_django_signup_form'):
             # get the signup form internal obj, find/create an import identifier
-            original_signup_form_obj = self._django_signup_form
-            import_symbol = ('webapp.forms', original_signup_form_obj.identifier)
-            original_sform_id = ns.find_or_create_import(import_symbol, original_signup_form_obj.identifier)
+            form_obj = self._django_signup_admin_form
             identifier = self.admin_namespace.new_identifier('MyUserAdmin', cap_words=True)
-            form_obj = DjangoAdminUserCreationForm(identifier, original_sform_id)
-            return form_obj
+            admin_obj = DjangoMyUserAdmin(identifier, form_obj.identifier)
+            return admin_obj
         """
 
     def register_model_with_admin(self, entity):

@@ -201,7 +201,19 @@ class DjangoImportExportAdminModel(object):
         """.format(this_id=self.identifier, iem_admin_id=self.namespace.imports()['utils.import_export.admin.model_admin'])
 
 class DjangoMyUserAdmin(object):
-    pass
+    """
+    This is the django admin sign up form object, which is a wrapper around the original one.
+    required because django admin object expects the interface to match up w the django.contrib.auth one
+    """
+
+    def __init__(self, identifier, create_form_id):
+        self.identifier = identifier
+        self.namespace = naming.Namespace(parent_namespace=identifier.ns) # this is necessary so the coder can get imports from the namespace
+        self.code_path = 'webapp/admin.py'
+        self.super_class_id = create_form_id
+
+    def render(self):
+        return env.get_template('admin_myuseradmin.py.template').render(form=self, imports=self.namespace.imports(), locals={})
 
 class AdminRegisterLine(object):
     def __init__(self, parent_namespace, model_identifier, admin_id):

@@ -1,5 +1,8 @@
-from django.utils.translation import ugettext, ugettext_lazy as
-class MyUserAdmin(UserAdmin):
+{% set ssf = self.super_class_id %}
+{% set useradmin = self.imports['django.auth.admin'] %}
+{% set forms = self.imports['django.forms'] %}
+from django.utils.translation import ugettext, ugettext_lazy as _
+class {{self.identifier}}({{useradmin}}):
     """
     Overrides UserAdmin to accomodate our custom User Model,
     which takes email, name, and password.
@@ -9,7 +12,7 @@ class MyUserAdmin(UserAdmin):
     add_form_template = "admin/auth/add_user.html"
 
     # use this to validate, and process the form.
-    add_form = AdminUserCreateForm
+    add_form = {{ssf}}
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
