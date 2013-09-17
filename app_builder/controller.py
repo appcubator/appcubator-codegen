@@ -13,7 +13,7 @@ logger = logging.getLogger("codegen-controller")
 
 def create_codes(app):
     factory = AppComponentFactory()
-
+ 
     create_map = {# MODELS
                   'setup user roles namespace': factory.setup_userrole_namespace,
                   'create model for entity': factory.create_model,
@@ -79,7 +79,11 @@ def create_codes(app):
                   'create login form receiver if not exists': factory.create_login_form_receiver_if_not_created,
                   'create signup form receiver if not exists': factory.create_signup_form_receiver_if_not_created,
                   'create url for form receiver if not created': factory.create_url_for_form_receiver_if_not_created,
-                  'add emails for non general form receivers': factory.add_email_actions_to_non_general_form_receiver
+                  'add emails for non general form receivers': factory.add_email_actions_to_non_general_form_receiver,
+
+                  # AWKWARD CUSTOM USERMODEL ADMIN WORKAROUND
+                  "create admin create user form": factory.create_admin_create_user_form,
+                  "create useradmin": factory.create_useradmin,
     }
 
 
@@ -160,6 +164,8 @@ def create_codes(app):
     # create('search rendering', app.pages[len(app.pages)-1])
 
     # random app-wide stuff
+    create("create admin create user form", app),
+    create("create useradmin", app),
     create('create tests for static pages', app)
     create('generate base.html', app)
 
