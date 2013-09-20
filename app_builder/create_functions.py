@@ -348,6 +348,9 @@ class AppComponentFactory(object):
 
         translate_all = lambda x, template=True: re.sub(r'\{\{ ?([^\}]*) ?\}\}', lambda x: translate(x, template=template), x)
 
+        page.navbar.visit_strings(translate_all)
+        page.footer.visit_strings(translate_all)
+
         for uie in page.uielements:
             uie.visit_strings(translate_all)
 

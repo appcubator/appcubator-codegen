@@ -154,6 +154,9 @@ class Navbar(DictInited):
         def is_current_page(self, page):
             return self.url_pl.page is page
 
+        def visit_strings(self, f):
+            self.title = f(self.title)
+
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},
         "isHidden": {"_type": True},
@@ -164,6 +167,11 @@ class Navbar(DictInited):
         if self.brandName is None:
             self.brandName = self.app.name
         return env.get_template('navbar.html').render(navbar=self, page=parent_page)
+
+    def visit_strings(self, f):
+        self.brandName = f(self.brandName)
+        for l in self.links:
+            l.visit_strings(f)
 
 class Footer(DictInited):
 
@@ -176,6 +184,9 @@ class Footer(DictInited):
         _pagelang_attrs = (('url', 'url_pl'),)
         _resolve_attrs = ()
 
+        def visit_strings(self, f):
+            self.title = f(self.title)
+
     _schema = {
         "customText": {"_type": ""},
         "isHidden": {"_type": True},
@@ -184,6 +195,11 @@ class Footer(DictInited):
 
     def render(self):
         return env.get_template('footer.html').render(footer=self)
+
+    def visit_strings(self, f):
+        self.customText = f(self.customText)
+        for l in self.links:
+            l.visit_strings(f)
 
 from uielements import UIElement
 
