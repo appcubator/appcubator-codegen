@@ -169,7 +169,8 @@ class Navbar(DictInited):
         return env.get_template('navbar.html').render(navbar=self, page=parent_page)
 
     def visit_strings(self, f):
-        self.brandName = f(self.brandName)
+        if self.brandName is not None:
+            self.brandName = f(self.brandName)
         for l in self.links:
             l.visit_strings(f)
 
