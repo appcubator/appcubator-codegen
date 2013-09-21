@@ -9,6 +9,7 @@ from app_builder.codes import DjangoForm, DjangoFormReceiver, DjangoCustomFormRe
 from app_builder.codes import DjangoLoginForm, DjangoSignupForm, DjangoLoginFormReceiver, DjangoSignupFormReceiver
 from app_builder.codes import DjangoEmailTemplate, DjangoBaseHtml
 from app_builder.codes import DjangoImportExportResource, DjangoImportExportAdminModel, AdminRegisterLine
+from app_builder.codes import DjangoAdminUserCreationForm, DjangoMyUserAdmin
 from app_builder.codes import Emailer
 from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
 from app_builder.imports import create_import_namespace
@@ -174,15 +175,47 @@ class AppComponentFactory(object):
         import_symbol = ('webapp.models', m.identifier)
         self.admin_namespace.find_or_create_import(import_symbol, m.identifier)
 
+    def create_admin_create_user_form(self, app):
+        """
+        class AdminUserCreateForm(ShortSignupForm)
+        """
+        if hasattr(self, '_django_signup_form'):
+            # get the signup form internal obj, find/create an import identifier
+            original_signup_form_obj = self._django_signup_form
+            import_symbol = ('webapp.forms', original_signup_form_obj.identifier)
+            original_sform_id = self.admin_namespace.find_or_create_import(import_symbol, original_signup_form_obj.identifier)
+            identifier = self.admin_namespace.new_identifier('AdminUserCreateForm', cap_words=True)
+            form_obj = DjangoAdminUserCreationForm(identifier, original_sform_id)
+
+            self._django_signup_admin_form = form_obj # bind the result of this to self for future functions to lookup
+            return form_obj
+
+    def create_useradmin(self, app):
+        """
+        MyUserAdmin(UserAdmin)
+        """
+        if hasattr(self, '_django_signup_form'):
+            # get the signup form internal obj, find/create an import identifier
+            form_obj = self._django_signup_admin_form
+            identifier = self.admin_namespace.new_identifier('MyUserAdmin', cap_words=True)
+            admin_obj = DjangoMyUserAdmin(identifier, form_obj.identifier)
+            self._django_myuseradmin = admin_obj # bind the result of this to self for future functions to lookup
+            return admin_obj
+
     def register_model_with_admin(self, entity):
         """
         Registers the ModelAdmin from admin.py with the Model from models.py.
         Drops a line of code to do this in webapp/admin.py
            If entity is user, register with django.contrib.auth.admin.UserAdmin
            Else, import from admin.py.
+
+        admin.site.register(User, MyUserAdmin)
         """
         if entity.is_user:
-            model_admin_id = self.admin_namespace.imports()['django.auth.admin']
+            if hasattr(self, '_django_signup_form'):
+                model_admin_id = self._django_myuseradmin.identifier
+            else:
+                model_admin_id = self.admin_namespace.imports()['django.auth.admin']
         else:
             model_admin_id = entity._django_model_admin.identifier
         return AdminRegisterLine(self.admin_namespace, entity._django_model.identifier, model_admin_id)
@@ -314,6 +347,9 @@ class AppComponentFactory(object):
                 logger.error("oneshot datalang %r blew up here... %s" % (m.group(1), traceback.format_exc()))
 
         translate_all = lambda x, template=True: re.sub(r'\{\{ ?([^\}]*) ?\}\}', lambda x: translate(x, template=template), x)
+
+        page.navbar.visit_strings(translate_all)
+        page.footer.visit_strings(translate_all)
 
         for uie in page.uielements:
             uie.visit_strings(translate_all)

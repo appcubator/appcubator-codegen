@@ -137,14 +137,14 @@ class Namespace(object):
             candidate = us2cw(candidate)
         else:
             if not ignore_case:
-                candidate = str(candidate).lower()
+                candidate = unicode(candidate).lower()
         candidate = self.make_name_safe_and_unique(candidate)
         new_ident = Identifier(candidate, self, ref=ref, is_import=is_import)
         self.identifiers.append(new_ident)
         return new_ident
 
     def make_name_safe_and_unique(self, name):
-        name = str(name) # in case it's identifier type
+        name = unicode(name)
         candidate = make_safe(name)
 
         while candidate in (i.identifier for i in self.used_ids()):

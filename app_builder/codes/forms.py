@@ -52,3 +52,18 @@ class DjangoSignupForm(DjangoForm):
     def render(self):
         self.included_field_string = "'email',"
         return env.get_template('form_signup.py.template').render(form=self, imports=self.namespace.imports(), locals={})
+
+class DjangoAdminUserCreationForm(DjangoForm):
+    """
+    This is the django admin sign up form object, which is a wrapper around the original one.
+    required because django admin object expects the interface to match up w the django.contrib.auth one
+    """
+
+    def __init__(self, identifier, original_sform_id):
+        self.identifier = identifier
+        self.namespace = naming.Namespace(parent_namespace=identifier.ns) # this is necessary so the coder can get imports from the namespace
+        self.code_path = 'webapp/admin.py'
+        self.super_class_id = original_sform_id
+
+    def render(self):
+        return env.get_template('form_signup_admin.py.template').render(form=self, imports=self.namespace.imports(), locals={})
