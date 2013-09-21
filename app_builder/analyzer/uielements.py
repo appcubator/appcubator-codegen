@@ -790,7 +790,6 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
 
     class BuyButtonInfo(DictInited):
         _schema = {
-            "action": {"_type": ""},
             "amount": {"_type": ""},
         }
 
@@ -806,7 +805,8 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         pass
 
     def visit_strings(self, f):
-        pass
+        old_amount = self.container_info.amount
+        self.container_info.amount = f(old_amount)
 
     """
     <form name="_xclick" action="https://www.paypal.com/cgi-bin/webscr" method="post">
