@@ -788,9 +788,13 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
 class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
     _hooks = ['resolve links href']
 
+    # TODO make the buy button info a number | datalang type
     class BuyButtonInfo(DictInited):
         _schema = {
-            "amount": {"_type": ""},
+            "business_name": {"_type": ""}, # this was the email address
+            "item_name": {"_type": ""}, # this gets displayed on the paypal page
+            "label": {"_type": ""}, # this is the label on the button
+            "amount": {"_type": ""}, # a string representation of the number or the datalang for a price (USD) type # TODO validate this.
         }
 
     _schema = {
@@ -798,8 +802,10 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         "action": {"_type": ""}
     }
 
+    """
     def __init__(self, *args, **kwargs):
         super(BuyButton, self).__init__(*args, **kwargs)
+    """
 
     def kwargs(self):
         pass
@@ -807,6 +813,12 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
     def visit_strings(self, f):
         old_amount = self.container_info.amount
         self.container_info.amount = f(old_amount)
+
+        old_item_name = self.container_info.item_name
+        self.container_info.item_name = f(old_item_name)
+
+        old_label = self.container_info.label
+        self.container_info.label = f(old_label)
 
     """
     <form name="_xclick" action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -819,42 +831,42 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
     </form>
     """
     def html(self):
-        f_attrs = {}
-        f_attrs["name"] = "_xclick"
-        f_attrs["action"] = "https://www.paypal.com/cgi-bin/webscr"
-        f_attrs["method"] = "post"
-        f_attrs["class"] = "no-ajax"
-        i1_attrs = {}
-        i1_attrs["type"] = "hidden"
-        i1_attrs["name"] = "cmd"
-        i1_attrs["value"] = "_xclick"
+        f_attrs = { "name": "_xclick",
+                    "action": "https://www.paypal.com/cgi-bin/webscr",
+                    "method": "post",
+                    "class": "no-ajax",
+                    }
+        i1_attrs = { "type": "hidden",
+                     "name": "cmd",
+                     "value": "_xclick",
+                     }
         inp1 = Tag('input', i1_attrs, content="")
-        i2_attrs = {}
-        i2_attrs["type"] = "hidden"
-        i2_attrs["name"] = "business"
-        i2_attrs["value"] = "iltercanberk@gmail.com"
+        i2_attrs = { "type": "hidden",
+                     "name": "business",
+                     "value": self.business_name,
+                     }
         inp2 = Tag('input', i2_attrs, content="")
-        i3_attrs = {}
-        i3_attrs["type"] = "hidden"
-        i3_attrs["name"] = "currency_code"
-        i3_attrs["value"] = "USD"
-        i3_attrs["type"] = "hidden"
+        i3_attrs = { "type": "hidden",
+                     "name": "currency_code",
+                     "value": "USD",
+                     "type": "hidden",
+                     }
         inp3 = Tag('input', i3_attrs, content="")
-        i4_attrs = {}
-        i4_attrs["name"] = "item_name"
-        i4_attrs["value"] = "Teddy Bear"
-        i4_attrs["type"] = "hidden"
+        i4_attrs = { "name": "item_name",
+                     "value": self.container_info.item_name,
+                     "type": "hidden",
+                     }
         inp4 = Tag('input', i4_attrs, content="")
-        i5_attrs = {}
-        i5_attrs["name"] = "amount"
-        i5_attrs["value"] = self.container_info.amount
-        i5_attrs["type"] = "hidden"
+        i5_attrs = { "name": "amount",
+                     "value": self.container_info.amount,
+                     "type": "hidden",
+                     }
         inp5 = Tag('input', i5_attrs, content="")
-        i6_attrs = {}
-        i6_attrs["name"] = "submit"
-        i6_attrs["type"] = "submit"
-        i6_attrs["class"] = "btn"
-        i6_attrs["value"] = "Purchase"
+        i6_attrs = { "name": "submit",
+                     "type": "submit",
+                     "class": "btn",
+                     "value": self.container_info.label,
+                     }
         inp6 = Tag('input', i6_attrs, content="")
 
         return Tag('form', f_attrs, content=[inp1, inp2, inp3, inp4, inp5, inp6])
