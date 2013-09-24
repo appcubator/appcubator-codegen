@@ -11,9 +11,9 @@ logger = logging.getLogger('app_builder.controller')
 logger = logging.getLogger("codegen-controller")
 
 
-def create_codes(app):
+def create_codes(app, provider_manager=None):
     factory = AppComponentFactory()
- 
+
     create_map = {# MODELS
                   'setup user roles namespace': factory.setup_userrole_namespace,
                   'create model for entity': factory.create_model,
