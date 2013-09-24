@@ -6,4 +6,11 @@ PROVIDERS = {
 }
 
 class ProviderManager(object):
-    pass
+    def __init__(self, provider_data_dict):
+        self.provider_data = provider_data_dict
+
+    def create_settings_chunk(self):
+        """
+        NYI
+        should return a settings codechunk w all the stuff in it.
+        """

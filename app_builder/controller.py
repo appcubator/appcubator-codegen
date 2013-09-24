@@ -1,18 +1,16 @@
-from app_builder.coder import Coder
-from app_builder.create_functions import AppComponentFactory
+from coder import Coder
+from create_functions import AppComponentFactory
+from providers import ProviderManager
 from pyflakes.api import check
 
 import logging
 import traceback
-import logging
 
 logger = logging.getLogger('app_builder.controller')
 
-logger = logging.getLogger("codegen-controller")
-
-
-def create_codes(app, provider_manager=None):
+def create_codes(app, provider_data=None):
     factory = AppComponentFactory()
+    provider_manager = ProviderManager(provider_data)
 
     create_map = {# MODELS
                   'setup user roles namespace': factory.setup_userrole_namespace,
