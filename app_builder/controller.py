@@ -8,6 +8,26 @@ import traceback
 logger = logging.getLogger('app_builder.controller')
 
 def create_codes(app, uid=None, email=None, provider_data=None):
+    uid = uid or "random"
+    email = email or "team@appcubator.com"
+
+    DEFAULT_PROVIDER_DATA = {
+          "FACEBOOK": {
+                        "FACEBOOK_APP_ID": '145000778994158',
+                        "FACEBOOK_API_SECRET": 'f5f3f2a69011b36da2005fbea8aa3476'
+                        },
+          "TWITTER": {
+                        "TWITTER_CONSUMER_KEY": '4XzJvQ1nZTMVcVmPwBjw',
+                        "TWITTER_CONSUMER_SECRET": 'YejAm6MhKfwh2YhqcG4Ljf0Hakgsnp5HzfyBA7bJBDk'
+                        },
+          "LINKEDIN": {
+                        "LINKEDIN_CONSUMER_KEY": 't0q97cjtk5kf',
+                        "LINKEDIN_CONSUMER_SECRET": '1R8SdQPxL9rzAlvD'
+                        }
+          }
+
+    provider_data = provider_data or DEFAULT_PROVIDER_DATA
+
     factory = AppComponentFactory()
     settings = SettingsFactory(uid, email, provider_data)
 

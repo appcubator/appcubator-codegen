@@ -771,6 +771,8 @@ class SettingsFactory(object):
         template_name = "settings_base.py.template"
 
         def __init__(self, secret_key, provider_chunks):
+            settings_namespace = naming.Namespace()
+            super(SettingsFactory.DjangoSettings, self).__init__(settings_namespace)
             self.code_path = "settings/common.py"
             self.locals['secret_key'] = secret_key
             self.locals['provider_chunks'] = provider_chunks
@@ -804,9 +806,9 @@ class SettingsFactory(object):
             if k not in self.provider_data:
                 continue
             for k2 in PROVIDERS[k]:
-                if k2 not in PROVIDERS[k]:
+                if k2 not in self.provider_data[k]:
                     raise IncompleteProviderData
-                ac = AssignStatement(k2, PROVIDERS[k][k2])
+                ac = AssignStatement(k2, self.provider_data[k][k2])
                 assign_chunks.append(ac)
         return assign_chunks
 
