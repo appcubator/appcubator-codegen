@@ -11,7 +11,7 @@ from app_builder.codes import DjangoEmailTemplate, DjangoBaseHtml
 from app_builder.codes import DjangoImportExportResource, DjangoImportExportAdminModel, AdminRegisterLine
 from app_builder.codes import DjangoAdminUserCreationForm, DjangoMyUserAdmin
 from app_builder.codes import Emailer
-from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement
+from app_builder.codes.utils import AssignStatement, FnCodeChunk, RoleRedirectChunk, EmailStatement, AnonymousCode
 from app_builder.imports import create_import_namespace
 from app_builder import naming
 from app_builder.analyzer.datalang import parse_to_datalang
@@ -323,10 +323,6 @@ class AppComponentFactory(object):
     # HTML GEN
 
     def create_base_html(self, app):
-        c = DjangoBaseHtml(app.info['description'])
-        return c
-
-    def create_settings_py(self, app):
         c = DjangoBaseHtml(app.info['description'])
         return c
 
@@ -762,3 +758,62 @@ class AppComponentFactory(object):
                 ident_url_pairs.append((p._django_view.identifier, '/' + ''.join([x + '/' for x in p.url.urlparts])))
         d = DjangoStaticPagesTestCase(ident_url_pairs, self.tests_namespace)
         return d
+
+
+from hashlib import md5
+class SettingsFactory(object):
+
+    class IncompleteProviderData(Exception):
+        pass
+
+
+    class DjangoSettings(AnonymousCode):
+        template_name = "settings_base.py.template"
+
+        def __init__(self, secret_key, provider_chunks):
+            self.code_path = "settings/common.py"
+            self.locals['secret_key'] = secret_key
+            self.locals['provider_chunks'] = provider_chunks
+
+    PROVIDERS = {
+            "FACEBOOK": ("FACEBOOK_APP_ID", "FACEBOOK_API_SECRET"),
+            "TWITTER": ("TWITTER_CONSUMER_KEY", "TWITTER_CONSUMER_SECRET"),
+            "LINKEDIN": ("LINKEDIN_CONSUMER_KEY", "LINKEDIN_CONSUMER_SECRET"),
+    }
+
+    def __init__(self, uid, email, provider_data):
+        """
+        all inputs should be strings
+        """
+        self.uid = uid
+        self.email = email
+        self.provider_data = provider_data
+        self.md5er = md5()
+        self.md5er.update("KOALABEARS")
+        self.md5er.update(self.uid)
+
+    def secret_key(self):
+        return self.md5er.hexdigest()
+
+    def provider_assign_chunks(self):
+        # Iterate over providers, and if key is found, then add all provider data as assign statements
+        assign_chunks = []
+        PROVIDERS = self.__class__.PROVIDERS
+        IncompleteProviderData = self.__class__.IncompleteProviderData
+        for k in PROVIDERS:
+            if k not in self.provider_data:
+                continue
+            for k2 in PROVIDERS[k]:
+                if k2 not in PROVIDERS[k]:
+                    raise IncompleteProviderData
+                ac = AssignStatement(k2, PROVIDERS[k][k2])
+                assign_chunks.append(ac)
+        return assign_chunks
+
+    def create_settings(self, X):
+        """
+        should return a settings codechunk w all the stuff in it.
+        First arg is a throw-away to ascribe to the interface
+        """
+        code = self.__class__.DjangoSettings(self.secret_key(), self.provider_assign_chunks())
+        return code

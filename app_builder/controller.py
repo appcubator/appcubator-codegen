@@ -1,6 +1,5 @@
 from coder import Coder
-from create_functions import AppComponentFactory
-from providers import ProviderManager
+from create_functions import AppComponentFactory, SettingsFactory
 from pyflakes.api import check
 
 import logging
@@ -8,9 +7,9 @@ import traceback
 
 logger = logging.getLogger('app_builder.controller')
 
-def create_codes(app, provider_data=None):
+def create_codes(app, uid=None, email=None, provider_data=None):
     factory = AppComponentFactory()
-    provider_manager = ProviderManager(provider_data)
+    settings = SettingsFactory(uid, email, provider_data)
 
     create_map = {# MODELS
                   'setup user roles namespace': factory.setup_userrole_namespace,
@@ -61,7 +60,7 @@ def create_codes(app, provider_data=None):
                   'create row/col structure for nodes': factory.create_tree_structure_for_page_nodes,
                   'create tests for static pages': factory.create_tests_for_static_pages,
                   'generate base.html': factory.create_base_html,
-                  'generate settings.py': factory.create_settings_py,
+                  'generate settings.py': settings.create_settings,
 
                   # ENTITY FORM RELATED HOOKS
                   'create form object': factory.create_django_form_for_entity_based_form,
@@ -170,7 +169,7 @@ def create_codes(app, provider_data=None):
     create('create tests for static pages', app)
     create('generate base.html', app)
 
-    #create('generate settings.py', app)
+    create('generate settings.py', None)
 
     return codes
 
