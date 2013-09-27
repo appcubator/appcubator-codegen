@@ -61,6 +61,7 @@ def create_codes(app, provider_data=None):
                   'create row/col structure for nodes': factory.create_tree_structure_for_page_nodes,
                   'create tests for static pages': factory.create_tests_for_static_pages,
                   'generate base.html': factory.create_base_html,
+                  'generate settings.py': factory.create_settings_py,
 
                   # ENTITY FORM RELATED HOOKS
                   'create form object': factory.create_django_form_for_entity_based_form,
@@ -168,6 +169,8 @@ def create_codes(app, provider_data=None):
     create('register admin model with admin site', app.userentity)
     create('create tests for static pages', app)
     create('generate base.html', app)
+
+    #create('generate settings.py', app)
 
     return codes
 

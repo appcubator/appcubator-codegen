@@ -326,6 +326,10 @@ class AppComponentFactory(object):
         c = DjangoBaseHtml(app.info['description'])
         return c
 
+    def create_settings_py(self, app):
+        c = DjangoBaseHtml(app.info['description'])
+        return c
+
     def properly_name_variables_in_template(self, page):
         def oneshot_datalang(s, req_handler):
             """
@@ -667,6 +671,7 @@ class AppComponentFactory(object):
         form_model = uie.container_info.form # bind to this name to save me some typing
         fr = uie._django_form_receiver
 
+        # TODO FIXME translate ahead of time.
         def translate(s):
             dl = datalang.parse_to_datalang(s, uie.app)
             return dl.to_code(context=fr.namespace, seed_id=fr.locals['obj'])

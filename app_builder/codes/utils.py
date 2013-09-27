@@ -81,4 +81,30 @@ class AssignStatement(object):
 
     def render(self):
         return "%s = %s" % (self.left_side, self.right_side)
-        
+
+from . import env
+
+class AnonymousCode(object):
+    """
+    A trivial example:
+
+    class SettingsCode(AnonymousCode):
+        template_name = "settings.py.template"
+
+        def add_fb(self, fb1, fb2):
+            self.locals['FB_KEY'] = repr(fb1)
+            self.locals['FB_SEC'] = fb2
+
+    sc = SettingsCode(settings_namespace)
+    sc.add_fb("abc", "123")
+    sc.render()
+    """
+
+    template_name = "something.html"
+
+    def __init__(self, namespace):
+        self.namespace = namespace
+        self.locals = {}
+
+    def render(self):
+        return env.get_template(self.__class__.template_name).render(locals=self.locals, imports=self.namespace.imports())
