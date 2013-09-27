@@ -80,7 +80,7 @@ def parse_to_pagelang(pagelang_string, app):
     internal://Tweet_page/?Tweet=loop.Tweet& ... qstring (datalang)
     """
     if not pagelang_string.startswith("internal://"):
-        assert pagelang_string.startswith("http://") or pagelang_string.startswith("https://"), "Not a valid link bro: %r" % pagelang_string
+        assert pagelang_string.startswith("http://") or pagelang_string.startswith("mailto://") or pagelang_string.startswith("https://"), "Not a valid link bro: %r" % pagelang_string
         return PageLang(pagelang_string, app, external=True)
     else:
         page_name, datalang_data = parse_lang(pagelang_string)
