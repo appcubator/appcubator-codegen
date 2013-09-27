@@ -808,7 +808,10 @@ class SettingsFactory(object):
             for k2 in PROVIDERS[k]:
                 if k2 not in self.provider_data[k]:
                     raise IncompleteProviderData
-                ac = AssignStatement(k2, self.provider_data[k][k2])
+                # trust but verify sanitized inputs
+                if re.search(r'[^a-zA-Z0-9_\-]', self.provider_data[k][k2]):
+                    assert False
+                ac = AssignStatement(k2, "\"%s\"" % self.provider_data[k][k2])
                 assign_chunks.append(ac)
         return assign_chunks
 

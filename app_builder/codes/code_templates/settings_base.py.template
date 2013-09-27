@@ -124,12 +124,10 @@ FACEBOOK_SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/__facebook_social_auth_callback/'
 TWITTER_SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/__twitter_social_auth_callback/'
 LINKEDIN_SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/__linkedin_social_auth_callback/'
 
-FACEBOOK_APP_ID = '145000778994158'
-FACEBOOK_API_SECRET = 'f5f3f2a69011b36da2005fbea8aa3476'
-TWITTER_CONSUMER_KEY         = '4XzJvQ1nZTMVcVmPwBjw'
-TWITTER_CONSUMER_SECRET      = 'YejAm6MhKfwh2YhqcG4Ljf0Hakgsnp5HzfyBA7bJBDk'
-LINKEDIN_CONSUMER_KEY        = 'etouje3xl27v'
-LINKEDIN_CONSUMER_SECRET     = 'xA3PGmrilqvd8COu'
+
+{% for social_assign_statement in locals['provider_chunks'] %}
+{{ social_assign_statement }}
+{% endfor %}
 
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 LINKEDIN_SCOPE = ['r_basicprofile', 'r_emailaddress']
