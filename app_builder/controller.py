@@ -102,6 +102,9 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                   # AWKWARD CUSTOM USERMODEL ADMIN WORKAROUND
                   "create admin create user form": factory.create_admin_create_user_form,
                   "create useradmin": factory.create_useradmin,
+
+                  # PLUGINS
+                  "require plugin data": settings.require_data,
     }
 
 
