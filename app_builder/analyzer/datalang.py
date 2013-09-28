@@ -1,4 +1,5 @@
 "DataLang parsing and intermediate representation"
+from dict_inited import DictInited
 
 class DataLang(object):
     def __init__(self, context_type, seed_entity, field_entity_accesstype_pairs, result_type):
@@ -95,7 +96,8 @@ def datalang_to_fields(starting_ent, tokens):
                     if last_item_in_loop:
                         obj_type = 'object'
             except IndexError:
-                raise Exception("Couldn't find field with the name or related name: %r" % tok)
+		        raise DictInited.FindFailed(
+                                "Couldn't find thing with name or related name name=%r" % (tok,))
 
     return (field_entity_accesstype_tuples, obj_type)
 

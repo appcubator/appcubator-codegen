@@ -293,7 +293,7 @@ class Form(DictInited, Hooked):
                     "email": {"_type": ""}
                 }
 
-            class RelationalAction(DictInited):
+            class RelationalAction(DictInited, Resolvable):
                 _schema = {
                     "set_fk": {"_type": ""},
                     "to_object": {"_type": ""}
@@ -301,6 +301,7 @@ class Form(DictInited, Hooked):
                 # in the strings, "this" will refer to the instance of the entity being created in the form
                 # set fk could be something like, "this.teacher" or "CurrentUser.mygroup".
                 # to object could be something like, "Page.Teacher" or "Page.Group"
+		_resolve_attrs = ()
                 _datalang_attrs = (('set_fk', 'set_fk_dl'), ('to_object', 'to_object_dl'))
 
 
