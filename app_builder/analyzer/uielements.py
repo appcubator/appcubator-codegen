@@ -787,7 +787,8 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
             return Tag('div', {}, content=[widget, script])
 
 class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
-    _hooks = ['resolve links href']
+    _hooks = ['resolve links href', 'require plugin data']
+    _plugin_name = "PAYPAL"
 
     # TODO make the buy button info a number | datalang type
     class BuyButtonInfo(DictInited):
@@ -844,7 +845,7 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         inp1 = Tag('input', i1_attrs, content="")
         i2_attrs = { "type": "hidden",
                      "name": "business",
-                     "value": self.business_name,
+                     "value": self.container_info.business_name,
                      }
         inp2 = Tag('input', i2_attrs, content="")
         i3_attrs = { "type": "hidden",

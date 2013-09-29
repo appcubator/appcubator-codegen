@@ -781,6 +781,7 @@ class SettingsFactory(object):
             "FACEBOOK": ("FACEBOOK_APP_ID", "FACEBOOK_API_SECRET"),
             "TWITTER": ("TWITTER_CONSUMER_KEY", "TWITTER_CONSUMER_SECRET"),
             "LINKEDIN": ("LINKEDIN_CONSUMER_KEY", "LINKEDIN_CONSUMER_SECRET"),
+            "PAYPAL": ("PAYPAL_EMAIL",),
     }
 
     def __init__(self, uid, email, provider_data):
@@ -794,6 +795,11 @@ class SettingsFactory(object):
         self.md5er.update("KOALABEARS")
         self.md5er.update(self.uid)
 
+    def require_data(uie):
+        plugin_name = uie.__class__._plugin_name
+        if plugin_name not in self.required_providers:
+            self.required_providers.append(plugin_name)
+
     def secret_key(self):
         return self.md5er.hexdigest()
 
@@ -802,14 +808,19 @@ class SettingsFactory(object):
         assign_chunks = []
         PROVIDERS = self.__class__.PROVIDERS
         IncompleteProviderData = self.__class__.IncompleteProviderData
-        for k in PROVIDERS:
+        # k is a level 1 key (FACEBOOK or PAYPAL)
+        for k in self.required_providers:
+            assert k in PROVIDERS, "Invalid plugin name"
+            # all providers are optional right now.
             if k not in self.provider_data:
                 continue
+            # k2 is a level 2 key (FB_ID or PAYPAL_EMAIL)
             for k2 in PROVIDERS[k]:
+                # given a provider, all identifying keys must be given
                 if k2 not in self.provider_data[k]:
                     raise IncompleteProviderData
                 # trust but verify sanitized inputs
-                if re.search(r'[^a-zA-Z0-9_\-]', self.provider_data[k][k2]):
+                if re.search(r'[^a-zA-Z0-9@_\-]', self.provider_data[k][k2]):
                     assert False
                 ac = AssignStatement(k2, "\"%s\"" % self.provider_data[k][k2])
                 assign_chunks.append(ac)
