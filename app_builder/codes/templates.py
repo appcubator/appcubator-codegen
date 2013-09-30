@@ -322,6 +322,8 @@ BASEHTML = """<!DOCTYPE html>
         position: relative;
       }
     </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     {% block css %}
     {% endblock %}
 </head>
@@ -357,13 +359,11 @@ BASEHTML = """<!DOCTYPE html>
     <!-- END FOOTER -->
 
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}jslibs/underscore.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}jslibs/backbone.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}jslibs/bootstrap.min.js"></script>
     <script type="text/javascript" src="//api.filepicker.io/v1/filepicker.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}ajaxify.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
     <script type="text/javascript">
       $(document).ready(function() {
