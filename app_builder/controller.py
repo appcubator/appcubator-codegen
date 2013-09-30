@@ -173,13 +173,10 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                     traceback.print_exc()
                     raise
             try:
-                print "attempting"
                 row_uielements = uie.container_info.row.uielements
             except AttributeError:
-                print "failed: %r instance" % (r_uie.__class__.__name__,)
                 pass
             else:
-                print "succeeded"
                 for r_uie in row_uielements:
                     for hook_name in r_uie.hooks:
                         try:

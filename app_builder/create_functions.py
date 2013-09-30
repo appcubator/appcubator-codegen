@@ -800,10 +800,8 @@ class SettingsFactory(object):
         plugin_name = uie.__class__._plugin_name
         PROVIDERS = self.__class__.PROVIDERS
         assert plugin_name in PROVIDERS, "Invalid plugin name: %r" % k
-        print "requiring %s" % plugin_name
         if plugin_name not in self.required_providers:
             self.required_providers.append(plugin_name)
-        print self.required_providers
 
     def secret_key(self):
         return self.md5er.hexdigest()
@@ -823,7 +821,7 @@ class SettingsFactory(object):
                 if k2 not in self.provider_data[k]:
                     raise IncompleteProviderData
                 # trust but verify sanitized inputs
-                if re.search(r'[^a-zA-Z0-9@_\-]', self.provider_data[k][k2]):
+                if re.search(r'[^a-zA-Z0-9@_\-\.]', self.provider_data[k][k2]):
                     assert False
                 ac = AssignStatement(k2, "\"%s\"" % self.provider_data[k][k2])
                 assign_chunks.append(ac)
