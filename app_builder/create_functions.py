@@ -794,6 +794,7 @@ class SettingsFactory(object):
         self.md5er = md5()
         self.md5er.update("KOALABEARS")
         self.md5er.update(self.uid)
+        self.required_providers = []
 
     def require_data(uie):
         plugin_name = uie.__class__._plugin_name

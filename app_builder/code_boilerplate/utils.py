@@ -70,3 +70,10 @@ class EmailOrUsernameModelBackend(object):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
+
+from django.conf import settings
+
+def add_settings_to_templates(request):
+    extra_context = { 'settings': settings }
+    return extra_context

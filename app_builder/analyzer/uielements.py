@@ -787,13 +787,13 @@ class FacebookShare(DictInited, Hooked):  # Facebook 'Like' Button
             return Tag('div', {}, content=[widget, script])
 
 class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
-    _hooks = ['resolve links href', 'require plugin data']
+    _hooks = ['require plugin data', 'resolve links href']
     _plugin_name = "PAYPAL"
 
     # TODO make the buy button info a number | datalang type
     class BuyButtonInfo(DictInited):
         _schema = {
-            "business_name": {"_type": ""}, # this was the email address
+            "business_name": {"_type": "", "default": ""}, # this was the email address
             "item_name": {"_type": ""}, # this gets displayed on the paypal page
             "label": {"_type": ""}, # this is the label on the button
             "amount": {"_type": ""}, # a string representation of the number or the datalang for a price (USD) type # TODO validate this.
@@ -804,10 +804,13 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         "action": {"_type": ""}
     }
 
-    """
     def __init__(self, *args, **kwargs):
         super(BuyButton, self).__init__(*args, **kwargs)
-    """
+
+        # the hook "require plugin data" gives you the guarantee that settings.PAYPAL_EMAIL will be available in the code
+        # then we have a custom context processer that puts the settings object in all templates (TODO block the namespace)
+        if self.container_info.business_name == "":
+            self.container_info.business_name = "{{ settings.PAYPAL_EMAIL }}"
 
     def kwargs(self):
         pass
