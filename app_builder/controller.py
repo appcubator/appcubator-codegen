@@ -26,10 +26,11 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                         }
           }
 
-    provider_data = provider_data or DEFAULT_PROVIDER_DATA
+    if provider_data is not None:
+        DEFAULT_PROVIDER_DATA.update(provider_data)
 
     factory = AppComponentFactory()
-    settings = SettingsFactory(uid, email, provider_data)
+    settings = SettingsFactory(uid, email, DEFAULT_PROVIDER_DATA)
 
     create_map = {# MODELS
                   'setup user roles namespace': factory.setup_userrole_namespace,
@@ -171,6 +172,22 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                     logger.error("Failed to call hook %r on %r instance" % (hook_name, uie.__class__.__name__))
                     traceback.print_exc()
                     raise
+            try:
+                print "attempting"
+                row_uielements = uie.container_info.row.uielements
+            except AttributeError:
+                print "failed: %r instance" % (r_uie.__class__.__name__,)
+                pass
+            else:
+                print "succeeded"
+                for r_uie in row_uielements:
+                    for hook_name in r_uie.hooks:
+                        try:
+                            create(hook_name, r_uie)
+                        except Exception, e:
+                            logger.error("Failed to call hook %r on %r instance" % (hook_name, r_uie.__class__.__name__))
+                            traceback.print_exc()
+                            raise
 
     # Emailer
     create('make emailer', app)

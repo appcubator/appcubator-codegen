@@ -809,7 +809,10 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
 
         # the hook "require plugin data" gives you the guarantee that settings.PAYPAL_EMAIL will be available in the code
         # then we have a custom context processer that puts the settings object in all templates (TODO block the namespace)
+        print "\n\n\n"
+        print "in init"
         if self.container_info.business_name == "":
+            print "setting email"
             self.container_info.business_name = "{{ settings.PAYPAL_EMAIL }}"
 
     def kwargs(self):
@@ -981,6 +984,7 @@ class Iterator(DictInited, Hooked):
     }
 
     def visit_strings(self, f):
+        # TODO figure out if this is redundant now that hooks are being called within a loop
         for uie in self.container_info.row.uielements:
             uie.visit_strings(f)
 

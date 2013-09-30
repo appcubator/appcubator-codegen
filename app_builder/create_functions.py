@@ -794,12 +794,16 @@ class SettingsFactory(object):
         self.md5er = md5()
         self.md5er.update("KOALABEARS")
         self.md5er.update(self.uid)
-        self.required_providers = []
+        self.required_providers = ["FACEBOOK", "LINKEDIN", "TWITTER"] # temporary until I make these login buttons require these settings
 
-    def require_data(uie):
+    def require_data(self, uie):
         plugin_name = uie.__class__._plugin_name
+        PROVIDERS = self.__class__.PROVIDERS
+        assert plugin_name in PROVIDERS, "Invalid plugin name: %r" % k
+        print "requiring %s" % plugin_name
         if plugin_name not in self.required_providers:
             self.required_providers.append(plugin_name)
+        print self.required_providers
 
     def secret_key(self):
         return self.md5er.hexdigest()
@@ -811,10 +815,8 @@ class SettingsFactory(object):
         IncompleteProviderData = self.__class__.IncompleteProviderData
         # k is a level 1 key (FACEBOOK or PAYPAL)
         for k in self.required_providers:
-            assert k in PROVIDERS, "Invalid plugin name"
-            # all providers are optional right now.
-            if k not in self.provider_data:
-                continue
+            assert k in self.provider_data, "%s was not found in provider data" % k
+
             # k2 is a level 2 key (FB_ID or PAYPAL_EMAIL)
             for k2 in PROVIDERS[k]:
                 # given a provider, all identifying keys must be given
