@@ -461,6 +461,10 @@ class AppComponentFactory(object):
         url_obj.routes.append(admin_route)
         url_obj.routes.append(admin_css_urls)
 
+    def add_static_serve(self, app):
+        code_fn = lambda: "urlpatterns += %s()" % self.urls_namespace.imports()['django.url.statics']
+        return FnCodeChunk(code_fn)
+
 
     # FORMS
 

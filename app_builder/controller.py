@@ -59,6 +59,7 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                   'add logout url': factory.add_logout_url,
                   'add search url' : factory.add_search_url,
                   'add admin urls' : factory.add_admin_urls,
+                  'static serve': factory.add_static_serve,
 
                   # GET REQUEST HANDLERS
                   'view for page': factory.create_view_for_page,
@@ -205,6 +206,7 @@ def create_codes(app, uid=None, email=None, provider_data=None):
     create('register admin model with admin site', app.userentity)
     create('create tests for static pages', app)
     create('generate base.html', app)
+    create('static serve', app)
 
     create('generate settings.py', None)
 
