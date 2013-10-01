@@ -175,7 +175,7 @@ def write_to_fs(coder, css="", dest=None):
 
     # copy boilerplate
     logger.debug("Copying boilerplate files.")
-    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
+    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi_heroku.py', 'Procfile', 'wsgi.py', 'README.md', 'README.pdf']:
         copy_file(fname, fname)
 
     copy_file('gitignore.gitignore', '.gitignore')
