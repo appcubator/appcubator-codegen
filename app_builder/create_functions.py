@@ -1,7 +1,7 @@
 import re
 import traceback
 
-from app_builder.analyzer import datalang, pagelang
+from app_builder.analyzer import datalang, pagelang, UserInputError
 from app_builder.codes import DjangoModel, DjangoUserModel
 from app_builder.codes import DjangoPageView, DjangoTemplate, DjangoPageSearch, SocialAuthHandler
 from app_builder.codes import DjangoURLs, DjangoStaticPagesTestCase, DjangoQuery, SearchQuery
@@ -799,7 +799,7 @@ class SettingsFactory(object):
     def require_data(self, uie):
         plugin_name = uie.__class__._plugin_name
         PROVIDERS = self.__class__.PROVIDERS
-        assert plugin_name in PROVIDERS, "Invalid plugin name: %r" % k
+        assert plugin_name in PROVIDERS, "Invalid plugin name: %r" % plugin_name
         if plugin_name not in self.required_providers:
             self.required_providers.append(plugin_name)
 
@@ -813,7 +813,8 @@ class SettingsFactory(object):
         IncompleteProviderData = self.__class__.IncompleteProviderData
         # k is a level 1 key (FACEBOOK or PAYPAL)
         for k in self.required_providers:
-            assert k in self.provider_data, "%s was not found in provider data" % k
+            if k not in self.provider_data:
+                raise UserInputError("To use the %s plugin, you should fill out the information on the Plugin page.", "plugins") % k
 
             # k2 is a level 2 key (FB_ID or PAYPAL_EMAIL)
             for k2 in PROVIDERS[k]:
