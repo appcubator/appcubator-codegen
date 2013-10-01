@@ -795,12 +795,12 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         _schema = {
             "business_name": {"_type": "", "default": ""}, # this was the email address
             "item_name": {"_type": ""}, # this gets displayed on the paypal page
-            "label": {"_type": ""}, # this is the label on the button
             "amount": {"_type": ""}, # a string representation of the number or the datalang for a price (USD) type # TODO validate this.
         }
 
     _schema = {
         "container_info": {"_type": BuyButtonInfo},
+        "content": {"_type": ""},
         "action": {"_type": ""}
     }
 
@@ -822,8 +822,8 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         old_item_name = self.container_info.item_name
         self.container_info.item_name = f(old_item_name)
 
-        old_label = self.container_info.label
-        self.container_info.label = f(old_label)
+        old_label = self.content
+        self.content = f(old_label)
 
     """
     <form name="_xclick" action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -870,7 +870,7 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
         i6_attrs = { "name": "submit",
                      "type": "submit",
                      "class": "btn",
-                     "value": self.container_info.label,
+                     "value": self.content,
                      }
         inp6 = Tag('input', i6_attrs, content="")
 
