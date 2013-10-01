@@ -463,7 +463,9 @@ class AppComponentFactory(object):
 
     def add_static_serve(self, app):
         code_fn = lambda: "urlpatterns += %s()" % self.urls_namespace.imports()['django.url.statics']
-        return FnCodeChunk(code_fn)
+        code_obj = FnCodeChunk(code_fn)
+        code_obj.code_path = "webapp/urls.py"
+        return code_obj
 
 
     # FORMS

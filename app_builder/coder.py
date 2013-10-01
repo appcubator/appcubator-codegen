@@ -175,9 +175,10 @@ def write_to_fs(coder, css="", dest=None):
 
     # copy boilerplate
     logger.debug("Copying boilerplate files.")
-    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi_heroku.py', 'Procfile', 'wsgi.py', 'README.md', 'README.pdf']:
+    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi_heroku.py', 'wsgi.py', 'README.md', 'README.pdf']:
         copy_file(fname, fname)
 
+    copy_file('Procfile.txt', 'Procfile')
     copy_file('gitignore.gitignore', '.gitignore')
     f_transporter('settings', 'settings', shutil.copytree)
     #copy_file('base.html', 'webapp/templates/base.html') this is dynamic now. see controller.py

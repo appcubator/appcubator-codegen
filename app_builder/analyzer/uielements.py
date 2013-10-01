@@ -809,10 +809,7 @@ class BuyButton(DictInited, Hooked):  # Facebook 'Like' Button
 
         # the hook "require plugin data" gives you the guarantee that settings.PAYPAL_EMAIL will be available in the code
         # then we have a custom context processer that puts the settings object in all templates (TODO block the namespace)
-        print "\n\n\n"
-        print "in init"
         if self.container_info.business_name == "":
-            print "setting email"
             self.container_info.business_name = "{{ settings.PAYPAL_EMAIL }}"
 
     def kwargs(self):
