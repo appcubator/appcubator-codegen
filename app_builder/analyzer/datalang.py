@@ -121,6 +121,10 @@ def parse_to_datalang(datalang_string, app):
     else:
         raise Exception("Not Yet Implemented: %r" % tokens[0])
 
+    # 1.5 check for date_created, the special built-in field that doesn't live in the App instance
+    if len(tokens) == 1 and tokens[0] == "date_created":
+        pass
+
     # 2. get the list of fields by performing entity-field-entity chaining
     field_entity_accesstype_pairs, result_type = datalang_to_fields(ent, tokens)
     # 3. create a datalang instance and bind it to dest_attr
