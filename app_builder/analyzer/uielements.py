@@ -190,7 +190,6 @@ class Form(DictInited, Hooked):
                             # TODO For edit form, this should return template code with an if statement
                             opt_field_id = field._page.id_namespace.new_identifier('opt-label-%s' % field.backend_field_name)
                             opt_field_options = []
-                            if edit_inst_code_fn is not None
                             opt_field_options.append(Tag('input', {'id': opt_field_id, 'class': 'field-type', 'type': 'radio', 'name':field.backend_field_name, 'value': item}))
                             opt_field_options.append(Tag('label', {'for': opt_field_id}, content=item))
                             opt_field = Tag('div', {'class': 'option'}, content = opt_field_options)
