@@ -170,7 +170,7 @@ class Form(DictInited, Hooked):
                         # this is needed for ajaxify to put in the filepicker value, and for the browser to submit the form
                         real_input = Tag('input', {'type': 'hidden', 'name': field.backend_field_name })
                         if edit_inst_code_fn is not None:
-                            real_input.attribs['value'] = "{{ %s.%s }}" % (edit_inst_code_fn(), field.backend_field_name)
+                            real_input.attribs['value'] = "{{ %s.%s|date:\"m/d/Y\" }}" % (edit_inst_code_fn(), field.backend_field_name)
                         content = [filepicker_button, real_input]
 
                     elif field.displayType == 'dropdown':
