@@ -10,7 +10,8 @@ $(document).ready(function() {
       },
       function(fperror){
         console.log(fperror);
-        alert(fperror);
+        // usually this is a cancel error.
+        // alert(fperror);
       });
   }
   function openImagepicker(callback) {
@@ -23,7 +24,8 @@ $(document).ready(function() {
       },
       function(fperror){
         console.log(fperror);
-        alert(fperror);
+        // usually this is a cancel error.
+        // alert(fperror);
       });
   }
 
@@ -57,13 +59,13 @@ $(document).ready(function() {
               if (typeof(data.refresh) !== 'undefined' && data.refresh) {
                 location.reload(true);
               } else {
-                alert("Form submitted! But... now what do I do...")
+                alert('There was an error submitting this form. Sorry about this, we want to fix it for you as soon as possible! Please email team@appcubator.com to report this issue [ERR 2].');
               }
             }
           }
         },
         error: function(jqxhr, statusStr, errorThrown) {
-          alert('Form didn\'t submit properly... Well this is awkward.');
+          alert('There was an error submitting this form. Sorry about this, we want to fix it for you as soon as possible! Please email team@appcubator.com to report this issue.');
         }
       };
       $.ajax(ajax_info);
@@ -92,7 +94,7 @@ $(document).ready(function() {
         });
     } else {
         // this case wont happen
-        alert("Not a file, not an image, so this is broken.");
+        alert('There was an error submitting this form. Sorry about this, we want to fix it for you as soon as possible! Please email team@appcubator.com to report this issue [ERR 3].');
     }
 
     e.preventDefault();
