@@ -436,6 +436,7 @@ class App(DictInited):
             uies = []
             for uie in row.uielements:
                 subclass = uie.subclass
+                subclass.page = row._page
                 uies.append(subclass)
             row.uielements = uies
 

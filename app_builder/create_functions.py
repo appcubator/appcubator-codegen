@@ -820,7 +820,7 @@ class SettingsFactory(object):
         # k is a level 1 key (FACEBOOK or PAYPAL)
         for k in self.required_providers:
             if k not in self.provider_data:
-                raise UserInputError("To use the %s plugin, you should fill out the information on the Plugin page.", "plugins") % k
+                raise UserInputError("To use the %s plugin, you should fill out the information on the Plugin page." % k, "plugins")
 
             # k2 is a level 2 key (FB_ID or PAYPAL_EMAIL)
             for k2 in PROVIDERS[k]:

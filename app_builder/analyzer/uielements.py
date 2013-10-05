@@ -177,6 +177,7 @@ class Form(DictInited, Hooked):
                         tagname = 'select'
                         opt_fields = []
                         for item in field.options:
+                            # TODO For edit form, this should return template code with an if statement
                             opt_field = Tag('option', {'value': item}, content=item)
                             opt_fields.append(opt_field)
                         content = opt_fields
@@ -186,6 +187,7 @@ class Form(DictInited, Hooked):
                         tagname = 'span'
                         opt_fields = []
                         for item in field.options:
+                            # TODO For edit form, this should return template code with an if statement
                             opt_field_id = field._page.id_namespace.new_identifier('opt-label-%s' % field.backend_field_name)
                             opt_field_options = []
                             opt_field_options.append(Tag('input', {'id': opt_field_id, 'class': 'field-type', 'type': 'radio', 'name':field.backend_field_name, 'value': item}))
@@ -200,7 +202,11 @@ class Form(DictInited, Hooked):
                     elif field.displayType == 'date-picker':
                         tagname = 'div'
                         base_attribs['class'] = 'date-picker-wrapper'
-                        inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name})
+                        if edit_inst_code_fn is not None:
+                            edit_id = "{{ %s.%s|date:\"m/d/Y\" }}" % (edit_inst_code_fn(), field.backend_field_name)
+                            inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name, 'value':edit_id})
+                        else:
+                            inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name})
                         img = Tag('img', { 'class': "date-picker-icon"})
                         content = [inp, img]
 
