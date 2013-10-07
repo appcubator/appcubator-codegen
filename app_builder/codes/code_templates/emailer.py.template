@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {% set post = imports['utils.requests.post'] %}
 
 {% set api_key = locals['api_key'] %}
