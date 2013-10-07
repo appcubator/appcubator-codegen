@@ -23,6 +23,12 @@ class UserInputError(Exception):
         return {'message': self.message,
                 'path': self.path }
 
+    def __unicode__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "%s\nPath: %s" % (self.message, self,path)
+
 from analyzer import *
 from dict_inited import InvalidDict
 
