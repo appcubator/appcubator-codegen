@@ -1,0 +1,6 @@
+@require_POST
+def {{identifier}}(request, {{thing_id}}):
+    {{thing_id2}} = get_object_or_404({{model_id}}, pk={{thing_id}})
+    {{thing_id2}}.delete()
+    return {{JsonResponse}}(errors=form.errors)
+
