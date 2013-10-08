@@ -27,6 +27,7 @@ def get_uielement_by_type(type_string):
                           'facebookshare': FacebookShare,
                           'videoembed': VideoEmbed,
                           'custom': CustomEl,
+                          'deletebutton': DeleteButton,
                          }
     subclass = UIELEMENT_TYPE_MAP[type_string]
     return subclass
@@ -89,6 +90,22 @@ class Hooked(object):
         except AttributeError:
             return () # empty tuple
 
+
+class DeleteButton(DictInited, Hooked):
+    # these are tightly coupled and serial for now.
+    _hooks = ('add delete form receiver',
+              'create url for delete form receiver',
+             )
+
+    class FormInfo(DictInited):
+
+        _schema = { }
+
+
+
+    _schema = { "container_info": {"_type": FormInfo},
+                "class_name": {"_type": "", "_default":""}
+             }
 
 class Form(DictInited, Hooked):
 
