@@ -93,6 +93,10 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                   'add the relation things to the form recevier': factory.add_relation_assignments_to_form_receiver,
                   'add email actions to the form receiver': factory.add_email_actions_to_form_receiver,
 
+                  # ENTITY DELETE BUTTON RELATED HOOKS
+                  'add delete form receiver': factory.create_delete_form_receiver_if_not_exists,
+                  'create url for delete form receiver': factory.create_url_for_form_receiver,
+
                   # USER FORM RELATED HOOKS
                   'create login form if not exists': factory.create_login_form_if_not_exists,
                   'create signup form if not exists': factory.create_signup_form_if_not_exists,

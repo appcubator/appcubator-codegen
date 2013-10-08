@@ -450,6 +450,11 @@ class AppComponentFactory(object):
             data_string += ' ' # just for formatting.
         uie.set_post_url('{%% url "webapp.form_receivers.%s" %s%%}' % (uie._django_form_receiver.identifier, data_string))
 
+ def create_delete_form_receiver_if_not_exists(self, uie):
+     pass
+ def factory.create_url_for_form_receiver(self, uie):
+     pass
+
     def add_admin_urls(self, app):
         """ Adds the following:
             url(r'^admin/', include(admin.site.urls)),
