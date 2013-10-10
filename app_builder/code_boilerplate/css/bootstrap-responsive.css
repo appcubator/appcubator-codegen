@@ -33,7 +33,7 @@
 
 .input-block-level {
   display: block;
-  width: 100%;
+  width: 100% !important;
   min-height: 30px;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
@@ -436,19 +436,8 @@
   .row-fluid .thumbnails {
     margin-left: 0;
   }
-}*/
-
-@media (max-width: 979px) {
-
-  .navbar {
-    width: 100%;
-  }
-
-  body .navbar-inner {
-    width: 100% !important;
-  }
 }
-
+*/
 @media (min-width: 768px) and (max-width: 979px) {
   .row {
     margin-left: -20px;
@@ -468,8 +457,6 @@
     min-height: 1px;
     margin-left: 20px;
   }
-
-
   .container,
   .navbar-static-top .container,
   .navbar-fixed-top .container,
@@ -549,7 +536,7 @@
     margin-left: 82px;
   }
   .row-fluid {
-    width: 100%;
+    width: 100%  !important;;
     *zoom: 1;
   }
   .row-fluid:before,
@@ -564,7 +551,7 @@
   .row-fluid [class*="span"] {
     display: block;
     float: left;
-    width: 100%;
+    width: 100% !important;
     min-height: 30px;
     margin-left: 2.7624309392265194%;
     *margin-left: 2.709239449864817%;
@@ -576,7 +563,7 @@
     margin-left: 0;
   }
   .row-fluid .span12 {
-    width: 100%;
+    width: 100%  !important;
     *width: 99.94680851063829%;
   }
   .row-fluid .span11 {
@@ -791,27 +778,14 @@
 
 @media (max-width: 767px) {
   body {
-/*    padding-right: 20px;
-    padding-left: 20px;*/
+    padding-right: 20px;
+    padding-left: 20px;
   }
-
-  body .navbar {
-    height: auto !important;
-  }
-
-  body .navbar-inner ul li {
-    width: 100%;
-  }
-
-  .hi1, .hi2, .hi3, .hi4, .hi5, .hi6 {
-    height: auto;
-  }
-
   .navbar-fixed-top,
   .navbar-fixed-bottom,
   .navbar-static-top {
-    margin-right: -20px;
-    margin-left: -20px;
+/*    margin-right: -20px;
+    margin-left: -20px;*/
   }
   .container-fluid {
     padding: 0;
@@ -826,10 +800,10 @@
     margin-left: 0;
   }
   .container {
-    width: auto;
+    width: auto !important;
   }
   .row-fluid {
-    width: 100%;
+    width: 100% !important;
   }
   .row,
   .thumbnails {
@@ -843,7 +817,7 @@
   .row-fluid [class*="span"] {
     display: block;
     float: none;
-    width: 100%;
+    width: 100%  !important;
     margin-left: 0;
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
@@ -851,7 +825,7 @@
   }
   .span12,
   .row-fluid .span12 {
-    width: 100%;
+    width: 100% !important;
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
             box-sizing: border-box;
@@ -864,7 +838,7 @@
   textarea[class*="span"],
   .uneditable-input {
     display: block;
-    width: 100%;
+    width: 100% !important;
     min-height: 30px;
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
@@ -875,7 +849,7 @@
   .input-prepend input[class*="span"],
   .input-append input[class*="span"] {
     display: inline-block;
-    width: auto;
+    width: auto !important;
   }
   .controls-row [class*="span"] + [class*="span"] {
     margin-left: 0;
@@ -939,9 +913,10 @@
   body {
     padding-top: 0;
   }
-  .navbar-fixed-top,
-  .navbar-fixed-bottom {
+  body .navbar-fixed-top,
+  body .navbar-fixed-bottom {
     position: static;
+    width: 100%;
   }
   .navbar-fixed-top {
     margin-bottom: 20px;
@@ -954,7 +929,7 @@
     padding: 5px;
   }
   .navbar .container {
-    width: auto;
+    width: 100% !important;
     padding: 0;
   }
   .navbar .brand {
@@ -1062,12 +1037,12 @@
     float: none;
     margin-left: 0;
   }
-  .nav-collapse,
-  .nav-collapse.collapse {
+  body .nav-collapse,
+  body .nav-collapse.collapse.collapse {
     height: 0;
     overflow: hidden;
   }
-  .navbar .btn-navbar {
+  body .navbar .btn-navbar.btn-navbar {
     display: block;
   }
   .navbar-static .navbar-inner {
@@ -1077,7 +1052,7 @@
 }
 
 @media (min-width: 980px) {
-  .nav-collapse.collapse {
+  body .nav-collapse.collapse {
     height: auto !important;
     overflow: visible !important;
   }
