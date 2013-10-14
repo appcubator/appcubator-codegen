@@ -204,9 +204,9 @@ class Form(DictInited, Hooked):
                         base_attribs['class'] = 'date-picker-wrapper'
                         if edit_inst_code_fn is not None:
                             edit_id = "{{ %s.%s|date:\"m/d/Y\" }}" % (edit_inst_code_fn(), field.backend_field_name)
-                            inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name, 'value':edit_id})
+                            inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name, 'placeholder': field.placeholder, 'value':edit_id})
                         else:
-                            inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name})
+                            inp = Tag('input', {'class': "date-picker-input", 'type': "text", 'name': field.backend_field_name, 'placeholder': field.placeholder})
                         img = Tag('img', { 'class': "date-picker-icon"})
                         content = [inp, img]
 
