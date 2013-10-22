@@ -84,7 +84,12 @@ def parse_to_pagelang(pagelang_string, app):
                 or (not pagelang_string.startswith("mailto://"))\
                 or (not pagelang_string.startswith("https://")):
             # fix the user's dumb mistake
-            pagelang_string = "http://" + pagelang_string
+            if (".com" in pagelang_string or ".org" in pagelang_string) and "/" in pagelang_string:
+                # it's probably a link?
+                pagelang_string = "http://" + pagelang_string
+            else:
+                # it's just normal text
+                raise AssertionError()
 
         return PageLang(pagelang_string, app, external=True)
     else:
