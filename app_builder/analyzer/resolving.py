@@ -57,6 +57,8 @@ class Resolvable(object):
                 raise UserInputError("You deleted or changed something, but there are still references to those things. Please fix them.", self._path)
             except pagelang.UrlDataMismatch:
                 raise UserInputError("Url data mismatch in pagelang", self._path)
+            except AssertionError:
+                raise UserInputError("Please fix the URL so that it starts with http, https, or mailto.", self._path)
             setattr(self, dest_attr, pl)
 
 
