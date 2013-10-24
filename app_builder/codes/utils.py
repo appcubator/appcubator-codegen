@@ -1,4 +1,5 @@
 CANON_TYPE_MAP = {'text': 'TextField',
+                 'link': 'URLField',
                  'number': 'FloatField',
                  'date': 'DateTimeField',
                  '_CREATED': 'DateTimeField',

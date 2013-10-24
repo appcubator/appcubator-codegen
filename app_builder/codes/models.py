@@ -77,7 +77,7 @@ class DjangoField(object):
         elif field.canon_type == '_MODIFIED':
             kwargs['auto_now'] = True
         if field.required:
-            if field.canon_type in ['text', 'email', 'image', 'file']:
+            if field.canon_type in ['text', 'email', 'image', 'file', 'link']:
                 kwargs['default'] = repr("")
             # Date time defaults should be skipped now.
             # if field.canon_type in ['date', '_CREATED', '_MODIFIED']:
