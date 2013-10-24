@@ -159,6 +159,7 @@ class Navbar(DictInited):
 
     _schema = {
         "brandName": {"_one_of": [{"_type": ""}, {"_type": None}]},
+        "version": {"_type": 0, "_default":1},
         "isHidden": {"_type": True},
         "links": {"_type": [], "_each": {"_type": NavbarItem}}
     }
@@ -166,7 +167,12 @@ class Navbar(DictInited):
     def render(self, parent_page):
         if self.brandName is None:
             self.brandName = self.app.name
-        return env.get_template('navbar.html').render(navbar=self, page=parent_page)
+        if self.version == 1:
+            return env.get_template('navbar-old.html').render(navbar=self, page=parent_page)
+        elif self.version == 2:
+            return env.get_template('navbar.html').render(navbar=self, page=parent_page)
+        else:
+            assert False
 
     def visit_strings(self, f):
         if self.brandName is not None:
@@ -191,11 +197,17 @@ class Footer(DictInited):
     _schema = {
         "customText": {"_type": ""},
         "isHidden": {"_type": True},
+        "version": {"_type": 0, "_default":1},
         "links": {"_type": [], "_each": {"_type": FooterItem}}
     }
 
     def render(self):
-        return env.get_template('footer.html').render(footer=self)
+        if self.version == 1:
+            return env.get_template('footer-old.html').render(footer=self)
+        elif self.version == 2:
+            return env.get_template('footer.html').render(footer=self)
+        else:
+            assert False
 
     def visit_strings(self, f):
         self.customText = f(self.customText)
