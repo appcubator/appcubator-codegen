@@ -173,36 +173,18 @@ def write_to_fs(coder, css="", dest=None):
     def copy_file(src_str, dest_str):
         return f_transporter(src_str, dest_str, shutil.copyfile)
 
-    # copy boilerplate
-    logger.debug("Copying boilerplate files.")
-    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
-        copy_file(fname, fname)
-
-    copy_file('Procfile.txt', 'Procfile')
-    copy_file('gitignore.gitignore', '.gitignore')
     f_transporter('settings', 'settings', shutil.copytree)
-    #copy_file('base.html', 'webapp/templates/base.html') this is dynamic now. see controller.py
-    copy_file('500.html', 'webapp/templates/500.html')
-    copy_file('404.html', 'webapp/templates/404.html')
     os.makedirs(join(dest, "webapp", "templates", "admin", "auth"))
-    copy_file("admin_user_create.html", "webapp/templates/admin/auth/add_user.html")
 
     # main webapp files
-    logger.debug("Rendering and writing webapp files.")
-    copy_file('__init__.py', 'webapp/__init__.py')
+    logger.debug("Rendering and writing files.")
     for rel_path, code in coder.itercode():
         write_string(code, rel_path)
-
 
     # static
     logger.debug("Copying static files, and writing CSS.")
     f_transporter('jslibs', 'webapp/static/jslibs', shutil.copytree)
     f_transporter('img', 'webapp/static/img', shutil.copytree)
-    copy_file('ajaxify.js', 'webapp/static/ajaxify.js')
-    copy_file('css/bootstrap.css', 'webapp/static/bootstrap.css')
-    copy_file('css/bootstrap-responsive.css', 'webapp/static/bootstrap-responsive.css')
-    copy_file('css/reset.css', 'webapp/static/reset.css')
-    copy_file('utils.py', 'webapp/utils.py')
     write_string(css, 'webapp/static/style.css') # TODO write css
 
     logger.info("Finished writing django app.")

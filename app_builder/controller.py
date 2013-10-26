@@ -1,6 +1,7 @@
 from coder import Coder
 from create_functions import AppComponentFactory, SettingsFactory
 from pyflakes.api import check
+from codes.utils import StaticFileCodeChunk
 
 import logging
 import traceback
@@ -209,6 +210,24 @@ def create_codes(app, uid=None, email=None, provider_data=None):
     create('static serve', app)
 
     create('generate settings.py', None)
+
+    # static files
+    for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
+        create(StaticFileCodeChunk(fname, fname))
+    for fname1, fname2 in [('Procfile.txt','Procfile'),
+                           ('gitignore.gitignore','.gitignore'),
+                           ('gitignore.gitignore','.gitignore'),
+                           ('500.html', 'webapp/templates/500.html'),
+                           ('404.html', 'webapp/templates/404.html'),
+                           ("admin_user_create.html", "webapp/templates/admin/auth/add_user.html"),
+                           ('__init__.py', 'webapp/__init__.py'),
+                           ('ajaxify.js', 'webapp/static/ajaxify.js'),
+                           ('css/bootstrap.css', 'webapp/static/bootstrap.css'),
+                           ('css/bootstrap-responsive.css', 'webapp/static/bootstrap-responsive.css'),
+                           ('css/reset.css', 'webapp/static/reset.css'),
+                           ('utils.py', 'webapp/utils.py'),
+                          ]:
+        create(StaticFileCodeChunk(fname1, fname2))
 
     return codes
 
