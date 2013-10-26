@@ -81,8 +81,8 @@ def parse_to_pagelang(pagelang_string, app):
     """
     if not pagelang_string.startswith("internal://"):
         if (not pagelang_string.startswith("http://")) \
-                or (not pagelang_string.startswith("mailto://"))\
-                or (not pagelang_string.startswith("https://")):
+                and (not pagelang_string.startswith("mailto://"))\
+                and (not pagelang_string.startswith("https://")):
             # fix the user's dumb mistake
             if (".com" in pagelang_string or ".org" in pagelang_string) and "/" in pagelang_string:
                 # it's probably a link?
