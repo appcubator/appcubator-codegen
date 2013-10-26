@@ -1,3 +1,4 @@
+var ERRORMSG = 'Sorry! There was an error submitting the form :(. Please report the following error message to team@appcubator.com. Apologies again for the inconvenience.';
 $(document).ready(function() {
   filepicker.setKey("AAO81GwtTTec7D8nH9SaTz");
 
@@ -57,13 +58,13 @@ $(document).ready(function() {
               if (typeof(data.refresh) !== 'undefined' && data.refresh) {
                 location.reload(true);
               } else {
-                alert("Form submitted! But... now what do I do...")
+                alert("Form submitted! Thank you!"); // This actually means that the codegen was broken because it didn't send a correct JsonResponse.
               }
             }
           }
         },
         error: function(jqxhr, statusStr, errorThrown) {
-          alert('Form didn\'t submit properly... Well this is awkward.');
+          alert(ERRORMSG + '\n' + statusStr + ' - ' + errorThrown);
         }
       };
       $.ajax(ajax_info);
@@ -92,7 +93,7 @@ $(document).ready(function() {
         });
     } else {
         // this case wont happen
-        alert("Not a file, not an image, so this is broken.");
+        alert(ERRORMSG + "\nNot a file, not an image, so this is broken.");
     }
 
     e.preventDefault();
