@@ -115,6 +115,10 @@ def create_codes(app, code_el_table=False, uid=None, email=None, provider_data=N
     from collections import defaultdict
     codes_by_el = defaultdict(set)
 
+    def add_code(c, el):
+        codes.append(c)
+        codes_by_el[el].add(c)
+
     def create(event_name, el, *args, **kwargs):
         try:
             logger.info("Running hook: %s" % event_name)
@@ -125,11 +129,9 @@ def create_codes(app, code_el_table=False, uid=None, email=None, provider_data=N
             if c is not None:
                 if isinstance(c, list):
                     for cc in c:
-                        codes.append(cc)
-                        codes_by_el[el].add(c)
+                        add_code(cc, el)
                 else:
-                    codes.append(c)
-                    codes_by_el[el].add(c)
+                    add_code(c, el)
 
     # setup models
     # XXX This is critical. some of the tables are just user roles, but only the combined user entity is relevant.
@@ -217,7 +219,7 @@ def create_codes(app, code_el_table=False, uid=None, email=None, provider_data=N
 
     # static files
     for fname in ['requirements.txt', '__init__.py', 'manage.py', 'wsgi.py', 'README.md', 'README.pdf']:
-        create(StaticFileCodeChunk(fname, fname))
+        add_code(StaticFileCodeChunk(fname, fname), app)
     for fname1, fname2 in [('Procfile.txt','Procfile'),
                            ('gitignore.gitignore','.gitignore'),
                            ('gitignore.gitignore','.gitignore'),
@@ -231,7 +233,7 @@ def create_codes(app, code_el_table=False, uid=None, email=None, provider_data=N
                            ('css/reset.css', 'webapp/static/reset.css'),
                            ('utils.py', 'webapp/utils.py'),
                           ]:
-        create(StaticFileCodeChunk(fname1, fname2))
+        add_code(StaticFileCodeChunk(fname1, fname2), app)
 
     if code_el_table:
         return (codes, codes_by_el)
