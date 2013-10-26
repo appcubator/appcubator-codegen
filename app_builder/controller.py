@@ -8,7 +8,7 @@ import traceback
 
 logger = logging.getLogger('app_builder.controller')
 
-def create_codes(app, uid=None, email=None, provider_data=None):
+def create_codes(app, code_el_table=False, uid=None, email=None, provider_data=None):
     uid = uid or "random"
     email = email or "team@appcubator.com"
 
@@ -112,6 +112,8 @@ def create_codes(app, uid=None, email=None, provider_data=None):
 
 
     codes = []
+    from collections import defaultdict
+    codes_by_el = defaultdict(set)
 
     def create(event_name, el, *args, **kwargs):
         try:
@@ -121,11 +123,13 @@ def create_codes(app, uid=None, email=None, provider_data=None):
             raise
         else:
             if c is not None:
-              if isinstance(c, list):
-                for cc in c:
-                  codes.append(cc)
-              else:
-                codes.append(c)
+                if isinstance(c, list):
+                    for cc in c:
+                        codes.append(cc)
+                        codes_by_el[el].add(c)
+                else:
+                    codes.append(c)
+                    codes_by_el[el].add(c)
 
     # setup models
     # XXX This is critical. some of the tables are just user roles, but only the combined user entity is relevant.
@@ -229,7 +233,10 @@ def create_codes(app, uid=None, email=None, provider_data=None):
                           ]:
         create(StaticFileCodeChunk(fname1, fname2))
 
-    return codes
+    if code_el_table:
+        return (codes, codes_by_el)
+    else:
+        return codes
 
 def main(app):
     codes = create_codes(app)
