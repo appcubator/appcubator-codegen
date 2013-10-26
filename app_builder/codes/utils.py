@@ -109,3 +109,21 @@ class AnonymousCode(object):
 
     def render(self):
         return env.get_template(self.__class__.template_name).render(locals=self.locals, imports=self.namespace.imports())
+
+import os, os.path
+join = os.path.join
+
+class StaticFileCodeChunk(object):
+    """
+    A way to put static files from the git repo into the generated app, without hardcoding in coder.py
+    """
+    def __init__(self, src_path, dest_path):
+        self.src_path = src_path
+        self.code_path = dest_path
+
+    def render(self):
+        # codes/../code_boilerplate
+        CODE_BOILERPLATE_PATH = join(os.path.dirname(__file__), '..', 'code_boilerplate')
+        with open(join(CODE_BOILERPLATE_PATH, self.src_path)) as f:
+            code_string = f.read()
+        return code_string
