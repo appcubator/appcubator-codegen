@@ -384,14 +384,14 @@ BASEHTML = """<!DOCTYPE html>
       });
     </script>
     <script type="text/javascript">
-        // sticky footer fix
-        var offset = $('.footer').offset().top;
-        var height = $('.footer').height();
+        // sticky footer
+        var offset = $('#footer').offset().top;
+        var height = $('#footer').height();
         var pageHeight = $(document.body).height();
 
         function resize() {
             if(offset+height < pageHeight) {
-                    $('.footer').css('margin-top', pageHeight - (offset+height) - 20);
+                    $('#footer').css('margin-top', pageHeight - (offset+height) - 20);
             }
         }
 
