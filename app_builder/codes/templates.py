@@ -300,7 +300,6 @@ BASEHTML = """<!DOCTYPE html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{{ STATIC_URL }}reset.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}appcubator-override.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap-responsive.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}style.css"/>
