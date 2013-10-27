@@ -2,6 +2,14 @@
   vertical-align: top;
 }
 
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; /* Firefox */
+  /* Safari */
+}
+
 body .row.row {
   margin-left: 0px;
   margin-right: 0px;
@@ -143,3 +151,11 @@ body hr[class*="span"] {
 .hoff3  { margin-top: 45px;  }
 .hoff2  { margin-top: 30px;  }
 .hoff1  { margin-top: 15px;  }
+
+.container.container {
+  padding: 0;
+}
+
+.container.elements {
+  padding: 0;
+}
