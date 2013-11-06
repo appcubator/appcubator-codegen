@@ -439,6 +439,7 @@ class Form(DictInited, Hooked):
         self.post_url = url
 
     def validate(self):
+        return
         if self.container_info.entity_resolved not in self.page.get_tables_from_url():
             raise UserInputError("A {name} Edit Form edits the instance of {name} on a given page.\
                                   However you don't have one. Please add a {name} ID to this Page Context,\
