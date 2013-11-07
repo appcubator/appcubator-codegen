@@ -354,6 +354,11 @@ class Form(DictInited, Hooked):
                 if self.action == 'edit':
                     assert self.editOn is not None, "Editform takes editOn arg."
 
+                if self.entity_resolved not in self._parent()._parent().page.get_tables_from_url():
+                    raise UserInputError("A {name} Edit Form edits the instance of {name} on a given page.\
+                                          However you don't have one. Please add a {name} ID to this Page Context,\
+                                          or made a {name} edit form on a page that already has a {name}.".format(name=self.entity_resolved.name), self._path)
+
             def resolve(self):
                 if self.action == 'login':
                     self.entity = self.app.userentity
@@ -437,13 +442,6 @@ class Form(DictInited, Hooked):
 
     def set_post_url(self, url):
         self.post_url = url
-
-    def validate(self):
-        return
-        if self.container_info.entity_resolved not in self.page.get_tables_from_url():
-            raise UserInputError("A {name} Edit Form edits the instance of {name} on a given page.\
-                                  However you don't have one. Please add a {name} ID to this Page Context,\
-                                  or made a {name} edit form on a page that already has a {name}.".format(name=self.container_info.entity_resolved.name), self._path)
 
     def html(self):
         fields = ['{% csrf_token %}']
