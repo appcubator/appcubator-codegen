@@ -2,13 +2,13 @@
   <div class="container">  
     <div class="navbar-header">
       <a href="#" class="navbar-brand">{{ navbar.brandName }}</a>
-      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
     </div>
-    <div class="navbar-collapse collapse" data-toggle="collapse">
+    <div class="navbar-collapse collapse bs-navbar-collapse">
       <ul class="nav navbar-nav">
         {% for l in navbar.links %}
         <li{% if l.is_current_page(page) %} class="active"{% endif %}>
