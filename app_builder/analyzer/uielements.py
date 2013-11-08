@@ -358,7 +358,7 @@ class Form(DictInited, Hooked):
                     if self.action == 'edit':
                         t, entity = self.edit_dl.final_type()
                         assert t == 'object'
-                        if entity not in self._parent()._parent().page.get_tables_from_url():
+                        if self.edit_dl.context_type == 'Page' and entity not in self._parent()._parent().page.get_tables_from_url():
                             raise UserInputError("A {name} Edit Form edits the instance of {name} on a given page.\
                                                   However you don't have one. Please add a {name} ID to this Page Context,\
                                                   or made a {name} edit form on a page that already has a {name}.".format(name=self.entity_resolved.name), self._path)
